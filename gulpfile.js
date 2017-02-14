@@ -185,8 +185,7 @@ gulp.task('html', () => {
 	// HTML lint
 	.pipe(plugins.htmlhint())
     .pipe(plugins.htmlhint.reporter())
-	.pipe(gulp.dest(paths.tmp+'/'))
-	.pipe(plugins.browserSync.stream());
+	.pipe(gulp.dest(paths.tmp+'/'));
 });
 
 
@@ -278,8 +277,6 @@ gulp.task('copy:fonts', () => {
 	var fontello = gulp.src(paths.dev+'/style/fontello/')
 	.pipe(plugins.copy(paths.tmp,{prefix:1}))
 	.pipe(plugins.browserSync.stream());
-	// Create folder if doesn't exists 
-	
 	// Return streams
 	return plugins.mergeStream(font, fontello);
 });
@@ -632,10 +629,10 @@ gulp.task('watch', () =>{
 	]));});
 	// IMAGES
 	plugins.watch(paths.dev+'/img/**/*.*', () => {gulp.start(gulpsync.sync([
-		'watch:messageIMAGES','copy:images'
+		'watch:messageIMAGES','copy:images','watch:reload'
 	]));});
 	// FONTELLO
-	plugins.watch(paths.dev+'/font/config.json', () => {gulp.start(gulpsync.sync([
+	plugins.watch(paths.dev+'/font/**/*.*', () => {gulp.start(gulpsync.sync([
 		'watch:messageFONTELLO',['fontello','clean-reports','build-sass'],['lint-reports','copy:fonts']
 	]));});
 	// BOWER
@@ -643,8 +640,8 @@ gulp.task('watch', () =>{
 		'watch:messageBOWER','bower-inject'
 	]));});
 	// GULP
-	plugins.watch('gulpfile.js', () => {gulp.start(gulpsync.sync([
-		'watch:messageGULP','watch:gulp'
+	plugins.watch(['gulpfile.js','tasks/**/*.*'], () => {gulp.start(gulpsync.sync([
+		'watch:gulp'
 	]));});
 });
 
@@ -657,7 +654,6 @@ gulp.task('watch:messageJS', function reload() {console.log('-* WATCH TRIGGERED:
 gulp.task('watch:messageIMAGES', function reload() {console.log('-* WATCH TRIGGERED: IMAGES *-');});
 gulp.task('watch:messageFONTELLO', function reload() {console.log('-* WATCH TRIGGERED: FONTELLO *-');});
 gulp.task('watch:messageBOWER', function reload() {console.log('-* WATCH TRIGGERED: BOWER *-');});
-gulp.task('watch:messageGULP', function reload() {console.log('-* GULP FILE CHANGED, PLEASE RESTART *-');});
 
 // Watch tasks
 gulp.task('watch:reload', function reload() {
@@ -665,6 +661,7 @@ gulp.task('watch:reload', function reload() {
 	console.log('(Watching)');
 });
 gulp.task('watch:gulp', () => {
+	console.log('-* GULP FILE CHANGED, PLEASE RESTART *-');
 	process.exit();
 });
 
@@ -676,7 +673,7 @@ gulp.task('watch:gulp', () => {
 // BUILDS
 gulp.task('build:tmp', gulpsync.sync([
 	'clean:tmp','create-folders','js',
-	['bower-install','fontello','copy:fonts','inject-CSSdeps', 'inject-JSdeps','clean-reports'],
+	['bower-install',/*'fontello',*/'copy:fonts','inject-CSSdeps', 'inject-JSdeps','clean-reports'],
 	['copy:scripts','copy:images','sprites'],
 	'build-sass',
 	['lint-reports','html'],

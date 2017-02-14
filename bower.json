@@ -15,5 +15,7 @@
     "node_modules",
     "bower_components"
   ],
-  "devDependencies": {}
+  "devDependencies": {
+    "localforage": "^1.4.3"
+  }
 }

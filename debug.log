@@ -4,3 +4,17 @@
 [0129/091044.301:ERROR:process_reader_win.cc(233)] ReadMemory at 0x52e975a8 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
 [0129/091044.341:WARNING:process_snapshot_win.cc(68)] ReadMemory ExceptionInformation failed
 [0129/091044.341:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::Initialize failed
+[0213/154457.504:ERROR:process_info.cc(608)] range at 0x94984ab800000000, size 0x20b fully unreadable
+[0213/154457.506:ERROR:process_info.cc(608)] range at 0x94984b1a00000000, size 0x20b fully unreadable
+[0213/154457.506:ERROR:process_info.cc(608)] range at 0x0, size 0x20b fully unreadable
+[0213/154458.668:WARNING:in_range_cast.h(38)] value 2248760890500 out of range
+[0213/154458.668:WARNING:in_range_cast.h(38)] value 2248760891798 out of range
+[0213/154458.668:WARNING:in_range_cast.h(38)] value 2248760892136 out of range
+[0213/154458.668:WARNING:in_range_cast.h(38)] value 2248760888894 out of range
+[0213/155840.582:ERROR:process_info.cc(608)] range at 0xb6704aba00000000, size 0x103 fully unreadable
+[0213/155840.582:ERROR:process_info.cc(608)] range at 0xb6704b1c00000000, size 0x103 fully unreadable
+[0213/155840.582:ERROR:process_info.cc(608)] range at 0x0, size 0x103 fully unreadable
+[0213/155840.663:WARNING:in_range_cast.h(38)] value 1115457328260 out of range
+[0213/155840.663:WARNING:in_range_cast.h(38)] value 1115457329558 out of range
+[0213/155840.664:WARNING:in_range_cast.h(38)] value 1115457329896 out of range
+[0213/155840.664:WARNING:in_range_cast.h(38)] value 1115457326654 out of range
