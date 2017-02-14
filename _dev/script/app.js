@@ -1,21 +1,21 @@
 
 // Imports
 import {ready, cl, clv, resetData, arrayCheck, getTodaysDate} from 'helperFunctions';
-import {getListOfTerms, viewCreate, createViewedTerms} from 'termCreation';
+import {getListOfTerms, updateDataCount} from 'termCreation';
+import {createRevealedCount} from 'termInteraction';
+import {viewCreate} from 'viewCreation';
 
 // Exports
-export default globals;
+export default ops;
 
 // Global options
-const globals = {
+let ops = {
     displayedTerms: 3,
     container: document.querySelector(".container"),
-    addDay: false,
+    addDay: true,
     debug: true,
+    storedData: {}
 }
-
-// Setup stored data
-let storedData = storedData || {};
 
 // Initialise modules on load
 ready(function(){
@@ -37,7 +37,7 @@ const openApp = function openApp() {
         }
         // Not first time
         else {
-            storedData.firstTime = false;
+            ops.storedData.firstTime = false;
             initialise();
         }
     }).catch( err => {
@@ -52,17 +52,17 @@ const firstTime = function firstTime() {
     createTermsHandler();
 
     // Set first time to false
-    storedData.firstTime = false;
+    ops.storedData.firstTime = false;
 
     // Add to storage
-    localforage.setItem('storedData', storedData);
+    localforage.setItem('ops.storedData', ops.storedData);
 }
 
 // Initialises app
 const initialise = function initialise() {
 
     // Get stored data
-    localforage.getItem('storedData').then( retrievedData => {
+    localforage.getItem('ops.storedData').then( retrievedData => {
         checkData(retrievedData);
     }).catch( err => {
         console.log(err);
@@ -72,7 +72,7 @@ const initialise = function initialise() {
     function checkData(retrievedData) {
 
         // Set data in app from storage
-        storedData = retrievedData;
+        ops.storedData = retrievedData;
         
         // Check if a new day
         let todaysDate = getTodaysDate();
@@ -84,7 +84,7 @@ const initialise = function initialise() {
 
         // If same day, use dailyTerms data
         if (arrayCheck(todaysDate, storedDate) === true) {
-            if (globals.addDay === true) {createTermsHandler();}
+            if (ops.addDay === true) {createTermsHandler();}
             else {viewCreate(retrievedData.dailyTerms);}
         }
         // Else create new terms
@@ -104,11 +104,23 @@ const createTermsHandler = function createTermsHandler() {
     viewCreate(pickedTerms);
 
     // Create opened date, daily terms, viewed terms
-    storedData.dateOpened = getTodaysDate();
-    storedData.dailyTerms = pickedTerms;    
-    storedData.viewedTerms = createViewedTerms(pickedTerms);
-    
+    ops.storedData.dateOpened = getTodaysDate();
+    ops.storedData.dailyTerms = pickedTerms;    
+    ops.storedData.viewedTerms = updateDataCount('viewedTerms', pickedTerms);
+
     // Add to storage
-    localforage.setItem('storedData', storedData);
-} 
+    localforage.setItem('ops.storedData', ops.storedData);
+
+    // Handles counter for revealed terms
+    createRevealedCount();
+
+    // Debug code
+    if (ops.debug === true){
+        cl(ops.storedData);
+        cl('Revealed terms count:');
+        cl(ops.storedData.revealedTermCount);
+        cl('Viewed terms count:');
+        cl(ops.storedData.viewedTerms);
+    };
+}
 

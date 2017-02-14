@@ -72,9 +72,6 @@ var app = function () {
     };
 
     // Imports
-    // Setup stored data
-    var storedData$1 = storedData$1 || {};
-
     // Creates a list of terms
     var getListOfTerms = function getListOfTerms() {
 
@@ -85,14 +82,14 @@ var app = function () {
         var dataLength = Object.keys(appData.terms).length;
 
         // Prevent overflow
-        if (globals$1.displayedTerms > dataLength) {
-            globals$1.displayedTerms = dataLength;
+        if (ops$1.displayedTerms > dataLength) {
+            ops$1.displayedTerms = dataLength;
         }
 
         // First time app opened
-        if (storedData$1.firstTime === undefined) {
+        if (ops$1.storedData.firstTime === undefined) {
 
-            while (i < globals$1.displayedTerms) {
+            while (i < ops$1.displayedTerms) {
                 var pickedTerm = pickRandom();
 
                 // Ensure term hasn't been already scanned
@@ -104,24 +101,27 @@ var app = function () {
         }
         // App opened before
         else {
-                var viewedLength = Object.keys(storedData$1.viewedTerms).length;
 
-                while (i < globals$1.displayedTerms) {
+                while (i < ops$1.displayedTerms) {
+                    var viewedLength = Object.keys(ops$1.storedData.viewedTerms).length;
 
                     // If all terms viewed
                     if (viewedLength === dataLength) {
+
                         var viewedSorted = [];
 
                         // Convert viewed terms to array
-                        for (var term in storedData$1.viewedTerms) {
-                            viewedSorted.push([term, storedData$1.viewedTerms[term]]);
+                        for (var term in ops$1.storedData.viewedTerms) {
+                            viewedSorted.push([term, ops$1.storedData.viewedTerms[term]]);
                         }
+
                         // Sort array by view count
                         viewedSorted.sort(function (a, b) {
                             return a[1] - b[1];
                         });
+
                         // Finish off iterator with lowest viewed terms
-                        while (i < globals$1.displayedTerms) {
+                        while (i < ops$1.displayedTerms) {
                             listOfTerms.push(viewedSorted[i][0]);
                             i++;
                         }
@@ -129,21 +129,23 @@ var app = function () {
                         i++;
                     } else {
                         var _pickedTerm = pickRandom();
+
                         // Ensure term hasn't been already scanned
                         if (!scannedTerms.includes(_pickedTerm)) {
                             scannedTerms.push(_pickedTerm);
+
                             // Ensure term not viewed before
-                            if (!storedData$1.viewedTerms.hasOwnProperty(_pickedTerm)) {
+                            if (!ops$1.storedData.viewedTerms.hasOwnProperty(_pickedTerm)) {
                                 listOfTerms.push(_pickedTerm);
-                                storedData$1.viewedTerms[_pickedTerm] = 0;
-                                localforage.setItem('storedData', storedData$1);
+                                ops$1.storedData.viewedTerms[_pickedTerm] = 0;
+                                localforage.setItem('ops.storedData', ops$1.storedData);
                                 i++;
                             }
                         }
                     }
                     // Overflow protection
                     if (j > 1000) {
-                        i = globals$1.displayedTerms;
+                        i = ops$1.displayedTerms;
                     }
                     j++;
                 }
@@ -155,89 +157,39 @@ var app = function () {
 
             return pickedTerm;
         }
+        // Return final list of terms
         return listOfTerms;
     };
 
-    // Create app view
-    var viewCreate = function viewCreate(termsToCreate) {
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+    // Handles count of a type of data
+    var updateDataCount = function updateDataCount(dataType, termsToAdjust) {
 
-        try {
-
-            for (var _iterator = termsToCreate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                var value = _step.value;
-
-
-                // Get terms and definitions from data
-                var termValue = appData.terms[value].term,
-                    definitionValue = appData.terms[value].definition;
-
-                // Create holders
-                var newTermHolder = document.createElement('p'),
-                    newdefinitionHolder = document.createElement('p');
-
-                // Add classes to holders
-                newTermHolder.classList.add('holder-term');
-                newdefinitionHolder.classList.add('holder-definition');
-
-                // Add content to holders
-                newTermHolder.textContent = termValue;
-                newdefinitionHolder.textContent = definitionValue;
-
-                // Add to view
-                globals$1.container.appendChild(newTermHolder);
-                globals$1.container.appendChild(newdefinitionHolder);
-
-                // Cycle for of loop
-                value++;
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally {
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                    _iterator.return();
-                }
-            } finally {
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-    };
-
-    // Handles count of viewed terms
-    var createViewedTerms = function createViewedTerms(termsToAdd) {
-
-        var viewedTermsData = storedData$1.viewedTerms || {};
+        var dataTypeHolder = ops$1.storedData[dataType] || {};
 
         // If no viewed data, create new 
-        if (!storedData$1.hasOwnProperty('viewedTerms')) {
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
+        if (!ops$1.storedData.hasOwnProperty(dataType)) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
             try {
 
-                for (var _iterator2 = termsToAdd[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var value = _step2.value;
+                for (var _iterator = termsToAdjust[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var value = _step.value;
 
-                    viewedTermsData[value] = 0;
+                    dataTypeHolder[value] = 0;
                 }
             } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
+                _didIteratorError = true;
+                _iteratorError = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
                     }
                 } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
+                    if (_didIteratorError) {
+                        throw _iteratorError;
                     }
                 }
             }
@@ -245,53 +197,128 @@ var app = function () {
         // If viewed data exists
         else {
                 // If viewed term exists, update count
-                var _iteratorNormalCompletion3 = true;
-                var _didIteratorError3 = false;
-                var _iteratorError3 = undefined;
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
 
                 try {
-                    for (var _iterator3 = termsToAdd[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                        var _value = _step3.value;
+                    for (var _iterator2 = termsToAdjust[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var _value = _step2.value;
 
 
-                        if (storedData$1.viewedTerms.hasOwnProperty(_value)) {
-                            var count = storedData$1.viewedTerms[_value];
+                        if (ops$1.storedData[dataType].hasOwnProperty(_value)) {
+                            var count = ops$1.storedData[dataType][_value];
                             count += 1;
-                            viewedTermsData[_value] = count;
+                            dataTypeHolder[_value] = count;
                         } else {
-                            viewedTermsData[termsToAdd] = 0;
+                            dataTypeHolder[termsToAdjust] = 0;
                         }
                     }
                 } catch (err) {
-                    _didIteratorError3 = true;
-                    _iteratorError3 = err;
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                            _iterator3.return();
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
                         }
                     } finally {
-                        if (_didIteratorError3) {
-                            throw _iteratorError3;
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
                         }
                     }
                 }
             }
         // Pass back final object
-        return viewedTermsData;
+        return dataTypeHolder;
+    };
+
+    // Imports
+    // Setup stored data
+
+    var createRevealedCount = function createRevealedCount() {
+
+        var revealBtn = document.querySelectorAll('.reveal');
+
+        var _loop = function _loop(i) {
+
+            revealBtn[i].addEventListener("click", function () {
+                var term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
+                var countHolder = revealBtn[i].parentNode.querySelector('.term-views');
+                var count = parseInt(countHolder.innerHTML);
+
+                countHolder.innerHTML = count + 1;
+                ops$1.storedData.revealedTermCount = updateDataCount('revealedTermCount', term);
+                localforage.setItem('ops.storedData', ops$1.storedData);
+            });
+        };
+
+        for (var i = 0; i < revealBtn.length; i++) {
+            _loop(i);
+        }
+    };
+
+    // Imports
+    // Create app view
+    var viewCreate = function viewCreate(termsToCreate) {
+
+        var viewHTML = [];
+
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+            for (var _iterator3 = termsToCreate[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                var value = _step3.value;
+
+
+                // Get terms and definitions from data
+                var termValue = appData.terms[value].term;
+                var definitionValue = appData.terms[value].definition;
+                var viewsCount = void 0;
+
+                if (ops$1.storedData.revealedTermCount === undefined) {
+                    viewsCount = 0;
+                } else {
+                    viewsCount = ops$1.storedData.revealedTermCount[value] || 0;
+                }
+
+                // Create view
+                var newHolder = '<div class="term-wrapper">\n                <p class="term-holder">' + termValue + '</p>\n                <p class="definition-holder">' + definitionValue + '</p>\n                <p class="term-views">' + viewsCount + '</p>\n                <button class="reveal">Reveal definition</button>\n            </div>';
+
+                viewHTML.push(newHolder);
+                // Cycle for of loop
+            }
+            // Add to view
+        } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                    _iterator3.return();
+                }
+            } finally {
+                if (_didIteratorError3) {
+                    throw _iteratorError3;
+                }
+            }
+        }
+
+        viewHTML = viewHTML.join('');
+        ops$1.container.innerHTML = viewHTML;
     };
 
     // Imports
     // Global options
-    var globals$1 = {
+    var ops$1 = {
         displayedTerms: 3,
         container: document.querySelector(".container"),
-        addDay: false,
-        debug: true
+        addDay: true,
+        debug: true,
+        storedData: {}
     };
-
-    // Setup stored data
-    var storedData = storedData || {};
 
     // Initialise modules on load
     ready(function () {
@@ -314,7 +341,7 @@ var app = function () {
             }
             // Not first time
             else {
-                    storedData.firstTime = false;
+                    ops$1.storedData.firstTime = false;
                     initialise();
                 }
         }).catch(function (err) {
@@ -329,17 +356,17 @@ var app = function () {
         createTermsHandler();
 
         // Set first time to false
-        storedData.firstTime = false;
+        ops$1.storedData.firstTime = false;
 
         // Add to storage
-        localforage.setItem('storedData', storedData);
+        localforage.setItem('ops.storedData', ops$1.storedData);
     };
 
     // Initialises app
     var initialise = function initialise() {
 
         // Get stored data
-        localforage.getItem('storedData').then(function (retrievedData) {
+        localforage.getItem('ops.storedData').then(function (retrievedData) {
             checkData(retrievedData);
         }).catch(function (err) {
             console.log(err);
@@ -349,7 +376,7 @@ var app = function () {
         function checkData(retrievedData) {
 
             // Set data in app from storage
-            storedData = retrievedData;
+            ops$1.storedData = retrievedData;
 
             // Check if a new day
             var todaysDate = getTodaysDate();
@@ -361,7 +388,7 @@ var app = function () {
 
             // If same day, use dailyTerms data
             if (arrayCheck(todaysDate, storedDate) === true) {
-                if (globals$1.addDay === true) {
+                if (ops$1.addDay === true) {
                     createTermsHandler();
                 } else {
                     viewCreate(retrievedData.dailyTerms);
@@ -384,14 +411,26 @@ var app = function () {
         viewCreate(pickedTerms);
 
         // Create opened date, daily terms, viewed terms
-        storedData.dateOpened = getTodaysDate();
-        storedData.dailyTerms = pickedTerms;
-        storedData.viewedTerms = createViewedTerms(pickedTerms);
+        ops$1.storedData.dateOpened = getTodaysDate();
+        ops$1.storedData.dailyTerms = pickedTerms;
+        ops$1.storedData.viewedTerms = updateDataCount('viewedTerms', pickedTerms);
 
         // Add to storage
-        localforage.setItem('storedData', storedData);
+        localforage.setItem('ops.storedData', ops$1.storedData);
+
+        // Handles counter for revealed terms
+        createRevealedCount();
+
+        // Debug code
+        if (ops$1.debug === true) {
+            cl(ops$1.storedData);
+            cl('Revealed terms count:');
+            cl(ops$1.storedData.revealedTermCount);
+            cl('Viewed terms count:');
+            cl(ops$1.storedData.viewedTerms);
+        }
     };
 
-    return globals$1;
+    return ops$1;
 }();
 //# sourceMappingURL=app.js.map

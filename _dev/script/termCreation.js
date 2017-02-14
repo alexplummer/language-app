@@ -1,14 +1,11 @@
 
 // Imports
-import {ready, cl, clv, arrayCheck} from 'helperFunctions';
+import {cl, clv} from 'helperFunctions';
 import appData from 'verbs';
-import globals from 'app';
+import ops from 'app';
 
 // Exports
-export {getListOfTerms, viewCreate, createViewedTerms};
-
-// Setup stored data
-let storedData = storedData || {};
+export {getListOfTerms, updateDataCount};
 
 // Creates a list of terms
 const getListOfTerms = function getListOfTerms() {
@@ -20,14 +17,14 @@ const getListOfTerms = function getListOfTerms() {
     const dataLength = Object.keys(appData.terms).length;
 
     // Prevent overflow
-    if (globals.displayedTerms > dataLength) {
-        globals.displayedTerms = dataLength;
+    if (ops.displayedTerms > dataLength) {
+        ops.displayedTerms = dataLength;
     }
     
     // First time app opened
-    if (storedData.firstTime === undefined) {
+    if (ops.storedData.firstTime === undefined) {
        
-        while (i<globals.displayedTerms) {
+        while (i<ops.displayedTerms) {
         let pickedTerm = pickRandom();
 
             // Ensure term hasn't been already scanned
@@ -39,24 +36,27 @@ const getListOfTerms = function getListOfTerms() {
     }
     // App opened before
     else {
-        const viewedLength = Object.keys(storedData.viewedTerms).length;
         
-        while (i<globals.displayedTerms) {
+        while (i<ops.displayedTerms) {
+            let viewedLength = Object.keys(ops.storedData.viewedTerms).length;
             
             // If all terms viewed
-            if (viewedLength === dataLength) {              
+            if (viewedLength === dataLength) {     
+                      
                 let viewedSorted = [];
                 
                 // Convert viewed terms to array
-                for (let term in storedData.viewedTerms) {
-                    viewedSorted.push([term, storedData.viewedTerms[term]])
+                for (let term in ops.storedData.viewedTerms) {
+                    viewedSorted.push([term, ops.storedData.viewedTerms[term]])
                 }
+
                 // Sort array by view count
                 viewedSorted.sort( (a, b) => {
                     return a[1] - b[1]
                 })
+
                 // Finish off iterator with lowest viewed terms
-                while (i<globals.displayedTerms) {
+                while (i<ops.displayedTerms) {
                     listOfTerms.push(viewedSorted[i][0]);
                     i++;
                 }
@@ -65,21 +65,23 @@ const getListOfTerms = function getListOfTerms() {
             }
             else {
                 let pickedTerm = pickRandom();
+                
                 // Ensure term hasn't been already scanned
                 if (!scannedTerms.includes(pickedTerm)) {
                     scannedTerms.push(pickedTerm);
+ 
                     // Ensure term not viewed before
-                    if (!storedData.viewedTerms.hasOwnProperty(pickedTerm)) {
+                    if (!ops.storedData.viewedTerms.hasOwnProperty(pickedTerm)) {
                         listOfTerms.push(pickedTerm);
-                        storedData.viewedTerms[pickedTerm] = 0;
-                        localforage.setItem('storedData', storedData);
+                        ops.storedData.viewedTerms[pickedTerm] = 0;
+                        localforage.setItem('ops.storedData', ops.storedData);
                         i++;
                     }
                 }   
             }
             // Overflow protection
             if (j > 1000) {
-                i = globals.displayedTerms;
+                i = ops.displayedTerms;
             }
             j++;
         }
@@ -91,66 +93,37 @@ const getListOfTerms = function getListOfTerms() {
 
         return pickedTerm;
     }
+    // Return final list of terms
     return listOfTerms;
 }
 
-// Create app view
-const viewCreate = function viewCreate(termsToCreate) {
+// Handles count of a type of data
+const updateDataCount = function(dataType, termsToAdjust) {
 
-    for (let value of termsToCreate) {
-        
-        // Get terms and definitions from data
-        let termValue       = appData.terms[value].term,
-            definitionValue = appData.terms[value].definition;
-        
-        // Create holders
-        let newTermHolder = document.createElement('p'),
-            newdefinitionHolder = document.createElement('p');
-
-        // Add classes to holders
-        newTermHolder.classList.add('holder-term');
-        newdefinitionHolder.classList.add('holder-definition');
-
-        // Add content to holders
-        newTermHolder.textContent = termValue;
-        newdefinitionHolder.textContent = definitionValue;
-
-        // Add to view
-        globals.container.appendChild(newTermHolder);
-        globals.container.appendChild(newdefinitionHolder);
-        
-        // Cycle for of loop
-        value++;
-    }
-}
-
-// Handles count of viewed terms
-const createViewedTerms = function(termsToAdd) {
-
-    let viewedTermsData = storedData.viewedTerms || {};
-
+ let dataTypeHolder = ops.storedData[dataType] || {};
+     
     // If no viewed data, create new 
-    if (!storedData.hasOwnProperty('viewedTerms')) {
-        
-        for (let value of termsToAdd) {   
-            viewedTermsData[value] = 0;
+    if (!ops.storedData.hasOwnProperty(dataType)) {
+       
+        for (let value of termsToAdjust) {   
+            dataTypeHolder[value] = 0;
         }
     }
     // If viewed data exists
     else {
         // If viewed term exists, update count
-        for (let value of termsToAdd) {   
-            
-            if (storedData.viewedTerms.hasOwnProperty(value)) {
-                let count = storedData.viewedTerms[value];
+        for (let value of termsToAdjust) {   
+
+            if (ops.storedData[dataType].hasOwnProperty(value)) {
+                let count = ops.storedData[dataType][value];
                 count += 1;
-                viewedTermsData[value] = count;
+                dataTypeHolder[value] = count;
             }
             else {
-                viewedTermsData[termsToAdd] = 0;
+                dataTypeHolder[termsToAdjust] = 0;
             }       
         }
     }
     // Pass back final object
-    return viewedTermsData;
+    return dataTypeHolder;
 }
