@@ -1084,6 +1084,11 @@ textarea {
   font: inherit;
   /* 2 */ }
 
+.term-wrapper:after {
+  content: "";
+  display: table;
+  clear: both; }
+
 /* csslint ignore:end */
 @font-face {
   font-family: 'fontello';
@@ -1134,6 +1139,33 @@ textarea {
 
 /* '' */
 /* inject:componentImports */
+.container {
+  width: 600px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #eee;
+  padding: 1.5rem; }
+
+.term-wrapper {
+  padding: 1.5rem 0; }
+  .term-wrapper > * {
+    float: left;
+    margin-right: 1.5rem; }
+  .term-wrapper .term-views {
+    border: 1px solid #666;
+    padding: 0.75rem; }
+  .term-wrapper .definition-holder {
+    display: none; }
+    .term-wrapper .definition-holder.shown {
+      display: block; }
+
+button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer; }
+  button.disabled {
+    cursor: default; }
+
 /* endinjectComponent */
 
 /*# sourceMappingURL=style.css.map */

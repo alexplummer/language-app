@@ -1,15 +1,15 @@
 
 // Imports
-import {cl, clv} from 'helperFunctions';
+import { cl, clv } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
 
 // Exports
-export {getListOfTerms, updateDataCount};
+export { getListOfTerms, updateDataCount };
 
 // Creates a list of terms
 const getListOfTerms = function getListOfTerms() {
-   
+
     let i = 0;
     let j = 0;
     let listOfTerms = [];
@@ -20,12 +20,12 @@ const getListOfTerms = function getListOfTerms() {
     if (ops.displayedTerms > dataLength) {
         ops.displayedTerms = dataLength;
     }
-    
+
     // First time app opened
     if (ops.storedData.firstTime === undefined) {
-       
-        while (i<ops.displayedTerms) {
-        let pickedTerm = pickRandom();
+
+        while (i < ops.displayedTerms) {
+            let pickedTerm = pickRandom();
 
             // Ensure term hasn't been already scanned
             if (!listOfTerms.includes(pickedTerm)) {
@@ -36,27 +36,27 @@ const getListOfTerms = function getListOfTerms() {
     }
     // App opened before
     else {
-        
-        while (i<ops.displayedTerms) {
+
+        while (i < ops.displayedTerms) {
             let viewedLength = Object.keys(ops.storedData.viewedTerms).length;
-            
+
             // If all terms viewed
-            if (viewedLength === dataLength) {     
-                      
+            if (viewedLength === dataLength) {
+
                 let viewedSorted = [];
-                
+
                 // Convert viewed terms to array
                 for (let term in ops.storedData.viewedTerms) {
                     viewedSorted.push([term, ops.storedData.viewedTerms[term]])
                 }
 
                 // Sort array by view count
-                viewedSorted.sort( (a, b) => {
+                viewedSorted.sort((a, b) => {
                     return a[1] - b[1]
                 })
 
                 // Finish off iterator with lowest viewed terms
-                while (i<ops.displayedTerms) {
+                while (i < ops.displayedTerms) {
                     listOfTerms.push(viewedSorted[i][0]);
                     i++;
                 }
@@ -65,11 +65,11 @@ const getListOfTerms = function getListOfTerms() {
             }
             else {
                 let pickedTerm = pickRandom();
-                
+
                 // Ensure term hasn't been already scanned
                 if (!scannedTerms.includes(pickedTerm)) {
                     scannedTerms.push(pickedTerm);
- 
+
                     // Ensure term not viewed before
                     if (!ops.storedData.viewedTerms.hasOwnProperty(pickedTerm)) {
                         listOfTerms.push(pickedTerm);
@@ -77,7 +77,7 @@ const getListOfTerms = function getListOfTerms() {
                         localforage.setItem('ops.storedData', ops.storedData);
                         i++;
                     }
-                }   
+                }
             }
             // Overflow protection
             if (j > 1000) {
@@ -89,7 +89,7 @@ const getListOfTerms = function getListOfTerms() {
     // Get random terms from data
     function pickRandom() {
         let keys = Object.keys(appData.terms),
-            pickedTerm = keys[ keys.length * Math.random() << 0];
+            pickedTerm = keys[keys.length * Math.random() << 0];
 
         return pickedTerm;
     }
@@ -98,21 +98,21 @@ const getListOfTerms = function getListOfTerms() {
 }
 
 // Handles count of a type of data
-const updateDataCount = function(dataType, termsToAdjust) {
+const updateDataCount = function (dataType, termsToAdjust, baseValue) {
 
- let dataTypeHolder = ops.storedData[dataType] || {};
-     
+    let dataTypeHolder = ops.storedData[dataType] || {};
+
     // If no viewed data, create new 
     if (!ops.storedData.hasOwnProperty(dataType)) {
-       
-        for (let value of termsToAdjust) {   
-            dataTypeHolder[value] = 0;
+
+        for (let value of termsToAdjust) {
+            dataTypeHolder[value] = baseValue;
         }
     }
     // If viewed data exists
     else {
         // If viewed term exists, update count
-        for (let value of termsToAdjust) {   
+        for (let value of termsToAdjust) {
 
             if (ops.storedData[dataType].hasOwnProperty(value)) {
                 let count = ops.storedData[dataType][value];
@@ -120,8 +120,8 @@ const updateDataCount = function(dataType, termsToAdjust) {
                 dataTypeHolder[value] = count;
             }
             else {
-                dataTypeHolder[termsToAdjust] = 0;
-            }       
+                dataTypeHolder[termsToAdjust] = baseValue;
+            }
         }
     }
     // Pass back final object

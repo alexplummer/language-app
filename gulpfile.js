@@ -699,9 +699,7 @@ gulp.task('optimise', gulpsync.sync([
 gulp.task('default', gulpsync.sync([
 	'build:tmp',
 	'connect',
-	'watch',
-	'clean:prod',
-	'build:prod'
+	'watch'
 ]), () => {console.log('(Watching)');
 });
 gulp.task('prod', gulpsync.sync([

@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var app = function () {
     'use strict';
 
@@ -26,15 +28,30 @@ var app = function () {
     // Creates array of day and month
     function getTodaysDate() {
 
-        // Set opened date to storedData
-        var todayDate = [],
-            day = new Date().getDate(),
-            month = new Date().getMonth();
+        // Get current day + month
+        var todayDate = [];
+        var day = new Date().getDate();
+        var month = new Date().getMonth();
 
-        todayDate.push(day);
-        todayDate.push(month);
+        todayDate.push([day, month]);
 
         return todayDate;
+    }
+
+    // Creates array of day, month, hour, minute, second
+    function getTimeComplete() {
+
+        // Get complete date time value 
+        var timeComplete = [];
+        var day = new Date().getDate();
+        var month = new Date().getMonth();
+        var hour = new Date().getHours();
+        var minute = new Date().getMinutes();
+        var second = new Date().getSeconds();
+
+        timeComplete.push([day, month, hour, minute, second]);
+
+        return timeComplete;
     }
 
     // Check if arrays are the same
@@ -54,8 +71,21 @@ var app = function () {
         document.querySelector('.reset').addEventListener('click', function (e) {
             e.preventDefault;
             localforage.clear();
-            cl('App reset');
+            cl('APP RESET');
         });
+    }
+
+    // Adds click functionality to selectors
+    function clickListener(elements, clickFunction) {
+        var _loop = function _loop(i) {
+            elements[i].addEventListener("click", function () {
+                clickFunction(i);
+            });
+        };
+
+        for (var i = 0; i < elements.length; i++) {
+            _loop(i);
+        }
     }
 
     // App data
@@ -162,7 +192,7 @@ var app = function () {
     };
 
     // Handles count of a type of data
-    var updateDataCount = function updateDataCount(dataType, termsToAdjust) {
+    var updateDataCount = function updateDataCount(dataType, termsToAdjust, baseValue) {
 
         var dataTypeHolder = ops$1.storedData[dataType] || {};
 
@@ -177,7 +207,7 @@ var app = function () {
                 for (var _iterator = termsToAdjust[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var value = _step.value;
 
-                    dataTypeHolder[value] = 0;
+                    dataTypeHolder[value] = baseValue;
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -211,7 +241,7 @@ var app = function () {
                             count += 1;
                             dataTypeHolder[_value] = count;
                         } else {
-                            dataTypeHolder[termsToAdjust] = 0;
+                            dataTypeHolder[termsToAdjust] = baseValue;
                         }
                     }
                 } catch (err) {
@@ -234,36 +264,161 @@ var app = function () {
     };
 
     // Imports
-    // Setup stored data
-
-    var createRevealedCount = function createRevealedCount() {
+    // Handles functions when reveal button clicked
+    var revealedBtnHandler = function revealedBtnHandler() {
 
         var revealBtn = document.querySelectorAll('.reveal');
 
-        var _loop = function _loop(i) {
+        clickListener(revealBtn, function (i) {
 
-            revealBtn[i].addEventListener("click", function () {
-                var term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
-                var countHolder = revealBtn[i].parentNode.querySelector('.term-views');
-                var count = parseInt(countHolder.innerHTML);
+            if (revealBtn[i].classList.contains('disabled')) {
+                return false;
+            }
+            var term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
 
-                countHolder.innerHTML = count + 1;
-                ops$1.storedData.revealedTermCount = updateDataCount('revealedTermCount', term);
-                localforage.setItem('ops.storedData', ops$1.storedData);
-            });
-        };
+            // Updates the revealed view counter
+            var countHolder = revealBtn[i].parentNode.querySelector('.term-views');
+            var definitionHolder = revealBtn[i].parentNode.querySelector('.definition-holder');
+            var count = parseInt(countHolder.innerHTML);
 
-        for (var i = 0; i < revealBtn.length; i++) {
-            _loop(i);
+            // Show definition
+            definitionHolder.classList.add('shown');
+
+            // Increase count by one
+            countHolder.innerHTML = count + 1;
+
+            // Pass to updateDataCount function
+            var dataCount = updateDataCount('revealedTermCount', term, 1);
+
+            // Set storedData
+            ops$1.storedData.revealedTermCount = dataCount;
+
+            // Starts a timer 
+            createRevealTimer(revealBtn[i]);
+
+            // Save to storage
+            localforage.setItem('ops.storedData', ops$1.storedData);
+        });
+    };
+
+    // Adds a timer to the reveal button
+    var createRevealTimer = function createRevealTimer(revealBtn) {
+
+        // If no stored data for reveal countdowns
+        if (ops$1.storedData.revealCountdowns === undefined) {
+            ops$1.storedData.revealCountdowns = {};
         }
+
+        var revealCountdowns = ops$1.storedData.revealCountdowns || {};
+        var term = [revealBtn.parentNode.querySelector('.term-holder').innerHTML];
+        var minutes = void 0;
+        var seconds = void 0;
+        var startTime = void 0;
+
+        // New timer
+        if (revealCountdowns[term] === undefined) {
+
+            minutes = 59;
+            seconds = 59;
+            startTime = getTimeComplete();
+
+            // Set storedData
+            ops$1.storedData.revealCountdowns[term] = startTime;
+        }
+        // Existing timer
+        else {
+                var _ret2 = function () {
+                    // Calculate remaining seconds
+                    var getRemainingSeconds = function getRemainingSeconds() {
+                        // If nowTime seconds less, indicates change of minute
+                        if (startTime[4] > nowTime[4]) {
+                            // Remaining seconds in minute
+                            seconds = startTime[4] - nowTime[4];
+                        }
+                        // Else same minute, subtract remaining seconds
+                        else {
+                                seconds = 59 - (nowTime[4] - startTime[4]);
+                            }
+                        return seconds;
+                    };
+
+                    // Timer stopped, return to normal
+
+
+                    var nowTime = getTimeComplete()[0];
+                    var timerEnded = false;
+
+                    // Get terms start time for countdown
+                    startTime = revealCountdowns[term][0];
+
+                    // Check remaining timer, format: startTime[day, month, hour, minute, second]
+
+                    // If day or month are different
+                    if (startTime[0] !== nowTime[0] || startTime[1] !== nowTime[1]) {
+                        timerEnded = true;
+                    }
+                    // If more than 2 hours different
+                    else if (Math.abs(startTime[2] - nowTime[2]) >= 2) {
+                            timerEnded = true;
+                        }
+                        // If nowTime minutes less, indicates change of hour
+                        else if (startTime[3] > nowTime[3]) {
+                                // Remaining minutes in hour
+                                minutes = startTime[3] - nowTime[3];
+                                seconds = getRemainingSeconds();
+                            }
+                            // Else same hour, subtract remaining minutes
+                            else {
+                                    minutes = 59 - (nowTime[3] - startTime[3]);
+                                    seconds = getRemainingSeconds();
+                                }if (timerEnded === true) {
+                        return {
+                            v: false
+                        };
+                    }
+                }();
+
+                if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+            }
+
+        // Set start time to storage
+        localforage.setItem('ops.storedData', ops$1.storedData);
+
+        // Sets a visual timer on the button
+        setInterval(function () {
+            var displayedMinutes = minutes;
+            var displayedSeconds = seconds;
+            var hiddenZero = '';
+
+            // Handle issues like zero index
+            if (seconds < 10 && seconds > 0) {
+                hiddenZero = '0';
+            }
+            if (seconds === 0) {
+                seconds = 60;
+                minutes -= 1;
+            }
+            if (seconds === 60) {
+                displayedSeconds = '00';
+            }
+
+            // Update DOM
+            revealBtn.innerHTML = displayedMinutes + ':' + hiddenZero + displayedSeconds;
+            revealBtn.classList.add('disabled');
+            revealBtn.setAttribute("disabled", true);
+
+            // Decrease timer
+            seconds -= 1;
+        }, 1000);
     };
 
     // Imports
     // Create app view
     var viewCreate = function viewCreate(termsToCreate) {
 
-        var viewHTML = [];
+        var viewHTML = "";
 
+        // Create HTML for terms
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;
@@ -276,8 +431,10 @@ var app = function () {
                 // Get terms and definitions from data
                 var termValue = appData.terms[value].term;
                 var definitionValue = appData.terms[value].definition;
+                var revealCounter = void 0;
                 var viewsCount = void 0;
 
+                // Check storage for revealed count
                 if (ops$1.storedData.revealedTermCount === undefined) {
                     viewsCount = 0;
                 } else {
@@ -287,7 +444,7 @@ var app = function () {
                 // Create view
                 var newHolder = '<div class="term-wrapper">\n                <p class="term-holder">' + termValue + '</p>\n                <p class="definition-holder">' + definitionValue + '</p>\n                <p class="term-views">' + viewsCount + '</p>\n                <button class="reveal">Reveal definition</button>\n            </div>';
 
-                viewHTML.push(newHolder);
+                viewHTML += newHolder;
                 // Cycle for of loop
             }
             // Add to view
@@ -306,8 +463,51 @@ var app = function () {
             }
         }
 
-        viewHTML = viewHTML.join('');
         ops$1.container.innerHTML = viewHTML;
+
+        // Add countdown timers to term buttons
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+            for (var _iterator4 = termsToCreate[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var _value2 = _step4.value;
+
+
+                // Check if timer data exists
+                if (ops$1.storedData.revealCountdowns !== undefined) {
+
+                    // Add countdown timers to buttons
+                    if (ops$1.storedData.revealCountdowns[_value2] !== undefined) {
+
+                        var revealBtn = document.querySelectorAll('.reveal');
+
+                        // Find button node that matches term in DOM
+                        for (var i = 0; i < revealBtn.length; i++) {
+                            var revealTerm = revealBtn[i].parentNode.querySelector('.term-holder').innerHTML;
+
+                            if (revealTerm === _value2) {
+                                createRevealTimer(revealBtn[i]);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                    _iterator4.return();
+                }
+            } finally {
+                if (_didIteratorError4) {
+                    throw _iteratorError4;
+                }
+            }
+        }
     };
 
     // Imports
@@ -413,13 +613,13 @@ var app = function () {
         // Create opened date, daily terms, viewed terms
         ops$1.storedData.dateOpened = getTodaysDate();
         ops$1.storedData.dailyTerms = pickedTerms;
-        ops$1.storedData.viewedTerms = updateDataCount('viewedTerms', pickedTerms);
+        ops$1.storedData.viewedTerms = updateDataCount('viewedTerms', pickedTerms, 0);
 
         // Add to storage
         localforage.setItem('ops.storedData', ops$1.storedData);
 
-        // Handles counter for revealed terms
-        createRevealedCount();
+        // Handles events for revealed terms
+        revealedBtnHandler();
 
         // Debug code
         if (ops$1.debug === true) {
@@ -428,6 +628,8 @@ var app = function () {
             cl(ops$1.storedData.revealedTermCount);
             cl('Viewed terms count:');
             cl(ops$1.storedData.viewedTerms);
+            cl('Revealed terms timer:');
+            cl(ops$1.storedData.revealCountdowns);
         }
     };
 

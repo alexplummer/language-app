@@ -1,0 +1,37 @@
+.container {
+    width: 600px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #eee;
+    padding: $size-m;
+}
+.term-wrapper {
+    @extend %cf;
+    padding: $size-m 0;
+
+    >* {
+        float: left;
+        margin-right: $size-m;
+    }
+    .term-views {
+        border: 1px solid #666;
+        padding: $size-s;
+    }
+    .definition-holder {
+        display: none;
+
+        &.shown {
+            display: block;
+        }
+    }
+}
+
+button {
+    padding: $size-s $size-m;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &.disabled {
+        cursor: default;
+    }
+}
