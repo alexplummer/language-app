@@ -12,8 +12,10 @@ export default ops;
 // Global options
 let ops = {
     displayedTerms: 3,
+    counterMins: 60,
+    counterSecs: 0,
     container: document.querySelector(".terms-wrapper"),
-    addDay: false,
+    addDay: true,
     debug: true,
     points: {
         correct: 50,
