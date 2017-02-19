@@ -22,11 +22,12 @@ const revealedBtnHandler = function revealedBtnHandler() {
 
         // Updates the revealed view counter
         let countHolder = revealBtn[i].parentNode.querySelector('.term-views');
+        let definitionWrapper = revealBtn[i].parentNode.querySelector('.definition-wrapper');
         let definitionHolder = revealBtn[i].parentNode.querySelector('.definition-holder');
         let count = parseInt(countHolder.innerHTML);
 
         // Show definition
-        definitionHolder.classList.add('shown');
+        definitionWrapper.classList.remove('hidden');
 
         // Increase count by one
         countHolder.innerHTML = count + 1;
@@ -58,12 +59,13 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     let minutes;
     let seconds;
     let startTime;
+    let timerEnded = false;
     
     // New timer
     if (revealCountdowns[term] === undefined) {
 
-        minutes = 59;
-        seconds = 59;
+        minutes = 60;
+        seconds = 0;
         startTime = getTimeComplete();
 
         // Set storedData
@@ -71,32 +73,59 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     }
     // Existing timer
     else {
+        // Get time from start to now
+        timeSinceStart();
+    }
+    function timeSinceStart() {
         let nowTime = getTimeComplete()[0];
-        let timerEnded = false;
 
         // Get terms start time for countdown
         startTime = revealCountdowns[term][0];
 
-        // Check remaining timer, format: startTime[day, month, hour, minute, second]
+        cl('Hours: '+startTime[2] + ' now: ' + nowTime[2]);
+        cl('Minutes: '+startTime[3] + ' now: ' + nowTime[3]);
 
+        // Check remaining timer, format: startTime[day, month, hour, minute, second]
+        
         // If day or month are different
         if (startTime[0] !== nowTime[0] || startTime[1] !== nowTime[1]) {
             timerEnded = true;
-        }
+        } 
         // If more than 2 hours different
         else if (Math.abs(startTime[2] - nowTime[2]) >= 2) {
-            timerEnded = true;
+            timerEnded = true; // Todo hour can break
         }
-        // If nowTime minutes less, indicates change of hour
-        else if (startTime[3] > nowTime[3]) {
-            // Remaining minutes in hour
-            minutes = startTime[3] - nowTime[3];
-            seconds = getRemainingSeconds();
+        // If 1 hour different
+        else if (Math.abs(startTime[2] - nowTime[2]) === 1) {
+cl('1 hour');
+            // NowTime overtaken startTime
+            if (startTime[3] < nowTime[3]) {
+                cl('ended');
+                 timerEnded = true; 
+            }
+            // Otherwise still under 60 mins
+            else {
+                minutes = getRemainingMinutes();
+                seconds = getRemainingSeconds();
+            }
         }
         // Else same hour, subtract remaining minutes
         else {
-            minutes = 59 - (nowTime[3] - startTime[3]);
+            minutes = getRemainingMinutes();
             seconds = getRemainingSeconds();
+        }
+        // Calculate remaining minutes
+        function getRemainingMinutes() {
+            // If nowTime minutes less, indicates change of hour
+            if (startTime[3] > nowTime[3]) {
+                // Remaining minutes in hour
+                minutes = startTime[3] - nowTime[3];
+            }
+            // Else same hour, subtract remaining minutes
+            else {
+                minutes = 59 - (nowTime[3] - startTime[3]);
+            }
+            return minutes;
         }
         // Calculate remaining seconds
         function getRemainingSeconds() {
@@ -114,6 +143,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
 
         // Timer stopped, return to normal
         if (timerEnded === true) {
+            delete ops.storedData.revealCountdowns[term];
             return false;
         }
     }
@@ -121,11 +151,40 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     // Set start time to storage
     localforage.setItem('ops.storedData', ops.storedData);
 
-    // Sets a visual timer on the button
-    setInterval(() => {
+    let timeout;
+    let checkCount = 0;
+
+    // If timer is active
+    if (timerEnded === false) {
+        // Button timer, use timeout to run in background some browsers
+        timeout = setTimeout(timeoutCall, 1000)  
+    }
+
+    // Self calling function
+    function timeoutCall() {
+        // Sync timer in some devices
+        checkCount += 1;
+        if (checkCount % 5 === 0) {
+            //timeSinceStart();
+        }
+        // Call UI timer build
+        buttonTimer();
+        timeout = setTimeout(timeoutCall, 1000);
+    }
+
+    // Builds the timer
+    function buttonTimer() {
         let displayedMinutes = minutes;
         let displayedSeconds = seconds;
         let hiddenZero = '';
+
+        // Timer end
+        if (seconds === 0 && minutes === 0) {
+            revealBtn.innerHTML = ("Reveal");
+            revealBtn.classList.remove('disabled');
+            revealBtn.setAttribute("disabled", false);
+            return false;
+        }
 
         // Handle issues like zero index
         if (seconds < 10 && seconds > 0) {
@@ -138,7 +197,6 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
         if (seconds === 60) {
             displayedSeconds = '00';
         }
-
         // Update DOM
         revealBtn.innerHTML = (displayedMinutes + ':' + hiddenZero + displayedSeconds);
         revealBtn.classList.add('disabled');
@@ -146,6 +204,10 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
 
         // Decrease timer
         seconds -= 1;
-    }, 1000);
-}
+    }
+};
+
+
+
+
 

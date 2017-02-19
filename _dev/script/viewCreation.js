@@ -6,7 +6,7 @@ import ops from 'app';
 import { createRevealTimer } from 'termInteraction';
 
 // Exports
-export { viewCreate };
+export { viewCreate, addHearts, setScore };
 
 // Create app view
 const viewCreate = function viewCreate(termsToCreate) {
@@ -19,6 +19,7 @@ const viewCreate = function viewCreate(termsToCreate) {
         // Get terms and definitions from data
         let termValue = appData.terms[value].term;
         let definitionValue = appData.terms[value].definition;
+        let supportValue = appData.terms[value].support;
         let revealCounter;
         let viewsCount;
 
@@ -30,11 +31,14 @@ const viewCreate = function viewCreate(termsToCreate) {
             viewsCount = ops.storedData.revealedTermCount[value] || 0;
         }
 
-        // Create view
+        // Create terms HTML
         let newHolder =
             `<div class="term-wrapper">
                 <p class="term-holder">${termValue}</p>
-                <p class="definition-holder">${definitionValue}</p>
+                <div class="definition-wrapper hidden">
+                    <p class="definition-holder">${definitionValue}</p>
+                    <div class="support-wrapper">${supportValue}</div>
+                </div>
                 <p class="term-views">${viewsCount}</p>
                 <button class="reveal">Reveal definition</button>
             </div>`;
@@ -50,7 +54,7 @@ const viewCreate = function viewCreate(termsToCreate) {
 
         // Check if timer data exists
         if (ops.storedData.revealCountdowns !== undefined) {
-            
+
             // Add countdown timers to buttons
             if (ops.storedData.revealCountdowns[value] !== undefined) {
 
@@ -67,4 +71,45 @@ const viewCreate = function viewCreate(termsToCreate) {
             }
         }
     }
+}
+
+// Add hearts to page
+const addHearts = function addHearts() {
+
+    // Only show hearts if a new day
+    if (ops.storedData.newDay === true) {
+        let heartHolder = document.querySelector('.hearts');
+        let heartsHTML = "";
+
+        // If no hearts data exists
+        if (ops.storedData.hearts === undefined) {
+            ops.storedData.hearts = ops.points.hearts;
+        }
+        let hearts = ops.storedData.hearts;
+
+        for (let i = 0; i < hearts; i++) {
+            heartsHTML += '<p>❤</p>';
+        }
+        // Add to view
+        heartHolder.innerHTML = heartsHTML;
+
+        // Add to storage
+        localforage.setItem('ops.storedData', ops.storedData);
+    }
+}
+
+// Sets the score
+const setScore = function setScore() {
+
+    let scoreHolder = document.querySelector('.score-holder');
+
+    // Set score if it doesn't exist
+    if (ops.storedData.score === undefined) {
+        ops.storedData.score = 0;
+    }
+    
+    let score = ops.storedData.score;
+
+    // Add to view
+    scoreHolder.innerHTML = score;
 }

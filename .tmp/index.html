@@ -41,7 +41,21 @@
 </head>
 
 <body><a class="reset" href="#">Reset</a>
-    <div class="container"></div>
+    <div class="container">
+        <div class="score">
+            <p>Score:<span class="score-holder">0</span>
+            </p>
+        </div>
+        <div class="hearts"></div>
+        <div class="query-wrapper hidden">
+            <p>Enter the definition for: <span class="query-holder"></span>
+            </p>
+            <input class="query-input" type="text" placeholder="Enter definition" />
+            <button class="query-submit">Check</button>
+        </div>
+        <p class="result-holder"></p>
+        <div class="terms-wrapper"></div>
+    </div>
     <!-- build:js script/script.js -->
     <!-- bower:js -->
     <script src="../bower_components/localforage/dist/localforage.js"></script>

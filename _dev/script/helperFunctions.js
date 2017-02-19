@@ -1,7 +1,12 @@
-//- Global helper functions
+
+// Imports
+import ops from 'app';
+
+// Exports
+export { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, pickRandom, clickListener, getTimeComplete };
 
 // JS ready
-export function ready(fn) {
+function ready(fn) {
     if (document.readyState != 'loading') {
         fn();
     } else {
@@ -10,17 +15,37 @@ export function ready(fn) {
 }
 
 // Console log -> cl
-export function cl(log) {
+function cl(log) {
     console.log(log);
 }
 
 // Console log plus value
-export function clv(term, log) {
+function clv(term, log) {
     console.log(term + '= ' + log);
 }
 
+// Checks if the same or new day
+function checkSameDay() {
+    
+    let todaysDate = getTodaysDate();
+    let storedDate = [];
+
+    // Get date last stored
+    storedDate = Array.from(ops.storedData.dateOpened);
+
+    // Check if same day
+    if (arrayCheck(todaysDate, storedDate) === true) {
+        if (ops.addDay === true) { ops.storedData.newDay = true }
+        else { ops.storedData.newDay = false }
+    }
+    // Otherwise a new day
+    else {
+        ops.storedData.newDay = true;
+    }
+}
+
 // Creates array of day and month
-export function getTodaysDate() {
+function getTodaysDate() {
 
     // Get current day + month
     let todayDate = [];
@@ -33,7 +58,7 @@ export function getTodaysDate() {
 }
 
 // Creates array of day, month, hour, minute, second
-export function getTimeComplete() {
+function getTimeComplete() {
 
     // Get complete date time value 
     let timeComplete = [];
@@ -49,20 +74,18 @@ export function getTimeComplete() {
 }
 
 // Check if arrays are the same
-export function arrayCheck(arr1, arr2) {
+function arrayCheck(arr1, arr2) {
 
-    if (arr1.length !== arr2.length)
-        return false;
-    for (var i = arr1.length; i--;) {
-        if (arr1[i] !== arr2[i])
-            return false;
+    // If same return true
+    if (JSON.stringify(arr1) == JSON.stringify(arr2)) {
+        return true;
     }
-
-    return true;
+    // Else false
+    return false;
 }
 
 // Resets stored data
-export function resetData() {
+function resetData() {
 
     document.querySelector('.reset').addEventListener('click', (e) => {
         e.preventDefault;
@@ -71,11 +94,18 @@ export function resetData() {
     })
 }
 
-
 // Adds click functionality to selectors
-export function clickListener(elements, clickFunction) {
+function clickListener(elements, clickFunction) {
 
     for (let i = 0; i < elements.length; i++) {
         elements[i].addEventListener("click", () => { clickFunction(i) });
     }
+}
+
+// Get a random term
+function pickRandom(objectList) {
+    let keys = Object.keys(objectList),
+        pickedTerm = keys[keys.length * Math.random() << 0];
+
+    return pickedTerm;
 }

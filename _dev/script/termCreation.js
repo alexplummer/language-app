@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv } from 'helperFunctions';
+import { cl, clv, pickRandom } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
 
@@ -25,7 +25,7 @@ const getListOfTerms = function getListOfTerms() {
     if (ops.storedData.firstTime === undefined) {
 
         while (i < ops.displayedTerms) {
-            let pickedTerm = pickRandom();
+            let pickedTerm = pickRandom(appData.terms);
 
             // Ensure term hasn't been already scanned
             if (!listOfTerms.includes(pickedTerm)) {
@@ -54,7 +54,7 @@ const getListOfTerms = function getListOfTerms() {
                 viewedSorted.sort((a, b) => {
                     return a[1] - b[1]
                 })
-
+                //if ()
                 // Finish off iterator with lowest viewed terms
                 while (i < ops.displayedTerms) {
                     listOfTerms.push(viewedSorted[i][0]);
@@ -63,8 +63,9 @@ const getListOfTerms = function getListOfTerms() {
                 // Overflow protection
                 i++;
             }
+            // Still unviewed terms in data
             else {
-                let pickedTerm = pickRandom();
+                let pickedTerm = pickRandom(appData.terms);
 
                 // Ensure term hasn't been already scanned
                 if (!scannedTerms.includes(pickedTerm)) {
@@ -80,18 +81,11 @@ const getListOfTerms = function getListOfTerms() {
                 }
             }
             // Overflow protection
-            if (j > 1000) {
+            if (j > 10000) {
                 i = ops.displayedTerms;
             }
             j++;
         }
-    }
-    // Get random terms from data
-    function pickRandom() {
-        let keys = Object.keys(appData.terms),
-            pickedTerm = keys[keys.length * Math.random() << 0];
-
-        return pickedTerm;
     }
     // Return final list of terms
     return listOfTerms;

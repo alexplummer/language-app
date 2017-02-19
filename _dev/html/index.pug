@@ -7,6 +7,19 @@ block content
 	
 	a.reset(href="#") Reset
 	.container
+		.score
+			p 
+				| Score:
+				span.score-holder 0
+		.hearts
+		.query-wrapper.hidden
+			p 
+				| Enter the definition for: 
+				span.query-holder
+			input(type="text", placeholder="Enter definition").query-input
+			button.query-submit Check
+		p.result-holder
+		.terms-wrapper
 
 	include includes/_under
 

@@ -1,9 +1,10 @@
 
 // Imports
-import { ready, cl, clv, resetData, arrayCheck, getTodaysDate } from 'helperFunctions';
+import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate } from 'helperFunctions';
 import { getListOfTerms, updateDataCount } from 'termCreation';
 import { revealedBtnHandler } from 'termInteraction';
-import { viewCreate } from 'viewCreation';
+import { viewCreate, addHearts, setScore } from 'viewCreation';
+import { createNewQuery } from 'queryInteraction';
 
 // Exports
 export default ops;
@@ -11,22 +12,26 @@ export default ops;
 // Global options
 let ops = {
     displayedTerms: 3,
-    container: document.querySelector(".container"),
-    addDay: true,
+    container: document.querySelector(".terms-wrapper"),
+    addDay: false,
     debug: true,
+    points: {
+        correct: 50,
+        hearts: 3
+    },
     storedData: {}
 }
 
 // Initialise modules on load
 ready(function () {
     'use strict';
-    openApp();
+    checkFirstTime();
     // Resets button
     resetData();
 });
 
 // Runs when app opens
-const openApp = function openApp() {
+const checkFirstTime = function checkFirstTime() {
 
     // Check if this is the first time app has run
     localforage.length().then(numberOfKeys => {
@@ -49,7 +54,7 @@ const openApp = function openApp() {
 const firstTime = function firstTime() {
 
     // Create terms
-    createTermsHandler();
+    appBuildHandler();
 
     // Set first time to false
     ops.storedData.firstTime = false;
@@ -58,7 +63,7 @@ const firstTime = function firstTime() {
     localforage.setItem('ops.storedData', ops.storedData);
 }
 
-// Initialises app
+// Initialises data and app
 const initialise = function initialise() {
 
     // Get stored data
@@ -75,33 +80,32 @@ const initialise = function initialise() {
         ops.storedData = retrievedData;
 
         // Check if a new day
-        let todaysDate = getTodaysDate();
-        let storedDate = [];
-        let addOneDay = true;
+        checkSameDay();
 
-        // Get date last stored
-        storedDate = Array.from(retrievedData.dateOpened);
-
-        // If same day, use dailyTerms data
-        if (arrayCheck(todaysDate, storedDate) === true) {
-            if (ops.addDay === true) { createTermsHandler(); }
-            else { viewCreate(retrievedData.dailyTerms); }
-        }
-        // Else create new terms
-        else {
-            createTermsHandler();
-        }
+        // Start build
+        appBuildHandler();
     }
 }
 
-// Calls functions to handle term creation
-const createTermsHandler = function createTermsHandler() {
+// Calls functions to handle app creation and running
+const appBuildHandler = function appBuildHandler() {
 
     // Get initial terms
-    let pickedTerms = getListOfTerms();
+    let pickedTerms;
+
+    // If same day, used daily terms
+    if (ops.storedData.newDay === false) {
+        pickedTerms = ops.storedData.dailyTerms;
+    }
+    // Else get new  
+    else {
+        pickedTerms = getListOfTerms();
+    }
 
     // Create initial view
     viewCreate(pickedTerms);
+    addHearts();
+    setScore();
 
     // Create opened date, daily terms, viewed terms
     ops.storedData.dateOpened = getTodaysDate();
@@ -113,6 +117,11 @@ const createTermsHandler = function createTermsHandler() {
 
     // Handles events for revealed terms
     revealedBtnHandler();
+
+    // Create query if revealed terms
+    if (ops.storedData.revealedTermCount !== undefined && ops.storedData.newDay === true) {
+        createNewQuery();
+    }
 
     // Debug code
     if (ops.debug === true) {

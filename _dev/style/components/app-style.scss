@@ -1,9 +1,18 @@
+body {
+    background: #000;
+}
 .container {
+    position: relative;
     width: 600px;
     max-width: 100%;
     margin: 0 auto;
-    background: #eee;
+    background: #666;
     padding: $size-m;
+
+    * {
+        color: #fff;
+    }
+    
 }
 .term-wrapper {
     @extend %cf;
@@ -17,21 +26,29 @@
         border: 1px solid #666;
         padding: $size-s;
     }
-    .definition-holder {
-        display: none;
+}
+[type="text"] {
+    color: #000;
+}
+.hearts {
+    position: absolute;
+    top: $size-m;
+    right: $size-m;
 
-        &.shown {
-            display: block;
-        }
+    p {
+        display: inline-block;
     }
 }
-
 button {
     padding: $size-s $size-m;
     border-radius: 5px;
     cursor: pointer;
+    color: #444 !important;
 
     &.disabled {
         cursor: default;
     }
+}
+.hidden {
+    display: none;
 }
