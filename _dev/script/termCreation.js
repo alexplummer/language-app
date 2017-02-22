@@ -38,14 +38,13 @@ const getListOfTerms = function getListOfTerms() {
     else {
 
         // Add reminder for previous incorrect term
-        if (Object.keys(ops.storedData.incorrectTerms).length > 0) {
+        if (ops.storedData.incorrectTerms !== undefined) {
             
             let reminderTerm;
 
             // Add reminded terms list
-            if (ops.storedData.remindedTerms === undefined) {
-                ops.storedData.remindedTerms = {};
-            }
+            ops.storedData.remindedTerms = ops.storedData.remindedTerms || {};
+
             // Keep reminded term the same
             if (ops.storedData.dailyReminder === undefined) {
                 ops.storedData.dailyReminder = {};

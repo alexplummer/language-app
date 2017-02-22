@@ -12,17 +12,17 @@ export default ops;
 // Global options
 let ops = {
     displayedTerms: 3,
-    counterMins: 0,
-    counterSecs: 1,
+    counterMins: 60,
+    counterSecs: 0,
     revealDailyBonusTarget: 2,
     wordAccuracy: 0.5,
     container: document.querySelector(".terms-wrapper"),
-    addDay: true,
+    addDay: false,
     debug: true,
     points: {
         correct: 50,
         dailyBonus: 10,
-        hearts: 1
+        hearts: 3
     },
     storedData: {}
 }
@@ -107,9 +107,7 @@ const appBuildHandler = function appBuildHandler() {
         pickedTerms = getListOfTerms();
         
         // Set daily limit
-        if (ops.storedData.revealDailyBonus === undefined) {
-            ops.storedData.revealDailyBonus = {};
-        }
+        ops.storedData.revealDailyBonus = ops.storedData.revealDailyBonus || {};
         // Reset daily reveal bonus
         ops.storedData.revealDailyBonus.complete = false;
     }
@@ -130,12 +128,12 @@ const appBuildHandler = function appBuildHandler() {
     revealedBtnHandler();
 
     // Keep query active each day
-    if (ops.storedData.queryComplete === undefined) {
-        ops.storedData.queryComplete = {};
-    }
+    ops.storedData.queryComplete = ops.storedData.queryComplete || {};
+
     if (ops.storedData.newDay === true) {
         delete ops.storedData.dailyQuery;
         ops.storedData.queryComplete = false;
+        ops.storedData.remindedTerms = ops.storedData.remindedTerms || {}
 
         // Delete daily reminder
         if (ops.storedData.remindedTerms.dailyReminder !== undefined) {
