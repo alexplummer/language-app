@@ -3,7 +3,9 @@
 import { cl, clv, clickListener } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
+import { createNewQuery } from 'queryInteraction';
 import { updateDataCount } from 'termCreation';
+import { setScore, addHearts } from 'viewCreation';
 
 // Exports
 export { revealedBtnHandler, createRevealTimer };
@@ -15,9 +17,11 @@ const revealedBtnHandler = function revealedBtnHandler() {
 
     clickListener(revealBtn, (i) => {
 
+        // Disabled button prevention
         if (revealBtn[i].classList.contains('disabled')) {
             return false;
         }
+
         let term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
 
         // Updates the revealed view counter
@@ -38,11 +42,43 @@ const revealedBtnHandler = function revealedBtnHandler() {
         // Set storedData
         ops.storedData.revealedTermCount = dataCount;
 
-        // Starts a timer 
-        createRevealTimer(revealBtn[i]);
+        // Daily reveal bonus
+        let revealBonusCount;
+
+        // If no daily bonus data
+        if (ops.storedData.revealDailyBonus === undefined) {
+            ops.storedData.revealDailyBonus = {};
+        }
+        // If no existing term bonus
+        if (ops.storedData.revealDailyBonus[term] === undefined) {
+            revealBonusCount = 1;
+        }
+        // Add one to daily bonus
+        else {
+            revealBonusCount = ops.storedData.revealDailyBonus[term];
+            revealBonusCount += 1;
+        }
+        // If bonus is met
+        if (revealBonusCount === ops.revealDailyBonusTarget) {
+            // If daily bonus not already triggered
+            if (ops.storedData.revealDailyBonus.complete === false) {
+                // Keep query active 
+                ops.storedData.queryComplete = false;
+                // Create a new query
+                createNewQuery();
+            }
+            // Set only once a day
+            ops.storedData.revealDailyBonus.complete = true;
+            ops.storedData.score += ops.points.dailyBonus;
+            setScore();
+        }
+        ops.storedData.revealDailyBonus[term] = revealBonusCount;
 
         // Save to storage
         localforage.setItem('ops.storedData', ops.storedData);
+
+        // Starts a timer 
+        createRevealTimer(revealBtn[i]);
     });
 }
 
@@ -55,6 +91,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     }
 
     let term = [revealBtn.parentNode.querySelector('.term-holder').innerHTML];
+
     let minutes = ops.counterMins;
     let seconds = ops.counterSecs;
     let remainingMinutes;
@@ -85,7 +122,11 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
 
     function startTimer() {
         let nowTime = new Date().getTime();
-    
+
+        // Disable button
+        revealBtn.classList.add('disabled');
+        revealBtn.setAttribute("disabled", true);
+
         // Get terms start time for countdown
         startTime = ops.storedData.revealCountdowns[term].startTime;
         timerEnded = ops.storedData.revealCountdowns[term].timerEnded;
@@ -98,6 +139,10 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
         // NowTime overtaken startTime
         if (diffSecs >= totalSecs) {
             timerEnded = true;
+            // Stop interval
+            clearInterval(ops.storedData.revealCountdowns[term].timerUpdate);
+            // Clear storage for term timer
+            delete ops.storedData.revealCountdowns[term];
         }
         // Timer stopped, return to normal
         if (timerEnded === true) {
@@ -118,7 +163,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     if (timerEnded === false) {
 
         // Start timer interval
-        ops.storedData.revealCountdowns[term].timerUpdate = setInterval( () => {
+        ops.storedData.revealCountdowns[term].timerUpdate = setInterval(() => {
             // Resync timer in some devices when off screen
             checkCount += 1;
             if (checkCount % 5 === 0) {
@@ -140,10 +185,6 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
             revealBtn.innerHTML = ("Reveal");
             revealBtn.classList.remove('disabled');
             revealBtn.disabled = false;
-            // Stop interval
-            clearInterval(ops.storedData.revealCountdowns[term].timerUpdate);
-            // Clear storage for term timer
-            delete ops.storedData.revealCountdowns[term];
             return false;
         }
 
@@ -156,8 +197,6 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
         }
         // Update DOM
         revealBtn.innerHTML = (displayedMinutes + ':' + hiddenZero + displayedSeconds);
-        revealBtn.classList.add('disabled');
-        revealBtn.setAttribute("disabled", true);
 
         // Decrease timer
         remainingSeconds -= 1;

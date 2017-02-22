@@ -12,14 +12,17 @@ export default ops;
 // Global options
 let ops = {
     displayedTerms: 3,
-    counterMins: 60,
-    counterSecs: 0,
+    counterMins: 0,
+    counterSecs: 1,
+    revealDailyBonusTarget: 2,
+    wordAccuracy: 0.5,
     container: document.querySelector(".terms-wrapper"),
     addDay: true,
     debug: true,
     points: {
         correct: 50,
-        hearts: 3
+        dailyBonus: 10,
+        hearts: 1
     },
     storedData: {}
 }
@@ -102,11 +105,17 @@ const appBuildHandler = function appBuildHandler() {
     // Else get new  
     else {
         pickedTerms = getListOfTerms();
+        
+        // Set daily limit
+        if (ops.storedData.revealDailyBonus === undefined) {
+            ops.storedData.revealDailyBonus = {};
+        }
+        // Reset daily reveal bonus
+        ops.storedData.revealDailyBonus.complete = false;
     }
 
     // Create initial view
     viewCreate(pickedTerms);
-    addHearts();
     setScore();
 
     // Create opened date, daily terms, viewed terms
@@ -120,20 +129,33 @@ const appBuildHandler = function appBuildHandler() {
     // Handles events for revealed terms
     revealedBtnHandler();
 
+    // Keep query active each day
+    if (ops.storedData.queryComplete === undefined) {
+        ops.storedData.queryComplete = {};
+    }
+    if (ops.storedData.newDay === true) {
+        delete ops.storedData.dailyQuery;
+        ops.storedData.queryComplete = false;
+
+        // Delete daily reminder
+        if (ops.storedData.remindedTerms.dailyReminder !== undefined) {
+            delete ops.storedData.remindedTerms.dailyReminder;
+        }
+    }
     // Create query if revealed terms
-    if (ops.storedData.revealedTermCount !== undefined && ops.storedData.newDay === true) {
+    if (ops.storedData.revealedTermCount !== undefined && ops.storedData.queryComplete === false) {
         createNewQuery();
     }
 
     // Debug code
     if (ops.debug === true) {
         cl(ops.storedData);
-        cl('Revealed terms count:');
-        cl(ops.storedData.revealedTermCount);
-        cl('Viewed terms count:');
-        cl(ops.storedData.viewedTerms);
-        cl('Revealed terms timer:');
-        cl(ops.storedData.revealCountdowns);
+        //cl('Revealed terms count:');
+        //cl(ops.storedData.revealedTermCount);
+        //cl('Viewed terms count:');
+        //cl(ops.storedData.viewedTerms);
+        //cl('Revealed terms timer:');
+        //cl(ops.storedData.revealCountdowns);
     };
 }
 

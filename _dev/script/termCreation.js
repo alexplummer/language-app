@@ -37,6 +37,35 @@ const getListOfTerms = function getListOfTerms() {
     // App opened before
     else {
 
+        // Add reminder for previous incorrect term
+        if (Object.keys(ops.storedData.incorrectTerms).length > 0) {
+            
+            let reminderTerm;
+
+            // Add reminded terms list
+            if (ops.storedData.remindedTerms === undefined) {
+                ops.storedData.remindedTerms = {};
+            }
+            // Keep reminded term the same
+            if (ops.storedData.dailyReminder === undefined) {
+                ops.storedData.dailyReminder = {};
+                reminderTerm = pickRandom(ops.storedData.incorrectTerms);
+                reminderTerm = Object.getOwnPropertyNames(reminderTerm);
+                ops.storedData.dailyReminder[reminderTerm] = appData.terms[reminderTerm].definition; 
+            }
+            else { 
+                reminderTerm = ops.storedData.dailyReminder;
+                reminderTerm = Object.getOwnPropertyNames(reminderTerm);
+            }
+            // Add to terms
+            listOfTerms.push(reminderTerm);
+            // Remove from incorrect terms
+            delete ops.storedData.incorrectTerms[reminderTerm];
+            // Add to list of reminded terms
+            ops.storedData.remindedTerms[reminderTerm] = appData.terms[reminderTerm].definition;
+            i++;
+        }
+        // Choose terms to  display
         while (i < ops.displayedTerms) {
             let viewedLength = Object.keys(ops.storedData.viewedTerms).length;
 
@@ -47,14 +76,20 @@ const getListOfTerms = function getListOfTerms() {
 
                 // Convert viewed terms to array
                 for (let term in ops.storedData.viewedTerms) {
-                    viewedSorted.push([term, ops.storedData.viewedTerms[term]])
+                    viewedSorted.push([term, ops.storedData.viewedTerms[term]]);
                 }
-
+                // If reminder term picked remove from selection
+                if (ops.storedData.dailyReminder !== undefined) {
+                    for (let m=viewedSorted.length-1; m>=0; m--) {
+                        if (ops.storedData.dailyReminder.hasOwnProperty(viewedSorted[m][0])) { 
+                            viewedSorted.splice(m, 1);
+                        }
+                    }
+                }
                 // Sort array by view count
                 viewedSorted.sort((a, b) => {
                     return a[1] - b[1]
                 })
-                //if ()
                 // Finish off iterator with lowest viewed terms
                 while (i < ops.displayedTerms) {
                     listOfTerms.push(viewedSorted[i][0]);

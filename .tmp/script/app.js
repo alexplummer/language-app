@@ -97,6 +97,64 @@ var app = function () {
         return pickedTerm;
     }
 
+    // Check if two words the same
+    function checkQuery(item1, item2) {
+
+        if (item1 === item2) return true;
+        if (item1.toUpperCase() === item2.toUpperCase()) return true;
+
+        // Perform fuzzy comparison
+        var getBigrams = function getBigrams(string) {
+            var i = void 0,
+                j = void 0,
+                ref = void 0,
+                s = void 0,
+                v = void 0;
+            s = string.toLowerCase();
+            v = new Array(s.length - 1);
+            for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
+                v[i] = s.slice(i, i + 2);
+            }
+            return v;
+        };
+        var stringSimilarity = function stringSimilarity(str1, str2) {
+            var hit_count = void 0,
+                j = void 0,
+                k = void 0,
+                len = void 0,
+                len1 = void 0,
+                pairs1 = void 0,
+                pairs2 = void 0,
+                union = void 0,
+                x = void 0,
+                y = void 0;
+            if (str1.length > 0 && str2.length > 0) {
+                pairs1 = getBigrams(str1);
+                pairs2 = getBigrams(str2);
+                union = pairs1.length + pairs2.length;
+                hit_count = 0;
+                for (j = 0, len = pairs1.length; j < len; j++) {
+                    x = pairs1[j];
+                    for (k = 0, len1 = pairs2.length; k < len1; k++) {
+                        y = pairs2[k];
+                        if (x === y) {
+                            hit_count++;
+                        }
+                    }
+                }
+                if (hit_count > 0) {
+                    return 2.0 * hit_count / union;
+                }
+            }
+            return 0.0;
+        };
+        var relevance = stringSimilarity(item1, item2);
+        if (relevance > ops$1.wordAccuracy) return "mispelled";
+
+        // Else false
+        return false;
+    }
+
     // App data
 
     var appData = {
@@ -141,6 +199,34 @@ var app = function () {
         // App opened before
         else {
 
+                // Add reminder for previous incorrect term
+                if (Object.keys(ops$1.storedData.incorrectTerms).length > 0) {
+
+                    var reminderTerm = void 0;
+
+                    // Add reminded terms list
+                    if (ops$1.storedData.remindedTerms === undefined) {
+                        ops$1.storedData.remindedTerms = {};
+                    }
+                    // Keep reminded term the same
+                    if (ops$1.storedData.dailyReminder === undefined) {
+                        ops$1.storedData.dailyReminder = {};
+                        reminderTerm = pickRandom(ops$1.storedData.incorrectTerms);
+                        reminderTerm = Object.getOwnPropertyNames(reminderTerm);
+                        ops$1.storedData.dailyReminder[reminderTerm] = appData.terms[reminderTerm].definition;
+                    } else {
+                        reminderTerm = ops$1.storedData.dailyReminder;
+                        reminderTerm = Object.getOwnPropertyNames(reminderTerm);
+                    }
+                    // Add to terms
+                    listOfTerms.push(reminderTerm);
+                    // Remove from incorrect terms
+                    delete ops$1.storedData.incorrectTerms[reminderTerm];
+                    // Add to list of reminded terms
+                    ops$1.storedData.remindedTerms[reminderTerm] = appData.terms[reminderTerm].definition;
+                    i++;
+                }
+                // Choose terms to  display
                 while (i < ops$1.displayedTerms) {
                     var viewedLength = Object.keys(ops$1.storedData.viewedTerms).length;
 
@@ -153,12 +239,18 @@ var app = function () {
                         for (var term in ops$1.storedData.viewedTerms) {
                             viewedSorted.push([term, ops$1.storedData.viewedTerms[term]]);
                         }
-
+                        // If reminder term picked remove from selection
+                        if (ops$1.storedData.dailyReminder !== undefined) {
+                            for (var m = viewedSorted.length - 1; m >= 0; m--) {
+                                if (ops$1.storedData.dailyReminder.hasOwnProperty(viewedSorted[m][0])) {
+                                    viewedSorted.splice(m, 1);
+                                }
+                            }
+                        }
                         // Sort array by view count
                         viewedSorted.sort(function (a, b) {
                             return a[1] - b[1];
                         });
-                        //if ()
                         // Finish off iterator with lowest viewed terms
                         while (i < ops$1.displayedTerms) {
                             listOfTerms.push(viewedSorted[i][0]);
@@ -268,163 +360,6 @@ var app = function () {
     };
 
     // Imports
-    // Handles functions when reveal button clicked
-    var revealedBtnHandler = function revealedBtnHandler() {
-
-        var revealBtn = document.querySelectorAll('.reveal');
-
-        clickListener(revealBtn, function (i) {
-
-            if (revealBtn[i].classList.contains('disabled')) {
-                return false;
-            }
-            var term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
-
-            // Updates the revealed view counter
-            var countHolder = revealBtn[i].parentNode.querySelector('.term-views');
-            var definitionWrapper = revealBtn[i].parentNode.querySelector('.definition-wrapper');
-            var definitionHolder = revealBtn[i].parentNode.querySelector('.definition-holder');
-            var count = parseInt(countHolder.innerHTML);
-
-            // Show definition
-            definitionWrapper.classList.remove('hidden');
-
-            // Increase count by one
-            countHolder.innerHTML = count + 1;
-
-            // Pass to updateDataCount function
-            var dataCount = updateDataCount('revealedTermCount', term, 1);
-
-            // Set storedData
-            ops$1.storedData.revealedTermCount = dataCount;
-
-            // Starts a timer 
-            createRevealTimer(revealBtn[i]);
-
-            // Save to storage
-            localforage.setItem('ops.storedData', ops$1.storedData);
-        });
-    };
-
-    // Adds a timer to the reveal button
-    var createRevealTimer = function createRevealTimer(revealBtn) {
-
-        // If no stored data for reveal countdowns
-        if (ops$1.storedData.revealCountdowns === undefined) {
-            ops$1.storedData.revealCountdowns = {};
-        }
-
-        var term = [revealBtn.parentNode.querySelector('.term-holder').innerHTML];
-        var minutes = ops$1.counterMins;
-        var seconds = ops$1.counterSecs;
-        var remainingMinutes = void 0;
-        var remainingSeconds = void 0;
-        var startTime = void 0;
-        var timerEnded = void 0;
-
-        // New timer
-        if (ops$1.storedData.revealCountdowns[term] === undefined) {
-
-            // Get a new time
-            startTime = new Date().getTime();
-
-            // Set storedData
-            ops$1.storedData.revealCountdowns[term] = {
-                "startTime": startTime,
-                "timerEnded": false
-            };
-
-            // Start timer
-            startTimer();
-        }
-        // Existing timer
-        else {
-                // Start timer
-                startTimer();
-            }
-
-        function startTimer() {
-            var nowTime = new Date().getTime();
-
-            // Get terms start time for countdown
-            startTime = ops$1.storedData.revealCountdowns[term].startTime;
-            timerEnded = ops$1.storedData.revealCountdowns[term].timerEnded;
-
-            // Get difference in seconds
-            var diffSecs = Math.floor((nowTime - startTime) / 1000);
-            // Get total in seconds
-            var totalSecs = ops$1.counterMins * 60 + seconds;
-
-            // NowTime overtaken startTime
-            if (diffSecs >= totalSecs) {
-                timerEnded = true;
-            }
-            // Timer stopped, return to normal
-            if (timerEnded === true) {
-                localforage.setItem('ops.storedData', ops$1.storedData);
-                return false;
-            }
-            // Set remaining time 
-            remainingSeconds = totalSecs - diffSecs;
-        }
-
-        // Set start time to storage
-        localforage.setItem('ops.storedData', ops$1.storedData);
-
-        var timeout = void 0;
-        var checkCount = 0;
-
-        // If timer is active   
-        if (timerEnded === false) {
-
-            // Start timer interval
-            ops$1.storedData.revealCountdowns[term].timerUpdate = setInterval(function () {
-                // Resync timer in some devices when off screen
-                checkCount += 1;
-                if (checkCount % 5 === 0) {
-                    startTimer();
-                }
-                // Call UI timer build
-                buttonTimer();
-            }, 1000);
-        }
-
-        // Builds the timer
-        function buttonTimer() {
-            var displayedMinutes = Math.floor(remainingSeconds / 60);
-            var displayedSeconds = remainingSeconds % 60;
-            var hiddenZero = '';
-
-            // Timer end
-            if (remainingSeconds === 0) {
-                revealBtn.innerHTML = "Reveal";
-                revealBtn.classList.remove('disabled');
-                revealBtn.disabled = false;
-                // Stop interval
-                clearInterval(ops$1.storedData.revealCountdowns[term].timerUpdate);
-                // Clear storage for term timer
-                delete ops$1.storedData.revealCountdowns[term];
-                return false;
-            }
-
-            // Handle issues like zero index
-            if (displayedSeconds < 10 && displayedSeconds >= 0) {
-                hiddenZero = '0';
-            }
-            if (remainingSeconds === 60) {
-                displayedSeconds = '00';
-            }
-            // Update DOM
-            revealBtn.innerHTML = displayedMinutes + ':' + hiddenZero + displayedSeconds;
-            revealBtn.classList.add('disabled');
-            revealBtn.setAttribute("disabled", true);
-
-            // Decrease timer
-            remainingSeconds -= 1;
-        }
-    };
-
-    // Imports
     // Create app view
     var viewCreate = function viewCreate(termsToCreate) {
 
@@ -525,27 +460,21 @@ var app = function () {
 
     // Add hearts to page
     var addHearts = function addHearts() {
+        var heartHolder = document.querySelector('.hearts');
+        var heartsHTML = "";
 
-        // Only show hearts if a new day
-        if (ops$1.storedData.newDay === true) {
-            var heartHolder = document.querySelector('.hearts');
-            var heartsHTML = "";
-
-            // If no hearts data exists
-            if (ops$1.storedData.hearts === undefined) {
-                ops$1.storedData.hearts = ops$1.points.hearts;
-            }
-            var hearts = ops$1.storedData.hearts;
-
-            for (var i = 0; i < hearts; i++) {
-                heartsHTML += '<p>❤</p>';
-            }
-            // Add to view
-            heartHolder.innerHTML = heartsHTML;
-
-            // Add to storage
-            localforage.setItem('ops.storedData', ops$1.storedData);
+        // If no hearts data exists
+        if (ops$1.storedData.hearts === undefined) {
+            ops$1.storedData.hearts = ops$1.points.hearts;
         }
+        for (var i = 0; i < ops$1.storedData.hearts; i++) {
+            heartsHTML += '<p>❤</p>';
+        }
+        // Add to view
+        heartHolder.innerHTML = heartsHTML;
+
+        // Add to storage
+        localforage.setItem('ops.storedData', ops$1.storedData);
     };
 
     // Sets the score
@@ -590,20 +519,38 @@ var app = function () {
         // Prevent choosing query already answered correct
         while (i < Object.keys(ops$1.storedData.revealedTermCount).length) {
 
-            // Pick a random term
-            randomTerm = pickRandom(ops$1.storedData.revealedTermCount);
-
+            if (ops$1.storedData.dailyQuery === undefined) {
+                // Pick a random term
+                randomTerm = pickRandom(ops$1.storedData.revealedTermCount);
+                ops$1.storedData.dailyQuery = randomTerm;
+            } else {
+                randomTerm = ops$1.storedData.dailyQuery;
+            }
             // If query not from correct terms
             if (!ops$1.storedData.correctTerms.hasOwnProperty(randomTerm)) {
-                buildQuery();
-                break;
+
+                // If query not from daily reminder term
+                if (ops$1.storedData.dailyReminder !== undefined) {
+                    if (!ops$1.storedData.dailyReminder.hasOwnProperty(randomTerm)) {
+                        queryHandler();
+                        break;
+                    }
+                }
+                // If query not from daily terms
+                else if (!ops$1.storedData.dailyTerms.hasOwnProperty(randomTerm)) {
+                        queryHandler();
+                        break;
+                    }
             }
             // Else look for another
             i++;
+            if (i === Object.keys(ops$1.storedData.revealedTermCount).length) {
+                document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
+            }
         }
 
         // Build the query
-        function buildQuery() {
+        function queryHandler() {
             var queryWrapper = document.querySelector('.query-wrapper');
             var queryHolder = document.querySelector('.query-holder');
             var querySubmit = document.querySelector('.query-submit');
@@ -612,8 +559,11 @@ var app = function () {
             var heartHolder = document.querySelector('.hearts');
             var score = parseInt(scoreHolder.innerHTML);
             var definition = appData.terms[randomTerm].definition;
-            var heartCount = ops$1.storedData.hearts;
             var count = 0;
+
+            // Add hearts
+            delete ops$1.storedData.hearts;
+            addHearts();
 
             // Show the query wrapper
             queryWrapper.classList.remove('hidden');
@@ -625,8 +575,10 @@ var app = function () {
             querySubmit.addEventListener("click", function () {
                 var queryInput = document.querySelector('.query-input').value;
 
-                if (queryInput === definition || queryInput.toUpperCase() === definition.toUpperCase()) {
+                if (checkQuery(queryInput, definition) === true) {
                     winCase();
+                } else if (checkQuery(queryInput, definition) === "mispelled") {
+                    winCase("mispelled");
                 } else if (queryInput === "") {
                     resultHolder.innerHTML = "Enter a definition.";
                 } else {
@@ -635,11 +587,18 @@ var app = function () {
             });
 
             // If definition is right
-            function winCase() {
+            function winCase(spelling) {
                 // Hide the query input
                 queryWrapper.classList.add('hidden');
-                // Display win message
-                resultHolder.innerHTML = "Well done, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                heartHolder.classList.add('hidden');
+                // If mispelled
+                if (spelling === "mispelled") {
+                    // Display win message
+                    resultHolder.innerHTML = "Well done but check your spelling, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                } else {
+                    // Display win message
+                    resultHolder.innerHTML = "Well done, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                }
                 // Add to score
                 score += ops$1.points.correct;
                 // Update view
@@ -647,6 +606,8 @@ var app = function () {
                 // Add to stored data
                 ops$1.storedData.score = score;
                 ops$1.storedData.correctTerms[randomTerm] = definition;
+                ops$1.storedData.queryComplete = true;
+                delete ops$1.storedData.dailyQuery;
                 // Check if whole term list answered correctly
                 if (Object.keys(ops$1.storedData.correctTerms).length === Object.keys(appData.terms).length) {
                     ops$1.storedData.gameWon = true;
@@ -666,19 +627,25 @@ var app = function () {
                 queryInput.value = "";
                 // Lose a heart
                 heartHolder.removeChild(heartHolder.getElementsByTagName('p')[0]);
-                count += 1;
+                ops$1.storedData.hearts -= 1;
                 // If all hearts lost
-                if (count === heartCount) {
+                if (ops$1.storedData.hearts === 0) {
                     // Hide query 
                     queryWrapper.classList.add('hidden');
                     heartHolder.classList.add('hidden');
+                    // Update DOM
+                    queryInput.value = "";
+                    queryInput.placeholder = "Enter the definition";
                     // Update view
                     resultHolder.innerHTML = "Sorry you lose.";
                     // Add to storedDatta 
                     ops$1.storedData.incorrectTerms[randomTerm] = definition;
-                    // Save to storage
-                    localforage.setItem('ops.storedData', ops$1.storedData);
+                    cl(ops$1.storedData.incorrectTerms);
+                    ops$1.storedData.queryComplete = true;
+                    delete ops$1.storedData.hearts;
                 }
+                // Save to storage
+                localforage.setItem('ops.storedData', ops$1.storedData);
             }
             // If game won
             function gameWon() {
@@ -688,17 +655,214 @@ var app = function () {
     };
 
     // Imports
+    // Handles functions when reveal button clicked
+    var revealedBtnHandler = function revealedBtnHandler() {
+
+        var revealBtn = document.querySelectorAll('.reveal');
+
+        clickListener(revealBtn, function (i) {
+
+            // Disabled button prevention
+            if (revealBtn[i].classList.contains('disabled')) {
+                return false;
+            }
+
+            var term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
+
+            // Updates the revealed view counter
+            var countHolder = revealBtn[i].parentNode.querySelector('.term-views');
+            var definitionWrapper = revealBtn[i].parentNode.querySelector('.definition-wrapper');
+            var definitionHolder = revealBtn[i].parentNode.querySelector('.definition-holder');
+            var count = parseInt(countHolder.innerHTML);
+
+            // Show definition
+            definitionWrapper.classList.remove('hidden');
+
+            // Increase count by one
+            countHolder.innerHTML = count + 1;
+
+            // Pass to updateDataCount function
+            var dataCount = updateDataCount('revealedTermCount', term, 1);
+
+            // Set storedData
+            ops$1.storedData.revealedTermCount = dataCount;
+
+            // Daily reveal bonus
+            var revealBonusCount = void 0;
+
+            // If no daily bonus data
+            if (ops$1.storedData.revealDailyBonus === undefined) {
+                ops$1.storedData.revealDailyBonus = {};
+            }
+            // If no existing term bonus
+            if (ops$1.storedData.revealDailyBonus[term] === undefined) {
+                revealBonusCount = 1;
+            }
+            // Add one to daily bonus
+            else {
+                    revealBonusCount = ops$1.storedData.revealDailyBonus[term];
+                    revealBonusCount += 1;
+                }
+            // If bonus is met
+            if (revealBonusCount === ops$1.revealDailyBonusTarget) {
+                // If daily bonus not already triggered
+                if (ops$1.storedData.revealDailyBonus.complete === false) {
+                    // Keep query active 
+                    ops$1.storedData.queryComplete = false;
+                    // Create a new query
+                    createNewQuery();
+                }
+                // Set only once a day
+                ops$1.storedData.revealDailyBonus.complete = true;
+                ops$1.storedData.score += ops$1.points.dailyBonus;
+                setScore();
+            }
+            ops$1.storedData.revealDailyBonus[term] = revealBonusCount;
+
+            // Save to storage
+            localforage.setItem('ops.storedData', ops$1.storedData);
+
+            // Starts a timer 
+            createRevealTimer(revealBtn[i]);
+        });
+    };
+
+    // Adds a timer to the reveal button
+    var createRevealTimer = function createRevealTimer(revealBtn) {
+
+        // If no stored data for reveal countdowns
+        if (ops$1.storedData.revealCountdowns === undefined) {
+            ops$1.storedData.revealCountdowns = {};
+        }
+
+        var term = [revealBtn.parentNode.querySelector('.term-holder').innerHTML];
+
+        var minutes = ops$1.counterMins;
+        var seconds = ops$1.counterSecs;
+        var remainingMinutes = void 0;
+        var remainingSeconds = void 0;
+        var startTime = void 0;
+        var timerEnded = void 0;
+
+        // New timer
+        if (ops$1.storedData.revealCountdowns[term] === undefined) {
+
+            // Get a new time
+            startTime = new Date().getTime();
+
+            // Set storedData
+            ops$1.storedData.revealCountdowns[term] = {
+                "startTime": startTime,
+                "timerEnded": false
+            };
+
+            // Start timer
+            startTimer();
+        }
+        // Existing timer
+        else {
+                // Start timer
+                startTimer();
+            }
+
+        function startTimer() {
+            var nowTime = new Date().getTime();
+
+            // Disable button
+            revealBtn.classList.add('disabled');
+            revealBtn.setAttribute("disabled", true);
+
+            // Get terms start time for countdown
+            startTime = ops$1.storedData.revealCountdowns[term].startTime;
+            timerEnded = ops$1.storedData.revealCountdowns[term].timerEnded;
+
+            // Get difference in seconds
+            var diffSecs = Math.floor((nowTime - startTime) / 1000);
+            // Get total in seconds
+            var totalSecs = ops$1.counterMins * 60 + seconds;
+
+            // NowTime overtaken startTime
+            if (diffSecs >= totalSecs) {
+                timerEnded = true;
+                // Stop interval
+                clearInterval(ops$1.storedData.revealCountdowns[term].timerUpdate);
+                // Clear storage for term timer
+                delete ops$1.storedData.revealCountdowns[term];
+            }
+            // Timer stopped, return to normal
+            if (timerEnded === true) {
+                localforage.setItem('ops.storedData', ops$1.storedData);
+                return false;
+            }
+            // Set remaining time 
+            remainingSeconds = totalSecs - diffSecs;
+        }
+
+        // Set start time to storage
+        localforage.setItem('ops.storedData', ops$1.storedData);
+
+        var timeout = void 0;
+        var checkCount = 0;
+
+        // If timer is active   
+        if (timerEnded === false) {
+
+            // Start timer interval
+            ops$1.storedData.revealCountdowns[term].timerUpdate = setInterval(function () {
+                // Resync timer in some devices when off screen
+                checkCount += 1;
+                if (checkCount % 5 === 0) {
+                    startTimer();
+                }
+                // Call UI timer build
+                buttonTimer();
+            }, 1000);
+        }
+
+        // Builds the timer
+        function buttonTimer() {
+            var displayedMinutes = Math.floor(remainingSeconds / 60);
+            var displayedSeconds = remainingSeconds % 60;
+            var hiddenZero = '';
+
+            // Timer end
+            if (remainingSeconds === 0) {
+                revealBtn.innerHTML = "Reveal";
+                revealBtn.classList.remove('disabled');
+                revealBtn.disabled = false;
+                return false;
+            }
+
+            // Handle issues like zero index
+            if (displayedSeconds < 10 && displayedSeconds >= 0) {
+                hiddenZero = '0';
+            }
+            if (remainingSeconds === 60) {
+                displayedSeconds = '00';
+            }
+            // Update DOM
+            revealBtn.innerHTML = displayedMinutes + ':' + hiddenZero + displayedSeconds;
+
+            // Decrease timer
+            remainingSeconds -= 1;
+        }
+    };
+
+    // Imports
     // Global options
     var ops$1 = {
         displayedTerms: 3,
-        counterMins: 60,
-        counterSecs: 0,
+        counterMins: 0,
+        counterSecs: 1,
+        revealDailyBonusTarget: 2,
+        wordAccuracy: 0.5,
         container: document.querySelector(".terms-wrapper"),
         addDay: true,
         debug: true,
         points: {
             correct: 50,
-            hearts: 3
+            dailyBonus: 10,
+            hearts: 1
         },
         storedData: {}
     };
@@ -782,11 +946,17 @@ var app = function () {
         // Else get new  
         else {
                 pickedTerms = getListOfTerms();
+
+                // Set daily limit
+                if (ops$1.storedData.revealDailyBonus === undefined) {
+                    ops$1.storedData.revealDailyBonus = {};
+                }
+                // Reset daily reveal bonus
+                ops$1.storedData.revealDailyBonus.complete = false;
             }
 
         // Create initial view
         viewCreate(pickedTerms);
-        addHearts();
         setScore();
 
         // Create opened date, daily terms, viewed terms
@@ -800,20 +970,33 @@ var app = function () {
         // Handles events for revealed terms
         revealedBtnHandler();
 
+        // Keep query active each day
+        if (ops$1.storedData.queryComplete === undefined) {
+            ops$1.storedData.queryComplete = {};
+        }
+        if (ops$1.storedData.newDay === true) {
+            delete ops$1.storedData.dailyQuery;
+            ops$1.storedData.queryComplete = false;
+
+            // Delete daily reminder
+            if (ops$1.storedData.remindedTerms.dailyReminder !== undefined) {
+                delete ops$1.storedData.remindedTerms.dailyReminder;
+            }
+        }
         // Create query if revealed terms
-        if (ops$1.storedData.revealedTermCount !== undefined && ops$1.storedData.newDay === true) {
+        if (ops$1.storedData.revealedTermCount !== undefined && ops$1.storedData.queryComplete === false) {
             createNewQuery();
         }
 
         // Debug code
         if (ops$1.debug === true) {
             cl(ops$1.storedData);
-            cl('Revealed terms count:');
-            cl(ops$1.storedData.revealedTermCount);
-            cl('Viewed terms count:');
-            cl(ops$1.storedData.viewedTerms);
-            cl('Revealed terms timer:');
-            cl(ops$1.storedData.revealCountdowns);
+            //cl('Revealed terms count:');
+            //cl(ops.storedData.revealedTermCount);
+            //cl('Viewed terms count:');
+            //cl(ops.storedData.viewedTerms);
+            //cl('Revealed terms timer:');
+            //cl(ops.storedData.revealCountdowns);
         }
     };
 

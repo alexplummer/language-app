@@ -75,28 +75,23 @@ const viewCreate = function viewCreate(termsToCreate) {
 
 // Add hearts to page
 const addHearts = function addHearts() {
+    let heartHolder = document.querySelector('.hearts');
+    let heartsHTML = "";
 
-    // Only show hearts if a new day
-    if (ops.storedData.newDay === true) {
-        let heartHolder = document.querySelector('.hearts');
-        let heartsHTML = "";
-
-        // If no hearts data exists
-        if (ops.storedData.hearts === undefined) {
-            ops.storedData.hearts = ops.points.hearts;
-        }
-        let hearts = ops.storedData.hearts;
-
-        for (let i = 0; i < hearts; i++) {
-            heartsHTML += '<p>❤</p>';
-        }
-        // Add to view
-        heartHolder.innerHTML = heartsHTML;
-
-        // Add to storage
-        localforage.setItem('ops.storedData', ops.storedData);
+    // If no hearts data exists
+    if (ops.storedData.hearts === undefined) {
+        ops.storedData.hearts = ops.points.hearts;
     }
+    for (let i = 0; i < ops.storedData.hearts; i++) {
+        heartsHTML += '<p>❤</p>';
+    }
+    // Add to view
+    heartHolder.innerHTML = heartsHTML;
+
+    // Add to storage
+    localforage.setItem('ops.storedData', ops.storedData);
 }
+
 
 // Sets the score
 const setScore = function setScore() {
