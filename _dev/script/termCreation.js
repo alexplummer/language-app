@@ -49,7 +49,6 @@ const getListOfTerms = function getListOfTerms() {
             if (ops.storedData.dailyReminder === undefined) {
                 ops.storedData.dailyReminder = {};
                 reminderTerm = pickRandom(ops.storedData.incorrectTerms);
-                reminderTerm = Object.getOwnPropertyNames(reminderTerm);
                 ops.storedData.dailyReminder[reminderTerm] = appData.terms[reminderTerm].definition; 
             }
             else { 

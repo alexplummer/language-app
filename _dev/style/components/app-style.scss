@@ -52,3 +52,13 @@ button {
 .hidden {
     display: none;
 }
+.support-wrapper {
+    @extend %row;
+
+    div {
+        @extend %col-xs-6;
+    }
+}
+table {
+    @extend .pure-table;
+}

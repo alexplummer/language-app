@@ -5,6 +5,7 @@ import { getListOfTerms, updateDataCount } from 'termCreation';
 import { revealedBtnHandler } from 'termInteraction';
 import { viewCreate, addHearts, setScore } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
+import appData from 'verbs';
 
 // Exports
 export default ops;
@@ -14,7 +15,7 @@ let ops = {
     displayedTerms: 3,
     counterMins: 60,
     counterSecs: 0,
-    revealDailyBonusTarget: 2,
+    revealDailyBonusTarget: 3,
     wordAccuracy: 0.5,
     container: document.querySelector(".terms-wrapper"),
     addDay: false,
@@ -144,6 +145,11 @@ const appBuildHandler = function appBuildHandler() {
     if (ops.storedData.revealedTermCount !== undefined && ops.storedData.queryComplete === false) {
         createNewQuery();
     }
+
+    // Refresh window on blur
+    window.onblur = function() {
+        location.reload();
+    };
 
     // Debug code
     if (ops.debug === true) {
