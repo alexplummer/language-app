@@ -62,12 +62,13 @@ const createNewQuery = function createNewQuery() {
         i++;
         if (i === Object.keys(ops.storedData.revealedTermCount).length) {
             document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
+            document.querySelector('.result-holder').classList.remove('hidden');
         }
     }
     
     // Build the query
     function queryHandler() {
-        let queryWrapper = document.querySelector('.query-wrapper');
+        let queryWrapper = document.querySelector('.m-query-wrapper');
         let queryHolder = document.querySelector('.query-holder');
         let querySubmit = document.querySelector('.query-submit');
         let resultHolder = document.querySelector('.result-holder');
@@ -99,6 +100,7 @@ const createNewQuery = function createNewQuery() {
             }
             else if (queryInput === "") {
                 resultHolder.innerHTML = "Enter a definition.";
+                resultHolder.classList.remove('hidden');
             }
             else {
                 loseCase();
@@ -114,10 +116,12 @@ const createNewQuery = function createNewQuery() {
             if (spelling === "mispelled") {
                 // Display win message
                 resultHolder.innerHTML = "Well done but check your spelling, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                resultHolder.classList.remove('hidden');
             }
             else {
                 // Display win message
                 resultHolder.innerHTML = "Well done, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                resultHolder.classList.remove('hidden');
             }
             // Add to score
             score += ops.points.correct;
@@ -141,6 +145,7 @@ const createNewQuery = function createNewQuery() {
             let queryInput = document.querySelector('.query-input');
             // Update view
             resultHolder.innerHTML = "Try again.";
+            resultHolder.classList.remove('hidden');
             // Add placeholder
             queryInput.placeholder = queryInput.value;
             // Remove guess
@@ -158,6 +163,7 @@ const createNewQuery = function createNewQuery() {
                 queryInput.placeholder = "Enter the definition";
                 // Update view
                 resultHolder.innerHTML = "Sorry you lose.";
+                resultHolder.classList.remove('hidden');
                 // Add to storedDatta 
                 ops.storedData.incorrectTerms[randomTerm] = definition;
                 cl(ops.storedData.incorrectTerms);

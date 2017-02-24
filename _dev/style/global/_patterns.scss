@@ -2,9 +2,6 @@
 // ============
 // Global patterns and mixins go in here
 
-%border-thin {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: $size-s;
+.hidden {
+    display: none;
 }
-
-

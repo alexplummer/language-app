@@ -18,6 +18,7 @@
 @import "library/_framework-tables";
 @import "library/_sprites";
 @import "library/mixins/_clearfix";
+@import "library/mixins/_iconfix";
 /* csslint ignore:end */
 
 
@@ -33,6 +34,7 @@
 // Common SASS shared between components
 
 @import "global/_vars";
+@import "global/_base";
 @import "global/_patterns";
 @import "global/_layout";
 @import "global/_typography";
@@ -43,5 +45,8 @@
 // User components, these are auto injected by Gulp when saved to folder
 
 /* inject:componentImports */
-@import "components/app-style.scss";
+@import "components/_m-card.scss";
+@import "components/_m-header.scss";
+@import "components/_m-query-wrapper.scss";
+@import "components/_m-term-wrapper.scss";
 /* endinjectComponent */

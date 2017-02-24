@@ -2,3 +2,8 @@
 // ============
 // Major layout rules to go here
 
+.container {
+    @extend %container;
+    width: 600px;   
+    max-width: 100%;
+}

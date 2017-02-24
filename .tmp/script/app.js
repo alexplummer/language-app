@@ -155,6 +155,32 @@ var app = function () {
         return false;
     }
 
+    // When user navigates away from page
+    var appBlur = function appBlur() {
+        var hidden = "hidden";
+
+        // Standards:
+        if (hidden in document) document.addEventListener("visibilitychange", onchange);else if ((hidden = "mozHidden") in document) document.addEventListener("mozvisibilitychange", onchange);else if ((hidden = "webkitHidden") in document) document.addEventListener("webkitvisibilitychange", onchange);else if ((hidden = "msHidden") in document) document.addEventListener("msvisibilitychange", onchange);
+        // IE 9 and lower:
+        else if ("onfocusin" in document) document.onfocusin = document.onfocusout = onchange;
+            // All others:
+            else window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onchange;
+
+        function onchange(evt) {
+            var v = "visible",
+                h = "hidden",
+                evtMap = {
+                focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h
+            };
+
+            evt = evt || window.event;
+            if (evt.type in evtMap) document.body.className = evtMap[evt.type];else location.reload();
+        }
+
+        // set the initial state (but only if browser supports the Page Visibility API)
+        if (document[hidden] !== undefined) onchange({ type: document[hidden] ? "blur" : "focus" });
+    };
+
     // App data
 
     var appData = {
@@ -1670,7 +1696,7 @@ var app = function () {
         else {
 
                 // Add reminder for previous incorrect term
-                if (ops$1.storedData.incorrectTerms !== undefined) {
+                if (Object.keys(ops$1.storedData.incorrectTerms).length > 0) {
 
                     var reminderTerm = void 0;
 
@@ -1858,7 +1884,7 @@ var app = function () {
                 }
 
                 // Create terms HTML
-                var newHolder = '<div class="term-wrapper">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n                <p class="term-views">' + viewsCount + '</p>\n                <button class="reveal">Reveal definition</button>\n            </div>';
+                var newHolder = '<div class="m-term-wrapper">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="right">\n                    <p class="term-views"><span>Goal :</span> <span class="count">' + viewsCount + '</span> / ' + ops$1.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
 
                 viewHTML += newHolder;
                 // Cycle for of loop
@@ -1901,7 +1927,7 @@ var app = function () {
 
                         // Find button node that matches term in DOM
                         for (var i = 0; i < revealBtn.length; i++) {
-                            var revealTerm = revealBtn[i].parentNode.querySelector('.term-holder').innerHTML;
+                            var revealTerm = revealBtn[i].parentNode.parentNode.querySelector('.term-holder').innerHTML;
 
                             if (revealTerm === _value2) {
                                 createRevealTimer(revealBtn[i]);
@@ -1936,7 +1962,7 @@ var app = function () {
             ops$1.storedData.hearts = ops$1.points.hearts;
         }
         for (var i = 0; i < ops$1.storedData.hearts; i++) {
-            heartsHTML += '<p>❤</p>';
+            heartsHTML += '<p></p>';
         }
         // Add to view
         heartHolder.innerHTML = heartsHTML;
@@ -2014,12 +2040,13 @@ var app = function () {
             i++;
             if (i === Object.keys(ops$1.storedData.revealedTermCount).length) {
                 document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
+                document.querySelector('.result-holder').classList.remove('hidden');
             }
         }
 
         // Build the query
         function queryHandler() {
-            var queryWrapper = document.querySelector('.query-wrapper');
+            var queryWrapper = document.querySelector('.m-query-wrapper');
             var queryHolder = document.querySelector('.query-holder');
             var querySubmit = document.querySelector('.query-submit');
             var resultHolder = document.querySelector('.result-holder');
@@ -2049,6 +2076,7 @@ var app = function () {
                     winCase("mispelled");
                 } else if (queryInput === "") {
                     resultHolder.innerHTML = "Enter a definition.";
+                    resultHolder.classList.remove('hidden');
                 } else {
                     loseCase();
                 }
@@ -2063,9 +2091,11 @@ var app = function () {
                 if (spelling === "mispelled") {
                     // Display win message
                     resultHolder.innerHTML = "Well done but check your spelling, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                    resultHolder.classList.remove('hidden');
                 } else {
                     // Display win message
                     resultHolder.innerHTML = "Well done, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                    resultHolder.classList.remove('hidden');
                 }
                 // Add to score
                 score += ops$1.points.correct;
@@ -2089,6 +2119,7 @@ var app = function () {
                 var queryInput = document.querySelector('.query-input');
                 // Update view
                 resultHolder.innerHTML = "Try again.";
+                resultHolder.classList.remove('hidden');
                 // Add placeholder
                 queryInput.placeholder = queryInput.value;
                 // Remove guess
@@ -2106,6 +2137,7 @@ var app = function () {
                     queryInput.placeholder = "Enter the definition";
                     // Update view
                     resultHolder.innerHTML = "Sorry you lose.";
+                    resultHolder.classList.remove('hidden');
                     // Add to storedDatta 
                     ops$1.storedData.incorrectTerms[randomTerm] = definition;
                     cl(ops$1.storedData.incorrectTerms);
@@ -2135,12 +2167,12 @@ var app = function () {
                 return false;
             }
 
-            var term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
+            var term = [revealBtn[i].parentNode.parentNode.querySelector('.term-holder').innerHTML];
 
             // Updates the revealed view counter
-            var countHolder = revealBtn[i].parentNode.querySelector('.term-views');
-            var definitionWrapper = revealBtn[i].parentNode.querySelector('.definition-wrapper');
-            var definitionHolder = revealBtn[i].parentNode.querySelector('.definition-holder');
+            var countHolder = revealBtn[i].parentNode.querySelector('.count');
+            var definitionWrapper = revealBtn[i].parentNode.parentNode.querySelector('.definition-wrapper');
+            var definitionHolder = revealBtn[i].parentNode.parentNode.querySelector('.definition-holder');
             var count = parseInt(countHolder.innerHTML);
 
             // Show definition
@@ -2203,7 +2235,7 @@ var app = function () {
             ops$1.storedData.revealCountdowns = {};
         }
 
-        var term = [revealBtn.parentNode.querySelector('.term-holder').innerHTML];
+        var term = [revealBtn.parentNode.parentNode.querySelector('.term-holder').innerHTML];
 
         var minutes = ops$1.counterMins;
         var seconds = ops$1.counterSecs;
@@ -2325,7 +2357,7 @@ var app = function () {
         revealDailyBonusTarget: 3,
         wordAccuracy: 0.5,
         container: document.querySelector(".terms-wrapper"),
-        addDay: false,
+        addDay: true,
         debug: true,
         points: {
             correct: 50,
@@ -2455,9 +2487,7 @@ var app = function () {
         }
 
         // Refresh window on blur
-        window.onblur = function () {
-            location.reload();
-        };
+        appBlur();
 
         // Debug code
         if (ops$1.debug === true) {

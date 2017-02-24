@@ -50,9 +50,9 @@ blockquote {
 // ============
 // Font sizes for headings and other elements
 
-h1, .h1 {font-size: $font-xxl * $xheight-header}
-h2, .h2 {font-size: $font-xl  * $xheight-header}
-h3, .h3 {font-size: $font-l   * $xheight-header}
+h1, .h1 {font-size: $font-l * $xheight-header}
+h2, .h2 {font-size: $font-m  * $xheight-header}
+h3, .h3 {font-size: $font-m   * $xheight-header}
 h4, .h4 {font-size: $font-m   * $xheight-header}
 h5, .h5 {font-size: $font-m   * $xheight-header}
 
@@ -129,8 +129,8 @@ h4, .h4, h5, .h5 {
 // Tablet
 @media (max-width: $laptop - 1) {
 
-    h1, .h1 {font-size: $font-xl * $xheight-header; line-height: ceil($font-xl / $font-baseline) * $font-baseline}
-    h2, .h2 {font-size: $font-l  * $xheight-header; line-height: ceil($font-l  / $font-baseline) * $font-baseline}
+    h1, .h1 {font-size: $font-l * $xheight-header; line-height: ceil($font-xl / $font-baseline) * $font-baseline}
+    h2, .h2 {font-size: $font-m  * $xheight-header; line-height: ceil($font-l  / $font-baseline) * $font-baseline}
     h3, .h3 {font-size: $font-m  * $xheight-header; line-height: ceil($font-m  / $font-baseline) * $font-baseline}
     h4, .h4 {font-size: $font-s  * $xheight-header; line-height: ceil($font-s  / $font-baseline) * $font-baseline}
     h5, .h5 {font-size: $font-s  * $xheight-header; line-height: ceil($font-s  / $font-baseline) * $font-baseline}

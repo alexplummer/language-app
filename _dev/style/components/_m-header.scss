@@ -1,0 +1,49 @@
+// Header
+// ============
+// Styling for the header module
+
+.m-header {
+    background: $clr-secondary;
+    padding: $size-m $size-s;
+    @extend %cf;
+
+    h1 {
+        float: left;
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        font-size: $font-m;
+        line-height: $font-l;
+        font-weight: 100;
+    }
+    .right {
+        float: right;
+
+        .score {
+            float: right;
+            margin-right: $size-m;
+
+            p, span {
+                color: #fff;
+                padding: 0;
+                margin: 0;
+                font-size: $font-m;
+                line-height: $font-l;
+                font-weight: 100;
+            }
+            span {
+                padding-left: $size-xs;
+            }
+        }
+        .settings {
+            @extend .icon-cog;
+            @extend .icon;
+            color: lighten($clr-secondary,50%);
+            font-size: $font-l;
+            padding: 0;
+            margin: 0;
+            line-height: $font-m;
+            float: right;
+        }
+    }
+}

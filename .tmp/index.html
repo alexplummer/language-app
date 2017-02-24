@@ -33,6 +33,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <!-- build:css style/style.css -->
     <!-- bower:css -->
     <!-- endbower -->
@@ -40,20 +41,33 @@
     <!-- endbuild -->
 </head>
 
-<body><a class="reset" href="#">Reset</a>
+<body>
     <div class="container">
-        <div class="score">
-            <p>Score:<span class="score-holder">0</span>
+        <header class="m-header">
+            <h1>Italian Verbs</h1>
+            <div class="right">
+                <a class="settings reset" href="#"></a>
+                <div class="score">
+                    <p>Score:<span class="score-holder">0</span>
+                    </p>
+                </div>
+            </div>
+        </header>
+        <div class="m-query-wrapper hidden">
+            <header>
+                <h2>Daily Test</h2>
+                <div class="hearts"></div>
+            </header>
+            <p>Translate: <span class="query-holder"></span>
             </p>
+            <div class="query-form">
+                <div class="input-wrap">
+                    <input class="query-input" type="text" placeholder="Enter definition" />
+                </div>
+                <button class="query-submit">Check</button>
+            </div>
+            <p class="result-holder hidden"></p>
         </div>
-        <div class="hearts"></div>
-        <div class="query-wrapper hidden">
-            <p>Enter the definition for: <span class="query-holder"></span>
-            </p>
-            <input class="query-input" type="text" placeholder="Enter definition" />
-            <button class="query-submit">Check</button>
-        </div>
-        <p class="result-holder"></p>
         <div class="terms-wrapper"></div>
     </div>
     <!-- build:js script/script.js -->

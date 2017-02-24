@@ -22,12 +22,12 @@ const revealedBtnHandler = function revealedBtnHandler() {
             return false;
         }
 
-        let term = [revealBtn[i].parentNode.querySelector('.term-holder').innerHTML];
+        let term = [revealBtn[i].parentNode.parentNode.querySelector('.term-holder').innerHTML];
 
         // Updates the revealed view counter
-        let countHolder = revealBtn[i].parentNode.querySelector('.term-views');
-        let definitionWrapper = revealBtn[i].parentNode.querySelector('.definition-wrapper');
-        let definitionHolder = revealBtn[i].parentNode.querySelector('.definition-holder');
+        let countHolder = revealBtn[i].parentNode.querySelector('.count');
+        let definitionWrapper = revealBtn[i].parentNode.parentNode.querySelector('.definition-wrapper');
+        let definitionHolder = revealBtn[i].parentNode.parentNode.querySelector('.definition-holder');
         let count = parseInt(countHolder.innerHTML);
 
         // Show definition
@@ -90,7 +90,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
         ops.storedData.revealCountdowns = {};
     }
 
-    let term = [revealBtn.parentNode.querySelector('.term-holder').innerHTML];
+    let term = [revealBtn.parentNode.parentNode.querySelector('.term-holder').innerHTML];
 
     let minutes = ops.counterMins;
     let seconds = ops.counterSecs;

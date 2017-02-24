@@ -5,20 +5,28 @@ block title
 
 block content
 	
-	a.reset(href="#") Reset
 	.container
-		.score
+		header.m-header
+			h1 Italian Verbs
+			.right
+				a(href="#").settings.reset
+				.score
+					p
+						| Score:
+						span.score-holder 0
+
+		.m-query-wrapper.hidden
+			header
+				h2 Daily Test
+				.hearts
 			p 
-				| Score:
-				span.score-holder 0
-		.hearts
-		.query-wrapper.hidden
-			p 
-				| Enter the definition for: 
+				| Translate: 
 				span.query-holder
-			input(type="text", placeholder="Enter definition").query-input
-			button.query-submit Check
-		p.result-holder
+			.query-form
+				.input-wrap
+					input(type="text", placeholder="Enter definition").query-input
+				button.query-submit Check
+			p.result-holder.hidden
 		.terms-wrapper
 
 	include includes/_under

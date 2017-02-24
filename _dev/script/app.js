@@ -1,6 +1,6 @@
 
 // Imports
-import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate } from 'helperFunctions';
+import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
 import { getListOfTerms, updateDataCount } from 'termCreation';
 import { revealedBtnHandler } from 'termInteraction';
 import { viewCreate, addHearts, setScore } from 'viewCreation';
@@ -18,7 +18,7 @@ let ops = {
     revealDailyBonusTarget: 3,
     wordAccuracy: 0.5,
     container: document.querySelector(".terms-wrapper"),
-    addDay: false,
+    addDay: true,
     debug: true,
     points: {
         correct: 50,
@@ -147,9 +147,7 @@ const appBuildHandler = function appBuildHandler() {
     }
 
     // Refresh window on blur
-    window.onblur = function() {
-        location.reload();
-    };
+    appBlur();
 
     // Debug code
     if (ops.debug === true) {

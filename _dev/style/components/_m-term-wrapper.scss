@@ -1,0 +1,37 @@
+// Term wrapper
+// ============
+// Cards for each term
+
+.m-term-wrapper {
+    @extend .m-card;
+    @extend %cf;
+
+    .term-holder {
+        float: left;
+        font-size: $font-l;
+        text-transform: capitalize;
+        position: relative;
+        top: 30px;
+    }
+    .right {
+        float: right;
+    }
+    .term-views {
+        text-align: center;
+        font-size: $font-m;
+
+        span {
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: $font-s;
+        }
+    }
+    .definition-wrapper {
+        clear: both;
+
+        .definition-holder {
+            font-size: $font-l;
+            text-transform: capitalize;
+        }
+    }
+}

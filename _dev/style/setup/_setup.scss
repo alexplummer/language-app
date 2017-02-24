@@ -3,10 +3,10 @@
 // ============
 // Colour scheme variables
 
-$clr-primary:   #3C9ADA;
-$clr-secondary: #F3AF4B;
-$clr-tertiary:  #80007F;
-$clr-hlight:    #F6631E;
+$clr-primary:   #023059;
+$clr-secondary: #1A56A5;
+$clr-tertiary:  #F70042;
+$clr-hlight:    #F2B604;
 $clr-shade:     #3F4747;
 
 $clr-link: $clr-hlight;
@@ -29,8 +29,8 @@ $clr-shade-textoverlay:     #FFFFFF;
 // Font family definitions
 
 $font-header: 'Montserrat', sans-serif;
-$font-body:   'Open Sans', sans-serif;
-$font-quote:  'Bevan', cursive;
+$font-body:   'Montserrat', sans-serif;
+$font-quote:  'Montserrat', sans-serif;
 
 // Modify irregular xheight fonts
 $xheight-header: 1;

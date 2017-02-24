@@ -33,14 +33,16 @@ const viewCreate = function viewCreate(termsToCreate) {
 
         // Create terms HTML
         let newHolder =
-            `<div class="term-wrapper">
+            `<div class="m-term-wrapper">
                 <p class="term-holder">${termValue}</p>
+                <div class="right">
+                    <p class="term-views"><span>Goal :</span> <span class="count">${viewsCount}</span> / ${ops.revealDailyBonusTarget}</p>
+                    <button class="reveal">Reveal</button>
+                </div>
                 <div class="definition-wrapper hidden">
                     <p class="definition-holder">${definitionValue}</p>
                     <div class="support-wrapper">${supportValue}</div>
                 </div>
-                <p class="term-views">${viewsCount}</p>
-                <button class="reveal">Reveal definition</button>
             </div>`;
 
         viewHTML += newHolder;
@@ -62,7 +64,7 @@ const viewCreate = function viewCreate(termsToCreate) {
 
                 // Find button node that matches term in DOM
                 for (let i = 0; i < revealBtn.length; i++) {
-                    let revealTerm = revealBtn[i].parentNode.querySelector('.term-holder').innerHTML;
+                    let revealTerm = revealBtn[i].parentNode.parentNode.querySelector('.term-holder').innerHTML;
 
                     if (revealTerm === value) {
                         createRevealTimer(revealBtn[i]);
@@ -83,7 +85,7 @@ const addHearts = function addHearts() {
         ops.storedData.hearts = ops.points.hearts;
     }
     for (let i = 0; i < ops.storedData.hearts; i++) {
-        heartsHTML += '<p>❤</p>';
+        heartsHTML += '<p></p>';
     }
     // Add to view
     heartHolder.innerHTML = heartsHTML;
