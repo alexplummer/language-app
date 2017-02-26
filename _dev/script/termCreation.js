@@ -38,6 +38,8 @@ const getListOfTerms = function getListOfTerms() {
     else {
 
         // Add reminder for previous incorrect term
+        ops.storedData.incorrectTerms = ops.storedData.incorrectTerms || {};
+
         if (Object.keys(ops.storedData.incorrectTerms).length > 0) {
             
             let reminderTerm;

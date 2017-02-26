@@ -369,106 +369,106 @@ textarea {
   /* 2 */ }
 
 h1, .h1 {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h2, .h2 {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h3, .h3 {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h4, .h4 {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h5, .h5 {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h6, .h6 {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 p {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 a {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 li {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 label {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 input {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 textarea {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 legend {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 button {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 select {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 blockquote {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 dt {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 dd {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 figure {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 figcaption {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 address {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 ul {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 ol {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 strong {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 b {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 br {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 span {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 table {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 th {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 td {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 code {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 time {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 img {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 form {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h1 {
   color: #3F4747; }
@@ -573,7 +573,7 @@ form {
   color: #3F4747; }
 
 blockquote {
-  font-family: "Montserrat", sans-serif; }
+  font-family: "Nunito", sans-serif; }
 
 h1, .h1 {
   font-size: 1.5rem; }
@@ -1058,10 +1058,10 @@ ul, ol, dl {
   margin-left: 1.5rem; }
 
 a {
-  color: #F2B604; }
+  color: #eca90b; }
 
 a:hover {
-  color: #fcc82d; }
+  color: #f6bc34; }
 
 blockquote {
   background: #f9f9f9;
@@ -1116,18 +1116,18 @@ Copyright 2013 Yahoo!
 Licensed under the BSD License.
 https://github.com/yahoo/pure/blob/master/LICENSE.md
 */
-.pure-table {
+.pure-table, table {
   /* Remove spacing between table cells (from Normalize.css) */
   border-collapse: collapse;
   border-spacing: 0;
   empty-cells: show;
   border: 1px solid #cbcbcb; }
-  .pure-table caption {
+  .pure-table caption, table caption {
     color: #000;
     font: italic 85%/1 arial, sans-serif;
     padding: 1em 0;
     text-align: center; }
-  .pure-table td, .pure-table th {
+  .pure-table td, table td, .pure-table th, table th {
     border-left: 1px solid #cbcbcb;
     /*  inner column border */
     border-width: 0 0 0 1px;
@@ -1137,14 +1137,14 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
     /*to make ths where the title is really long work*/
     padding: 0.5em 1em;
     /* cell padding */ }
-  .pure-table td:first-child, .pure-table th:first-child {
+  .pure-table td:first-child, table td:first-child, .pure-table th:first-child, table th:first-child {
     border-left-width: 0; }
-  .pure-table thead {
+  .pure-table thead, table thead {
     background-color: #e0e0e0;
     color: #000;
     text-align: left;
     vertical-align: bottom; }
-  .pure-table td {
+  .pure-table td, table td {
     background-color: transparent; }
 
 /* Consider removing this next declaration block, as it causes problems when
@@ -1173,12 +1173,12 @@ striping:
 .pure-table-horizontal tbody > tr:last-child > td {
   border-bottom-width: 0; }
 
-.m-header:after, .m-term-wrapper:after {
+.m-header:after, .m-term-wrapper:after, .m-term-wrapper .definition-wrapper .support-wrapper:after {
   content: "";
   display: table;
   clear: both; }
 
-.icon:before, .m-header .right .settings:before, .m-query-wrapper .hearts p:before, [class^="icon"]:before {
+.icon:before, .m-header .right .settings:before, .m-modal .inner header h2:before, .m-modal .close:before, .m-query-wrapper header h2:before, .m-query-wrapper .hearts p:before, .m-term-wrapper .term-holder:before, .m-term-wrapper .definition-wrapper .helpers .lookup:before, .m-term-wrapper .definition-wrapper .helpers .colour:before, .m-term-wrapper .definition-wrapper .helpers .symbol:before, [class^="icon"]:before {
   font-family: "fontello";
   font-style: normal;
   font-weight: normal;
@@ -1205,14 +1205,14 @@ striping:
   /* Uncomment for 3D effect */
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }
 
-a.icon:before, .m-header .right a.settings:before {
+a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-term-wrapper a.term-holder:before, .m-term-wrapper .definition-wrapper .helpers a.lookup:before, .m-term-wrapper .definition-wrapper .helpers a.colour:before, .m-term-wrapper .definition-wrapper .helpers a.symbol:before {
   text-decoration: none; }
 
 /* csslint ignore:end */
 @font-face {
   font-family: 'fontello';
-  src: url("../font/fontello.eot?86912917");
-  src: url("../font/fontello.eot?86912917#iefix") format("embedded-opentype"), url("../font/fontello.woff2?86912917") format("woff2"), url("../font/fontello.woff?86912917") format("woff"), url("../font/fontello.ttf?86912917") format("truetype"), url("../font/fontello.svg?86912917#fontello") format("svg");
+  src: url("../font/fontello.eot?13745711");
+  src: url("../font/fontello.eot?13745711#iefix") format("embedded-opentype"), url("../font/fontello.woff2?13745711") format("woff2"), url("../font/fontello.woff?13745711") format("woff"), url("../font/fontello.ttf?13745711") format("truetype"), url("../font/fontello.svg?13745711#fontello") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1222,7 +1222,7 @@ a.icon:before, .m-header .right a.settings:before {
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?86912917#fontello') format('svg');
+    src: url('../font/fontello.svg?13745711#fontello') format('svg');
   }
 }
 */
@@ -1261,15 +1261,56 @@ a.icon:before, .m-header .right a.settings:before {
   content: '\e801'; }
 
 /* '' */
+.icon-book:before, .m-modal .inner header h2:before, .m-term-wrapper .definition-wrapper .helpers .lookup:before {
+  content: '\e802'; }
+
+/* '' */
+.icon-tint:before, .m-term-wrapper .definition-wrapper .helpers .colour:before {
+  content: '\e803'; }
+
+/* '' */
+.icon-volume:before, .m-term-wrapper .term-holder:before {
+  content: '\e804'; }
+
+/* '' */
+.icon-cancel-circled2:before, .m-modal .close:before {
+  content: '\e805'; }
+
+/* '' */
+.icon-garden:before, .m-term-wrapper .definition-wrapper .helpers .symbol:before {
+  content: '\e81a'; }
+
+/* '' */
+.icon-graduation-cap:before, .m-query-wrapper header h2:before {
+  content: '\f19d'; }
+
+/* '' */
 body {
   background: #f2f2f2; }
 
 .container {
-  background: #023059;
+  background: #574b5d;
+  position: relative;
   padding: 0; }
+  .container:before {
+    content: "";
+    background: url(../img/type-bg.jpg);
+    opacity: 0.1;
+    background-size: cover;
+    position: absolute;
+    height: 100%;
+    width: 100%; }
+  .container.modal-active:before {
+    content: "";
+    background: #1b2e65;
+    opacity: 0.8;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 51; }
 
 button {
-  background: #F2B604;
+  background: #eca90b;
   cursor: pointer;
   width: 130px;
   color: #fff;
@@ -1277,29 +1318,60 @@ button {
   padding: 0.75rem;
   border-radius: 5px; }
 
+input {
+  font-size: 1.125rem;
+  background: #f5f5f5; }
+
+table {
+  background: #fff;
+  font-size: 0.75rem; }
+
 .hidden {
   display: none; }
 
+.m-header .right .score p, .m-query-wrapper p, .m-term-wrapper .term-views span {
+  font-size: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px; }
+
 .container {
   width: 600px;
-  max-width: 100%; }
+  max-width: 100%;
+  min-height: 100vh;
+  z-index: 10; }
+
+.m-card, .m-modal .inner, .m-query-wrapper, .m-term-wrapper, .m-header {
+  position: relative;
+  z-index: 50; }
+
+.terms-wrapper {
+  padding-bottom: 10px; }
+
+h2 {
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 100; }
+  h2.icon:before, .m-header .right h2.settings:before, .m-modal .inner header h2:before, .m-modal h2.close:before, .m-query-wrapper header h2:before, .m-term-wrapper h2.term-holder:before, .m-term-wrapper .definition-wrapper .helpers h2.lookup:before, .m-term-wrapper .definition-wrapper .helpers h2.colour:before, .m-term-wrapper .definition-wrapper .helpers h2.symbol:before {
+    margin-right: 12px;
+    color: #999; }
 
 /* inject:componentImports */
-.m-card, .m-query-wrapper, .m-term-wrapper {
+.m-card, .m-modal .inner, .m-query-wrapper, .m-term-wrapper {
   background: #fff;
   margin: 0.75rem;
-  padding: 0.75rem;
+  padding: 0 0.75rem;
   border-radius: 5px; }
 
 .m-header {
-  background: #1A56A5;
+  background: #f7004e;
   padding: 1.5rem 0.75rem; }
   .m-header h1 {
     float: left;
     color: #fff;
     padding: 0;
     margin: 0;
-    font-size: 1.125rem;
+    font-size: 1.5rem;
     line-height: 1.5rem;
     font-weight: 100; }
   .m-header .right {
@@ -1311,29 +1383,60 @@ button {
         color: #fff;
         padding: 0;
         margin: 0;
-        font-size: 1.125rem;
-        line-height: 1.5rem;
-        font-weight: 100; }
+        line-height: 1.5rem; }
       .m-header .right .score span {
         padding-left: 0.375rem; }
+      .m-header .right .score .score-holder {
+        font-size: 1.125rem;
+        font-weight: 100; }
     .m-header .right .settings {
-      color: #c8dcf6;
+      color: #fff;
       font-size: 1.5rem;
       padding: 0;
       margin: 0;
       line-height: 1.125rem;
       float: right; }
 
+.m-modal {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  padding: 0 0.75rem; }
+  .m-modal .inner {
+    z-index: 100;
+    position: relative;
+    top: 50%;
+    width: 100%;
+    left: -12px;
+    padding-bottom: 20px;
+    transform: translateY(-50%); }
+    .m-modal .inner header {
+      padding-top: 0.75rem;
+      border-bottom: 1px solid #ddd; }
+  .m-modal .close {
+    position: absolute;
+    font-size: 1.5rem;
+    top: 0;
+    right: 0.75rem;
+    color: #f7004e; }
+  .m-modal p {
+    text-transform: capitalize;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-top: 0.75rem;
+    padding-bottom: 0; }
+  .m-modal .dictionary-definitions li {
+    text-transform: capitalize; }
+    .m-modal .dictionary-definitions li:nth-of-type(1n+4) {
+      display: none; }
+
 .m-query-wrapper {
+  padding-top: 0.75rem;
   margin: 1.5rem 0.75rem;
   position: relative; }
   .m-query-wrapper header {
     border-bottom: 1px solid #ddd;
     margin-bottom: 0.75rem; }
-    .m-query-wrapper header h2 {
-      padding: 0;
-      text-transform: uppercase;
-      font-weight: 100; }
   .m-query-wrapper .hearts {
     position: absolute;
     top: 0.75rem;
@@ -1342,11 +1445,14 @@ button {
       display: inline-block;
       padding: 0;
       margin: 0;
-      color: #F70042;
+      color: #f7004e;
       font-size: 1.125rem; }
-  .m-query-wrapper .query-holder {
+      .m-query-wrapper .hearts p:before {
+        margin-right: 0; }
+  .m-query-wrapper p .query-holder {
     text-transform: capitalize;
     font-size: 1.5rem;
+    font-weight: 400;
     padding-left: 0.375rem; }
   .m-query-wrapper .query-form {
     position: relative; }
@@ -1357,8 +1463,7 @@ button {
         width: 100%;
         padding: 0.75rem;
         border-radius: 4px;
-        background: #eee;
-        box-shadow: inset 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 2px 3px 0 rgba(0, 0, 0, 0.1);
         border: 1px solid #ccc; }
     .m-query-wrapper .query-form button {
       position: absolute;
@@ -1366,30 +1471,73 @@ button {
       right: 0;
       width: 130px;
       position: absolute; }
+  .m-query-wrapper .result-holder {
+    border-top: 1px solid #ddd;
+    margin-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    text-transform: none;
+    font-weight: 400;
+    letter-spacing: normal; }
 
-.m-term-wrapper .term-holder {
-  float: left;
-  font-size: 1.5rem;
-  text-transform: capitalize;
-  position: relative;
-  top: 30px; }
-
-.m-term-wrapper .right {
-  float: right; }
-
-.m-term-wrapper .term-views {
-  text-align: center;
-  font-size: 1.125rem; }
-  .m-term-wrapper .term-views span {
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: 1rem; }
-
-.m-term-wrapper .definition-wrapper {
-  clear: both; }
-  .m-term-wrapper .definition-wrapper .definition-holder {
+.m-term-wrapper {
+  overflow: hidden; }
+  .m-term-wrapper .term-holder {
+    float: left;
     font-size: 1.5rem;
-    text-transform: capitalize; }
+    text-transform: capitalize;
+    position: relative;
+    top: 30px; }
+    .m-term-wrapper .term-holder:before {
+      cursor: pointer;
+      margin-right: 0.75rem; }
+  .m-term-wrapper .right {
+    float: right;
+    border-left: 1px solid #ddd;
+    padding: 0 0.75rem;
+    margin-right: -0.75rem; }
+  .m-term-wrapper .term-views {
+    text-align: center;
+    font-size: 1.125rem; }
+    .m-term-wrapper .term-views .count {
+      font-weight: 400;
+      font-size: 1.5rem; }
+  .m-term-wrapper .definition-wrapper {
+    clear: both;
+    margin: -0.75rem;
+    padding: 0.75rem;
+    box-shadow: inset 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    background: #f5f5f5;
+    border-top: 1px solid #ddd;
+    position: relative; }
+    .m-term-wrapper .definition-wrapper .definition-holder {
+      font-size: 1.5rem;
+      text-transform: capitalize;
+      padding-bottom: 0.75rem; }
+    .m-term-wrapper .definition-wrapper .helpers {
+      position: absolute;
+      right: 0.75rem;
+      top: 15px; }
+      .m-term-wrapper .definition-wrapper .helpers .lookup, .m-term-wrapper .definition-wrapper .helpers .colour, .m-term-wrapper .definition-wrapper .helpers .symbol {
+        font-size: 1.5rem;
+        background: #888;
+        color: #f5f5f5;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        padding-top: 0;
+        margin-left: 0.375rem;
+        text-align: center;
+        display: inline-block; }
+    .m-term-wrapper .definition-wrapper .support-wrapper {
+      border-top: 1px solid #ddd;
+      padding-top: 0.75rem; }
+      .m-term-wrapper .definition-wrapper .support-wrapper div {
+        width: 50%;
+        float: left; }
+      .m-term-wrapper .definition-wrapper .support-wrapper .irregular {
+        font-weight: bold;
+        color: #f7004e; }
 
 /* endinjectComponent */
 

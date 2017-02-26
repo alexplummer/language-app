@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv, clickListener } from 'helperFunctions';
+import { cl, clv, clickListener, jsonp, findKeys } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
 import { createNewQuery } from 'queryInteraction';
@@ -8,7 +8,7 @@ import { updateDataCount } from 'termCreation';
 import { setScore, addHearts } from 'viewCreation';
 
 // Exports
-export { revealedBtnHandler, createRevealTimer };
+export { revealedBtnHandler, createRevealTimer, dictionaryLookup };
 
 // Handles functions when reveal button clicked
 const revealedBtnHandler = function revealedBtnHandler() {
@@ -203,7 +203,65 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     }
 };
 
+const dictionaryLookup = function dictionaryLookup() {
 
+    let dictionaryBtn = document.querySelectorAll('.lookup');
+    let modal = document.querySelector('.m-modal');
+    let definitionHolder = document.querySelector('.dictionary-definitions');
+
+    clickListener(dictionaryBtn, (i) => {
+        let term = dictionaryBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
+
+        // Bring up modal
+        modal.classList.remove('hidden');
+        document.querySelector('.container').classList.add('modal-active');
+        modal.getElementsByTagName('p')[0].innerHTML = term+":";
+
+        // Make request to Glosbe
+        jsonp('https://glosbe.com/gapi/translate?from=ita&dest=eng&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
+            let dictionaryResponses = "";
+
+            try {
+                // Search through data for "meanings"
+                findProp(data, "text");
+
+                function findProp(obj, key, out) {
+                    let i;
+                    let proto = Object.prototype;
+                    let ts = proto.toString;
+                    let hasOwn = proto.hasOwnProperty.bind(obj);
+
+                    for (i in obj) {
+                        if (hasOwn(i)) {
+                            if (i === key) {
+                                dictionaryResponses += '<li>'+obj[i]+'</li>';
+                            } else if ('[object Array]' === ts.call(obj[i]) || '[object Object]' === ts.call(obj[i])) {
+                                findProp(obj[i], key, out);
+                            }
+                        }
+                    }
+                    return out;
+                }
+
+                // Add to DOM
+                definitionHolder.innerHTML = dictionaryResponses;
+            }
+            catch (err) {
+                cl('error');
+            }
+        })
+    });
+
+    // Hide modal, clear it's contents
+    let modalClose = modal.querySelector('.close');
+
+    modalClose.addEventListener("click", () => {
+        // Hide modal
+        modal.classList.add('hidden');
+        document.querySelector('.container').classList.remove('modal-active');
+        defintionHolder.innerHTML = "";
+    })
+}
 
 
 

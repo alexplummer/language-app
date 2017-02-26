@@ -6,4 +6,13 @@
     @extend %container;
     width: 600px;   
     max-width: 100%;
+    min-height: 100vh;
+    z-index: $z-s;
+}
+.m-card, .m-header {
+    position: relative;
+    z-index: $z-m;
+}
+.terms-wrapper {
+    padding-bottom: 10px;
 }

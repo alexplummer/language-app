@@ -32,11 +32,11 @@ const createNewQuery = function createNewQuery() {
     }
 
     // Prevent choosing query already answered correct
-    while (i < Object.keys(ops.storedData.revealedTermCount).length) {
+    while (i < Object.keys(ops.storedData.viewedTerms).length) {
 
-        if (ops.storedData.dailyQuery === undefined) {
+        if (ops.storedData.dailyQuery === undefined) {  
             // Pick a random term
-            randomTerm = pickRandom(ops.storedData.revealedTermCount);
+            randomTerm = pickRandom(ops.storedData.viewedTerms);
             ops.storedData.dailyQuery = randomTerm;
         }
         else {
@@ -60,7 +60,7 @@ const createNewQuery = function createNewQuery() {
         }
         // Else look for another
         i++;
-        if (i === Object.keys(ops.storedData.revealedTermCount).length) {
+        if (i === Object.keys(ops.storedData.viewedTerms).length) {
             document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
             document.querySelector('.result-holder').classList.remove('hidden');
         }
@@ -110,7 +110,7 @@ const createNewQuery = function createNewQuery() {
         // If definition is right
         function winCase(spelling) {
             // Hide the query input
-            queryWrapper.classList.add('hidden');
+            document.querySelector('.query-form').classList.add('hidden');
             heartHolder.classList.add('hidden');
             // If mispelled
             if (spelling === "mispelled") {
@@ -156,13 +156,13 @@ const createNewQuery = function createNewQuery() {
             // If all hearts lost
             if (ops.storedData.hearts === 0) {
                 // Hide query 
-                queryWrapper.classList.add('hidden');
+                document.querySelector('.query-form').classList.add('hidden');
                 heartHolder.classList.add('hidden');
                 // Update DOM
                 queryInput.value = "";
                 queryInput.placeholder = "Enter the definition";
                 // Update view
-                resultHolder.innerHTML = "Sorry you lose.";
+                resultHolder.innerHTML = "Sorry, you are out of attempts!";
                 resultHolder.classList.remove('hidden');
                 // Add to storedDatta 
                 ops.storedData.incorrectTerms[randomTerm] = definition;

@@ -33,7 +33,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,800" rel="stylesheet">
     <!-- build:css style/style.css -->
     <!-- bower:css -->
     <!-- endbower -->
@@ -43,6 +43,16 @@
 
 <body>
     <div class="container">
+        <div class="m-modal hidden">
+            <div class="inner">
+                <header>
+                    <a class="close" href="#"></a>
+                    <h2>Dictionary definitions</h2>
+                </header>
+                <p></p>
+                <ul class="dictionary-definitions"></ul>
+            </div>
+        </div>
         <header class="m-header">
             <h1>Italian Verbs</h1>
             <div class="right">
@@ -73,6 +83,7 @@
     <!-- build:js script/script.js -->
     <!-- bower:js -->
     <script src="../bower_components/localforage/dist/localforage.js"></script>
+    <script src="../bower_components/fetch/fetch.js"></script>
     <!-- endbower -->
     <!-- inject:imports -->
     <script src="script/app.js"></script>

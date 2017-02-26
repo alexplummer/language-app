@@ -36,11 +36,16 @@ const viewCreate = function viewCreate(termsToCreate) {
             `<div class="m-term-wrapper">
                 <p class="term-holder">${termValue}</p>
                 <div class="right">
-                    <p class="term-views"><span>Goal :</span> <span class="count">${viewsCount}</span> / ${ops.revealDailyBonusTarget}</p>
+                    <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${ops.revealDailyBonusTarget}</p>
                     <button class="reveal">Reveal</button>
                 </div>
                 <div class="definition-wrapper hidden">
                     <p class="definition-holder">${definitionValue}</p>
+                    <div class="helpers">
+                        <a href="#" class="lookup"></a>
+                        <a href="#" class="colour"></a>
+                        <a href="#" class="symbol"></a>
+                    </div>
                     <div class="support-wrapper">${supportValue}</div>
                 </div>
             </div>`;

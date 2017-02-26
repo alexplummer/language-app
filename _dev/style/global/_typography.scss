@@ -1,3 +1,17 @@
 // Typography
 // ============
 // Global typographic styles go in here
+
+h2 {
+    padding: 0;
+    font-size: $font-l;
+    font-weight: 100;
+
+    &.icon {
+        
+        &:before {
+            margin-right: 12px;
+            color: #999;
+        }
+    }
+}

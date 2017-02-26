@@ -15,7 +15,9 @@ export {
     clickListener,
     getTimeComplete,
     checkQuery,
-    appBlur
+    appBlur,
+    jsonp,
+    findKeys
 };
 
 // JS ready
@@ -205,4 +207,38 @@ const appBlur = function appBlur() {
   // set the initial state (but only if browser supports the Page Visibility API)
   if( document[hidden] !== undefined )
     onchange({type: document[hidden] ? "blur" : "focus"});
+}
+
+// Creates JSONP requests
+const jsonp = function jsonp(uri){
+    return new Promise(function(resolve, reject){
+        var id = '_' + Math.round(10000 * Math.random());
+        var callbackName = 'jsonp_callback_' + id;
+        window[callbackName] = function(data){
+            delete window[callbackName];
+            var ele = document.getElementById(id);
+            ele.parentNode.removeChild(ele);
+            resolve(data);
+        }
+
+        var src = uri + '&callback=' + callbackName;
+        var script = document.createElement('script');
+        script.src = src;
+        script.id = id;
+        script.addEventListener('error', reject);
+        (document.getElementsByTagName('head')[0] || document.body || document.documentElement).appendChild(script);
+    });
+}
+
+// Find all keys in object ! Potentially cyclicle !
+const findKeys = function findKeys(obj, key) {
+    let val = obj[key];
+    let keysList = [];
+
+    for (val in obj){
+        if (obj[val] === key){
+            keysList.push(obj[val]);
+        }
+    }
+    return keysList;
 }

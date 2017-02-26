@@ -1,0 +1,57 @@
+// Modal
+// ============
+// Styling for modal
+
+.m-modal {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    padding: 0 $size-s;
+
+    .inner {
+        @extend .m-card;
+        z-index: $z-l;
+        position: relative;
+        top: 50%;
+        width: 100%;
+        left: -12px;
+        padding-bottom: 20px;
+        transform: translateY(-50%);
+
+        header {
+            padding-top: $size-s;
+            border-bottom: 1px solid #ddd;
+
+            h2 {
+                @extend .icon;
+                @extend .icon-book;
+            }
+        }
+    }
+    .close {
+        @extend .icon;
+        @extend .icon-cancel-circled2;
+        position: absolute;
+        font-size: $font-l;
+        top: 0;
+        right: $size-s;
+        color: $clr-tertiary;
+    }
+    p {
+        text-transform: capitalize;
+        font-size: $font-l;
+        font-weight: 400;
+        margin-top: $size-s;
+        padding-bottom: 0;
+    }
+    .dictionary-definitions {
+
+        li {
+            text-transform: capitalize;
+
+            &:nth-of-type(1n+4) {
+                display: none;
+            }
+        }
+    }
+}

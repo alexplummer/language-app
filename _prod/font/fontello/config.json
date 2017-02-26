@@ -7,10 +7,52 @@
   "ascent": 850,
   "glyphs": [
     {
-      "uid": "acf41aa4018e58d49525665469e35665",
-      "css": "thumbs-up",
+      "uid": "6083c8aa5e3345476a24a28ac1afaa61",
+      "css": "cog",
+      "code": 59393,
+      "src": "elusive"
+    },
+    {
+      "uid": "d73eceadda1f594cec0536087539afbf",
+      "css": "heart",
       "code": 59392,
       "src": "fontawesome"
+    },
+    {
+      "uid": "20fc52f9a88bb7bda023ef209acac095",
+      "css": "graduation-cap",
+      "code": 61853,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "9755f76110ae4d12ac5f9466c9152031",
+      "css": "book",
+      "code": 59394,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "83458acd9f38d03ec0226ce82a83c0f4",
+      "css": "tint",
+      "code": 59395,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "d06b13f30947afbbdae6977413144183",
+      "css": "garden",
+      "code": 59418,
+      "src": "maki"
+    },
+    {
+      "uid": "b59b3b618699b467541f631edd5a02ed",
+      "css": "volume",
+      "code": 59396,
+      "src": "elusive"
+    },
+    {
+      "uid": "74415da8e36ed0afcea9b2b1454f4176",
+      "css": "cancel-circled2",
+      "code": 59397,
+      "src": "elusive"
     }
   ]
 }

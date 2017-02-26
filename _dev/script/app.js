@@ -2,7 +2,7 @@
 // Imports
 import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
 import { getListOfTerms, updateDataCount } from 'termCreation';
-import { revealedBtnHandler } from 'termInteraction';
+import { revealedBtnHandler, dictionaryLookup } from 'termInteraction';
 import { viewCreate, addHearts, setScore } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
 import appData from 'verbs';
@@ -106,7 +106,10 @@ const appBuildHandler = function appBuildHandler() {
     // Else get new  
     else {
         pickedTerms = getListOfTerms();
-        
+
+        // Clear daily goals
+        delete ops.storedData.revealedTermCount;
+
         // Set daily limit
         ops.storedData.revealDailyBonus = ops.storedData.revealDailyBonus || {};
         // Reset daily reveal bonus
@@ -127,12 +130,16 @@ const appBuildHandler = function appBuildHandler() {
 
     // Handles events for revealed terms
     revealedBtnHandler();
+    dictionaryLookup();
 
     // Keep query active each day
     ops.storedData.queryComplete = ops.storedData.queryComplete || {};
 
     if (ops.storedData.newDay === true) {
+        // Reset daily counters
         delete ops.storedData.dailyQuery;
+        delete ops.storedData.revealCountdowns;
+
         ops.storedData.queryComplete = false;
         ops.storedData.remindedTerms = ops.storedData.remindedTerms || {}
 
@@ -142,7 +149,7 @@ const appBuildHandler = function appBuildHandler() {
         }
     }
     // Create query if revealed terms
-    if (ops.storedData.revealedTermCount !== undefined && ops.storedData.queryComplete === false) {
+    if (ops.storedData.viewedTerms !== undefined && ops.storedData.queryComplete === false) {
         createNewQuery();
     }
 

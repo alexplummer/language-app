@@ -3,18 +3,18 @@
 // ============
 // Colour scheme variables
 
-$clr-primary:   #023059;
+$clr-primary:   #1b2e65;
 $clr-secondary: #1A56A5;
-$clr-tertiary:  #F70042;
-$clr-hlight:    #F2B604;
+$clr-tertiary:  #f7004e;
+$clr-hlight:    #eca90b;
 $clr-shade:     #3F4747;
 
 $clr-link: $clr-hlight;
 $clr-link-hover: lighten($clr-link, 10%);
 
 $clr-light:   #BED4D2;
-$clr-lighter: #D8E7E6;
-$clr-dark:    #666666;
+$clr-lighter: #eee;
+$clr-dark:    #574b5d;
 $clr-darker:  #333333;
 
 $clr-primary-textoverlay:   #FFFFFF;
@@ -28,9 +28,9 @@ $clr-shade-textoverlay:     #FFFFFF;
 // ============
 // Font family definitions
 
-$font-header: 'Montserrat', sans-serif;
-$font-body:   'Montserrat', sans-serif;
-$font-quote:  'Montserrat', sans-serif;
+$font-header: 'Nunito', sans-serif;
+$font-body:   'Nunito', sans-serif;
+$font-quote:  'Nunito', sans-serif;
 
 // Modify irregular xheight fonts
 $xheight-header: 1;
@@ -83,3 +83,14 @@ $container-max: 1376px;
 $grid-columns: 12;
 $gutter-width: $size-l;
 $outer-margin: $size-m;
+
+
+// Z-index
+// ============
+// Structured Z-index
+
+$z-max: 1000;
+$z-l: 100;
+$z-m: 50;
+$z-s: 10;
+$z-min: 0;
