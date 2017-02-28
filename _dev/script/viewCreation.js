@@ -35,7 +35,7 @@ const viewCreate = function viewCreate(termsToCreate) {
         let newHolder =
             `<div class="m-term-wrapper ${termValue}">
                 <p class="term-holder">${termValue}</p>
-                <div class="theme-holder"></div>
+                <div class="theme-holder"><p class="symbol-holder"></p></div>
                 <div class="right">
                     <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${ops.revealDailyBonusTarget}</p>
                     <button class="reveal">Reveal</button>
@@ -68,7 +68,15 @@ const viewCreate = function viewCreate(termsToCreate) {
             let pickedColour = ops.storedData.viewedTerms[termValue].colour;
             // Add colour to object
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+            termWrapper.querySelector('.theme-holder').classList.add('bg-active');
             termWrapper.querySelector('.term-holder').style.color = "#fff";
+        }
+        // Check storage for assigned symbol
+        if (ops.storedData.viewedTerms[termValue] !== undefined && ops.storedData.viewedTerms[termValue].symbol !== undefined) {
+            let termWrapper = document.querySelector('.' + termValue + '');
+            let pickedSymbol = ops.storedData.viewedTerms[termValue].symbol;
+            // Add symbol to object
+            termWrapper.querySelector('.symbol-holder').innerHTML = pickedSymbol;
         }
     }
 

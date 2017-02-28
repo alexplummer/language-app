@@ -29,6 +29,20 @@
         height: 100%;
         left: 0;
         z-index: $z-m - 1;
+        overflow: hidden;
+
+        .symbol-holder {
+            font-size: 160px;
+            transform: rotate(30deg);
+            display: inline-block;
+            color: rgba(0,0,0,0.2);
+            position: relative;
+            top: 30px;
+            left: 0;
+        }
+        &.bg-active .symbol-holder {
+            color: rgba(250,250,250,0.2);
+        }
     }
     .right {
         float: right;

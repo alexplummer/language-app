@@ -2,7 +2,7 @@
 // Imports
 import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
 import { getListOfTerms } from 'termCreation';
-import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal } from 'termInteraction';
+import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol } from 'termInteraction';
 import { viewCreate, addHearts, setScore } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
 import appData from 'verbs';
@@ -133,6 +133,7 @@ const appBuildHandler = function appBuildHandler() {
     dictionaryLookup();
     textToSpeech();
     addColour();
+    pickSymbol();
     hideModal();
 
     // Keep query active each day

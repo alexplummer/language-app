@@ -1834,7 +1834,7 @@ var app = function () {
                 }
 
                 // Create terms HTML
-                var newHolder = '<div class="m-term-wrapper ' + termValue + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"></div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + ops$1.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
+                var newHolder = '<div class="m-term-wrapper ' + termValue + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"><p class="symbol-holder"></p></div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + ops$1.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
 
                 viewHTML += newHolder;
             }
@@ -1875,7 +1875,15 @@ var app = function () {
                     var pickedColour = ops$1.storedData.viewedTerms[_termValue].colour;
                     // Add colour to object
                     termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+                    termWrapper.querySelector('.theme-holder').classList.add('bg-active');
                     termWrapper.querySelector('.term-holder').style.color = "#fff";
+                }
+                // Check storage for assigned symbol
+                if (ops$1.storedData.viewedTerms[_termValue] !== undefined && ops$1.storedData.viewedTerms[_termValue].symbol !== undefined) {
+                    var _termWrapper = document.querySelector('.' + _termValue + '');
+                    var pickedSymbol = ops$1.storedData.viewedTerms[_termValue].symbol;
+                    // Add symbol to object
+                    _termWrapper.querySelector('.symbol-holder').innerHTML = pickedSymbol;
                 }
             }
 
@@ -2321,6 +2329,18 @@ var app = function () {
         }
     };
 
+    // Allows for text to speech
+    var textToSpeech = function textToSpeech() {
+
+        var termHolder = document.querySelectorAll('.term-holder');
+
+        clickListener(termHolder, function (i) {
+            var speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
+            speech.lang = "it";
+            window.speechSynthesis.speak(speech);
+        });
+    };
+
     // Retrieves dictionary references
     var dictionaryLookup = function dictionaryLookup() {
 
@@ -2334,8 +2354,9 @@ var app = function () {
             modal.classList.remove('hidden');
             document.querySelector('.container').classList.add('modal-active');
 
-            var view = '<header>\n                        <a class="close" href="#"></a>\n                        <h2 class="dictionary">Dictionary definitions</h2>\n                    </header>\n                    <p>' + term + ':</p>\n                    <ul class="definitions">\n                    </ul>';
-            modal.querySelector('.inner').innerHTML += view;
+            var view = '<header>\n                        <h2 class="dictionary">Dictionary definitions</h2>\n                    </header>\n                    <p>' + term + ':</p>\n                    <ul class="definitions">\n                    </ul>';
+
+            modal.querySelector('.content').innerHTML += view;
             var definitionHolder = modal.querySelector('.definitions');
 
             // Make request to Glosbe
@@ -2374,20 +2395,6 @@ var app = function () {
                 }
             });
         });
-        // Reassign hide modal
-        hideModal();
-    };
-
-    // Allows for text to speech
-    var textToSpeech = function textToSpeech() {
-
-        var termHolder = document.querySelectorAll('.term-holder');
-
-        clickListener(termHolder, function (i) {
-            var speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
-            speech.lang = "it";
-            window.speechSynthesis.speak(speech);
-        });
     };
 
     // Adds colours to term holders
@@ -2406,10 +2413,10 @@ var app = function () {
             var termHolder = colourBtn[i].parentNode.parentNode.parentNode;
             var term = colourBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
 
-            var view = '<header>\n                        <a class="close" href="#"></a>\n                        <h2 class="colour">Colour picker</h2>\n                    </header>\n                    <p>Click below to add a colour for "<span class="colour-term">' + term + '</span>":</p>\n                    <ul class="colour-wrap">\n                        <li><a href="#" data-colour="#1abc9c"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#3498db"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#9b59b6"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#f1c40f"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e67e22"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e74c3c"></a></li>\n                    </ul>';
+            var view = '<header>\n                        <h2 class="colour">Colour picker</h2>\n                    </header>\n                    <p>Click below to add a colour for "<span class="colour-term">' + term + '</span>":</p>\n                    <ul class="colour-wrap">\n                        <li><a href="#" data-colour="#1abc9c"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#3498db"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#9b59b6"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#f1c40f"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e67e22"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e74c3c"></a></li>\n                    </ul>';
 
             // Add view
-            modal.querySelector('.inner').innerHTML += view;
+            modal.querySelector('.content').innerHTML += view;
 
             var coloursHolder = modal.querySelector('.colour-wrap');
             // Add colour vars
@@ -2427,6 +2434,7 @@ var app = function () {
                 var pickedColour = colours[i].getAttribute('data-colour');
                 // Add colour to object
                 termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+                termWrapper.querySelector('.theme-holder').classList.add('bg-active');
                 termWrapper.querySelector('.term-holder').style.color = "#fff";
                 // Set storage
                 ops$1.storedData.viewedTerms[term].colour = pickedColour;
@@ -2435,8 +2443,69 @@ var app = function () {
                 hideModal(true);
             });
         }
-        // Reassign hide modal
-        hideModal();
+    };
+
+    // Symbol picker
+    var pickSymbol = function pickSymbol() {
+        var modal = document.querySelector('.m-modal');
+        var symbolBtn = document.querySelectorAll('.symbol');
+        var symbolRanges = [[0x2600, 0x26FF], [0x1200, 0x135A], [0xA000, 0xA48C]];
+        var symbolHTML = "<tr>";
+        var k = 0;
+
+        for (var j = 0; j < symbolRanges.length; j++) {
+
+            for (var i = symbolRanges[j][0]; i < symbolRanges[j][1]; i++) {
+
+                if (k % 5 === 0 && k != 0) {
+                    symbolHTML += '</tr><tr>';
+                }
+
+                var symbol = String.fromCodePoint(i);
+                symbolHTML += '<td><p>' + symbol + '</p></td>';
+                k++;
+
+                if (i === symbolRanges[j][1] - 1) {
+                    symbolHTML += "</tr>";
+                }
+            }
+        }
+
+        clickListener(symbolBtn, function (i) {
+            // Bring up modal
+            modal.classList.remove('hidden');
+            document.querySelector('.container').classList.add('modal-active');
+
+            var termHolder = symbolBtn[i].parentNode.parentNode.parentNode;
+            var term = symbolBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
+
+            var view = '<header>\n                        <h2 class="symbol">Glyph picker</h2>\n                    </header>\n                    <p>Click below to add a glyph for "<span class="symbol-term">' + term + '</span>":</p>\n                    <div class="symbol-wrap">\n                        <table>' + symbolHTML + '</table>\n                    </div>';
+
+            // Add view
+            modal.querySelector('.content').innerHTML += view;
+
+            symbolListener();
+        });
+        // Check for clicked symbol
+        function symbolListener() {
+            var term = document.querySelector('.symbol-term').innerHTML;
+            var termWrapper = document.querySelector('.' + term + '');
+            var pickedSymbol = "";
+
+            modal.getElementsByTagName('table')[0].addEventListener('click', function (e) {
+                e = e || window.event;
+                var target = e.target || e.srcElement;
+                pickedSymbol = target.innerHTML.replace(/(<p[^>]+?>|<p>|<\/p>)/img, "");
+
+                // Add symbol to object
+                termWrapper.querySelector('.symbol-holder').innerHTML = pickedSymbol;
+                // Set storage
+                ops$1.storedData.viewedTerms[term].symbol = pickedSymbol;
+                localforage.setItem('ops.storedData', ops$1.storedData);
+                // Hide modal
+                hideModal(true);
+            }, false);
+        }
     };
 
     // Hide modal
@@ -2456,7 +2525,7 @@ var app = function () {
         function closeModal() {
             document.querySelector('.container').classList.remove('modal-active');
             modal.classList.add('hidden');
-            modal.querySelector('.inner').innerHTML = "";
+            modal.querySelector('.content').innerHTML = "";
         }
     };
 
@@ -2585,6 +2654,7 @@ var app = function () {
         dictionaryLookup();
         textToSpeech();
         addColour();
+        pickSymbol();
         hideModal();
 
         // Keep query active each day

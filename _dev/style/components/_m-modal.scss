@@ -45,6 +45,9 @@
         margin-top: $size-s;
         padding-bottom: 0;
 
+        span {
+            font-size: $font-l;
+        }
         &::first-letter {
             text-transform: capitalize;
         }
@@ -61,6 +64,26 @@
     }
     input {
         width: 100px;
+    }
+    .symbol-wrap {
+        max-height: 55vh;
+        overflow-y: scroll;
+        margin-top: $size-m;
+        padding-right: $size-s;
+
+        table {
+            @extend .pure-table-bordered;
+            font-size: $font-l;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            
+            p { 
+                color: #aaa;
+                margin: 0;
+                padding: 0;
+            }
+        }
     }
     .colour-wrap {
         margin-left: 0;
