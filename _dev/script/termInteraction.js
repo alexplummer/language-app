@@ -4,11 +4,10 @@ import { cl, clv, clickListener, jsonp, findKeys } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
 import { createNewQuery } from 'queryInteraction';
-import { updateDataCount } from 'termCreation';
 import { setScore, addHearts } from 'viewCreation';
 
 // Exports
-export { revealedBtnHandler, createRevealTimer, dictionaryLookup };
+export { revealedBtnHandler, createRevealTimer, dictionaryLookup, textToSpeech, addColour, hideModal };
 
 // Handles functions when reveal button clicked
 const revealedBtnHandler = function revealedBtnHandler() {
@@ -33,22 +32,15 @@ const revealedBtnHandler = function revealedBtnHandler() {
         // Show definition
         definitionWrapper.classList.remove('hidden');
 
-        // Increase count by one
-        countHolder.innerHTML = count + 1;
-
-        // Pass to updateDataCount function
-        let dataCount = updateDataCount('revealedTermCount', term, 1);
-
         // Set storedData
-        ops.storedData.revealedTermCount = dataCount;
+        ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
+        ops.storedData.viewedTerms[term] = ops.storedData.viewedTerms[term] || {};
+        ops.storedData.viewedTerms[term].viewCount = ops.storedData.viewedTerms[term].viewCount || -1;
+        ops.storedData.viewedTerms[term].viewCount += 1;
 
         // Daily reveal bonus
         let revealBonusCount;
 
-        // If no daily bonus data
-        if (ops.storedData.revealDailyBonus === undefined) {
-            ops.storedData.revealDailyBonus = {};
-        }
         // If no existing term bonus
         if (ops.storedData.revealDailyBonus[term] === undefined) {
             revealBonusCount = 1;
@@ -58,6 +50,8 @@ const revealedBtnHandler = function revealedBtnHandler() {
             revealBonusCount = ops.storedData.revealDailyBonus[term];
             revealBonusCount += 1;
         }
+        // Update DOM
+        countHolder.innerHTML = revealBonusCount;
         // If bonus is met
         if (revealBonusCount === ops.revealDailyBonusTarget) {
             // If daily bonus not already triggered
@@ -86,12 +80,9 @@ const revealedBtnHandler = function revealedBtnHandler() {
 const createRevealTimer = function createRevealTimer(revealBtn) {
 
     // If no stored data for reveal countdowns
-    if (ops.storedData.revealCountdowns === undefined) {
-        ops.storedData.revealCountdowns = {};
-    }
+    ops.storedData.revealCountdowns = ops.storedData.revealCountdowns || {};
 
     let term = [revealBtn.parentNode.parentNode.querySelector('.term-holder').innerHTML];
-
     let minutes = ops.counterMins;
     let seconds = ops.counterSecs;
     let remainingMinutes;
@@ -203,19 +194,28 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     }
 };
 
+// Retrieves dictionary references
 const dictionaryLookup = function dictionaryLookup() {
 
     let dictionaryBtn = document.querySelectorAll('.lookup');
     let modal = document.querySelector('.m-modal');
-    let definitionHolder = document.querySelector('.dictionary-definitions');
 
     clickListener(dictionaryBtn, (i) => {
         let term = dictionaryBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
-
+        
         // Bring up modal
         modal.classList.remove('hidden');
         document.querySelector('.container').classList.add('modal-active');
-        modal.getElementsByTagName('p')[0].innerHTML = term+":";
+
+        let view = `<header>
+                        <a class="close" href="#"></a>
+                        <h2 class="dictionary">Dictionary definitions</h2>
+                    </header>
+                    <p>${term}:</p>
+                    <ul class="definitions">
+                    </ul>`;
+        modal.querySelector('.inner').innerHTML += view;
+        let definitionHolder = modal.querySelector('.definitions');
 
         // Make request to Glosbe
         jsonp('https://glosbe.com/gapi/translate?from=ita&dest=eng&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
@@ -234,7 +234,7 @@ const dictionaryLookup = function dictionaryLookup() {
                     for (i in obj) {
                         if (hasOwn(i)) {
                             if (i === key) {
-                                dictionaryResponses += '<li>'+obj[i]+'</li>';
+                                dictionaryResponses += '<li>' + obj[i] + '</li>';
                             } else if ('[object Array]' === ts.call(obj[i]) || '[object Object]' === ts.call(obj[i])) {
                                 findProp(obj[i], key, out);
                             }
@@ -242,26 +242,108 @@ const dictionaryLookup = function dictionaryLookup() {
                     }
                     return out;
                 }
-
                 // Add to DOM
                 definitionHolder.innerHTML = dictionaryResponses;
             }
             catch (err) {
                 cl('error');
             }
-        })
+        });
     });
-
-    // Hide modal, clear it's contents
-    let modalClose = modal.querySelector('.close');
-
-    modalClose.addEventListener("click", () => {
-        // Hide modal
-        modal.classList.add('hidden');
-        document.querySelector('.container').classList.remove('modal-active');
-        defintionHolder.innerHTML = "";
-    })
+    // Reassign hide modal
+    hideModal();
 }
 
+// Allows for text to speech
+const textToSpeech = function textToSpeech() {
 
+    let termHolder = document.querySelectorAll('.term-holder');
 
+    clickListener(termHolder, (i) => {
+        let speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
+        speech.lang = "it";
+        window.speechSynthesis.speak(speech);
+    });
+}
+
+// Adds colours to term holders
+const addColour = function addColour() {
+    
+    let modal = document.querySelector('.m-modal');
+    let colourBtn = document.querySelectorAll('.colour');
+    let picker;
+    let colours;
+
+    clickListener(colourBtn, (i) => {
+        // Bring up modal
+        modal.classList.remove('hidden');
+        document.querySelector('.container').classList.add('modal-active');
+
+        let termHolder = colourBtn[i].parentNode.parentNode.parentNode;
+        let term = colourBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
+
+        let view = `<header>
+                        <a class="close" href="#"></a>
+                        <h2 class="colour">Colour picker</h2>
+                    </header>
+                    <p>Click below to add a colour for "<span class="colour-term">${term}</span>":</p>
+                    <ul class="colour-wrap">
+                        <li><a href="#" data-colour="#1abc9c"></a></li>
+						<li><a href="#" data-colour="#3498db"></a></li>
+						<li><a href="#" data-colour="#9b59b6"></a></li>
+						<li><a href="#" data-colour="#f1c40f"></a></li>
+						<li><a href="#" data-colour="#e67e22"></a></li>
+						<li><a href="#" data-colour="#e74c3c"></a></li>
+                    </ul>`;
+
+        // Add view
+        modal.querySelector('.inner').innerHTML += view;
+
+        let coloursHolder = modal.querySelector('.colour-wrap');
+        // Add colour vars
+        colours = coloursHolder.getElementsByTagName('a');
+        colourListener();
+    });
+
+    // Add colour function
+    function colourListener() {
+        let term = document.querySelector('.colour-term').innerHTML;
+        let termWrapper = document.querySelector('.' + term + '');
+        
+        // Pick a colour
+        clickListener(colours, (i) => {
+            let pickedColour = colours[i].getAttribute('data-colour');
+            // Add colour to object
+            termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+            termWrapper.querySelector('.term-holder').style.color = "#fff";
+            // Set storage
+            ops.storedData.viewedTerms[term].colour = pickedColour;
+            localforage.setItem('ops.storedData', ops.storedData);
+            // Hide modal
+            hideModal(true);
+        });
+    }
+    // Reassign hide modal
+    hideModal();
+}
+
+// Hide modal
+const hideModal = function hideModal(trigger) {
+    let modal = document.querySelector('.m-modal');
+    let modalClose = modal.querySelector('.close');
+
+    modalClose.addEventListener("click", (e) => {
+        e.preventDefault();
+        closeModal();
+    });
+    // Programatically close modal
+    if (trigger) {
+        closeModal();
+    }
+    // Hide modal
+    function closeModal() {
+        document.querySelector('.container').classList.remove('modal-active');
+        modal.classList.add('hidden');
+        modal.querySelector('.inner').innerHTML = "";
+    }
+}

@@ -24,17 +24,18 @@ const viewCreate = function viewCreate(termsToCreate) {
         let viewsCount;
 
         // Check storage for revealed count
-        if (ops.storedData.revealedTermCount === undefined) {
+        if (ops.storedData.revealDailyBonus === undefined) {
             viewsCount = 0;
         }
         else {
-            viewsCount = ops.storedData.revealedTermCount[value] || 0;
+            viewsCount = ops.storedData.revealDailyBonus[value] || 0;
         }
 
         // Create terms HTML
         let newHolder =
-            `<div class="m-term-wrapper">
+            `<div class="m-term-wrapper ${termValue}">
                 <p class="term-holder">${termValue}</p>
+                <div class="theme-holder"></div>
                 <div class="right">
                     <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${ops.revealDailyBonusTarget}</p>
                     <button class="reveal">Reveal</button>
@@ -51,10 +52,25 @@ const viewCreate = function viewCreate(termsToCreate) {
             </div>`;
 
         viewHTML += newHolder;
-        // Cycle for of loop
     }
     // Add to view
     ops.container.innerHTML = viewHTML;
+
+    // Add theme to previously created terms
+    for (let value of termsToCreate) {
+        let termValue = appData.terms[value].term;
+
+        // Check storage for assigned colour
+        ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
+        
+        if (ops.storedData.viewedTerms[termValue] !== undefined && ops.storedData.viewedTerms[termValue].colour !== undefined) {
+            let termWrapper = document.querySelector('.' + termValue + '');
+            let pickedColour = ops.storedData.viewedTerms[termValue].colour;
+            // Add colour to object
+            termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+            termWrapper.querySelector('.term-holder').style.color = "#fff";
+        }
+    }
 
     // Add countdown timers to term buttons
     for (let value of termsToCreate) {

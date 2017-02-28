@@ -1,8 +1,8 @@
 
 // Imports
 import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
-import { getListOfTerms, updateDataCount } from 'termCreation';
-import { revealedBtnHandler, dictionaryLookup } from 'termInteraction';
+import { getListOfTerms } from 'termCreation';
+import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal } from 'termInteraction';
 import { viewCreate, addHearts, setScore } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
 import appData from 'verbs';
@@ -18,7 +18,7 @@ let ops = {
     revealDailyBonusTarget: 3,
     wordAccuracy: 0.5,
     container: document.querySelector(".terms-wrapper"),
-    addDay: true,
+    addDay: false,
     debug: true,
     points: {
         correct: 50,
@@ -109,6 +109,7 @@ const appBuildHandler = function appBuildHandler() {
 
         // Clear daily goals
         delete ops.storedData.revealedTermCount;
+        delete ops.storedData.revealDailyBonus;
 
         // Set daily limit
         ops.storedData.revealDailyBonus = ops.storedData.revealDailyBonus || {};
@@ -123,7 +124,6 @@ const appBuildHandler = function appBuildHandler() {
     // Create opened date, daily terms, viewed terms
     ops.storedData.dateOpened = getTodaysDate();
     ops.storedData.dailyTerms = pickedTerms;
-    ops.storedData.viewedTerms = updateDataCount('viewedTerms', pickedTerms, 0);
 
     // Add to storage
     localforage.setItem('ops.storedData', ops.storedData);
@@ -131,6 +131,9 @@ const appBuildHandler = function appBuildHandler() {
     // Handles events for revealed terms
     revealedBtnHandler();
     dictionaryLookup();
+    textToSpeech();
+    addColour();
+    hideModal();
 
     // Keep query active each day
     ops.storedData.queryComplete = ops.storedData.queryComplete || {};

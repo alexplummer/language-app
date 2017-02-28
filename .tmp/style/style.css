@@ -1087,7 +1087,7 @@ dt {
 * {
   box-sizing: border-box; }
 
-.container {
+.container, .m-modal {
   box-sizing: border-box;
   max-width: 1400px;
   margin: 0 auto;
@@ -1095,19 +1095,19 @@ dt {
   padding-right: 3rem; }
 
 @media only screen and (min-width: 768px) {
-  .container {
+  .container, .m-modal {
     width: 100%; } }
 
 @media only screen and (min-width: 992px) {
-  .container {
+  .container, .m-modal {
     width: 100%; } }
 
 @media only screen and (min-width: 1200px) {
-  .container {
+  .container, .m-modal {
     width: 100%; } }
 
 @media only screen and (min-width: 1400px) {
-  .container {
+  .container, .m-modal {
     width: 1376px; } }
 
 /*!
@@ -1173,7 +1173,7 @@ striping:
 .pure-table-horizontal tbody > tr:last-child > td {
   border-bottom-width: 0; }
 
-.m-header:after, .m-term-wrapper:after, .m-term-wrapper .definition-wrapper .support-wrapper:after {
+.m-header:after, .m-modal .colour-wrap:after, .m-term-wrapper:after, .m-term-wrapper .definition-wrapper .support-wrapper:after {
   content: "";
   display: table;
   clear: both; }
@@ -1211,8 +1211,8 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
 /* csslint ignore:end */
 @font-face {
   font-family: 'fontello';
-  src: url("../font/fontello.eot?13745711");
-  src: url("../font/fontello.eot?13745711#iefix") format("embedded-opentype"), url("../font/fontello.woff2?13745711") format("woff2"), url("../font/fontello.woff?13745711") format("woff"), url("../font/fontello.ttf?13745711") format("truetype"), url("../font/fontello.svg?13745711#fontello") format("svg");
+  src: url("../font/fontello.eot?98222801");
+  src: url("../font/fontello.eot?98222801#iefix") format("embedded-opentype"), url("../font/fontello.woff2?98222801") format("woff2"), url("../font/fontello.woff?98222801") format("woff"), url("../font/fontello.ttf?98222801") format("truetype"), url("../font/fontello.svg?98222801#fontello") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1222,7 +1222,7 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?13745711#fontello') format('svg');
+    src: url('../font/fontello.svg?98222801#fontello') format('svg');
   }
 }
 */
@@ -1261,7 +1261,7 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
   content: '\e801'; }
 
 /* '' */
-.icon-book:before, .m-modal .inner header h2:before, .m-term-wrapper .definition-wrapper .helpers .lookup:before {
+.icon-book:before, .m-modal .inner header h2.dictionary:before, .m-term-wrapper .definition-wrapper .helpers .lookup:before {
   content: '\e802'; }
 
 /* '' */
@@ -1317,14 +1317,24 @@ button {
   border: 0;
   padding: 0.75rem;
   border-radius: 5px; }
+  button.disabled {
+    cursor: default; }
 
 input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 4px;
+  box-shadow: inset 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
   font-size: 1.125rem;
   background: #f5f5f5; }
 
 table {
   background: #fff;
   font-size: 0.75rem; }
+
+#color-picker-holder {
+  display: none; }
 
 .hidden {
   display: none; }
@@ -1335,7 +1345,7 @@ table {
   text-transform: uppercase;
   letter-spacing: 1px; }
 
-.container {
+.container, .m-modal {
   width: 600px;
   max-width: 100%;
   min-height: 100vh;
@@ -1398,12 +1408,11 @@ h2 {
       float: right; }
 
 .m-modal {
-  position: absolute;
-  width: 100%;
+  position: fixed;
   height: 100vh;
-  padding: 0 0.75rem; }
+  padding: 0 0.75rem;
+  z-index: 100; }
   .m-modal .inner {
-    z-index: 100;
     position: relative;
     top: 50%;
     width: 100%;
@@ -1420,15 +1429,43 @@ h2 {
     right: 0.75rem;
     color: #f7004e; }
   .m-modal p {
-    text-transform: capitalize;
     font-size: 1.5rem;
     font-weight: 400;
     margin-top: 0.75rem;
     padding-bottom: 0; }
-  .m-modal .dictionary-definitions li {
+    .m-modal p::first-letter {
+      text-transform: capitalize; }
+  .m-modal .definitions li {
     text-transform: capitalize; }
-    .m-modal .dictionary-definitions li:nth-of-type(1n+4) {
+    .m-modal .definitions li:nth-of-type(1n+4) {
       display: none; }
+  .m-modal input {
+    width: 100px; }
+  .m-modal .colour-wrap {
+    margin-left: 0; }
+    .m-modal .colour-wrap li {
+      float: left;
+      list-style: none; }
+      .m-modal .colour-wrap li a {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin: 0;
+        padding: 0;
+        margin-right: 0.75rem; }
+      .m-modal .colour-wrap li:nth-of-type(1) a {
+        background-color: #1abc9c; }
+      .m-modal .colour-wrap li:nth-of-type(2) a {
+        background-color: #3498db; }
+      .m-modal .colour-wrap li:nth-of-type(3) a {
+        background-color: #9b59b6; }
+      .m-modal .colour-wrap li:nth-of-type(4) a {
+        background-color: #f1c40f; }
+      .m-modal .colour-wrap li:nth-of-type(5) a {
+        background-color: #e67e22; }
+      .m-modal .colour-wrap li:nth-of-type(6) a {
+        background-color: #e74c3c; }
 
 .m-query-wrapper {
   padding-top: 0.75rem;
@@ -1459,12 +1496,6 @@ h2 {
     .m-query-wrapper .query-form .input-wrap {
       width: 100%;
       padding-right: 140px; }
-      .m-query-wrapper .query-form .input-wrap input {
-        width: 100%;
-        padding: 0.75rem;
-        border-radius: 4px;
-        box-shadow: inset 0 2px 3px 0 rgba(0, 0, 0, 0.1);
-        border: 1px solid #ccc; }
     .m-query-wrapper .query-form button {
       position: absolute;
       top: 0;
@@ -1486,15 +1517,26 @@ h2 {
     font-size: 1.5rem;
     text-transform: capitalize;
     position: relative;
+    z-index: 50;
     top: 30px; }
     .m-term-wrapper .term-holder:before {
       cursor: pointer;
       margin-right: 0.75rem; }
+  .m-term-wrapper .theme-holder {
+    position: absolute;
+    opacity: 0.7;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    z-index: 49; }
   .m-term-wrapper .right {
     float: right;
+    position: relative;
+    z-index: 50;
     border-left: 1px solid #ddd;
     padding: 0 0.75rem;
-    margin-right: -0.75rem; }
+    margin-right: -0.75rem;
+    background: #fff; }
   .m-term-wrapper .term-views {
     text-align: center;
     font-size: 1.125rem; }
@@ -1508,7 +1550,8 @@ h2 {
     box-shadow: inset 0 5px 10px 0 rgba(0, 0, 0, 0.05);
     background: #f5f5f5;
     border-top: 1px solid #ddd;
-    position: relative; }
+    position: relative;
+    z-index: 50; }
     .m-term-wrapper .definition-wrapper .definition-holder {
       font-size: 1.5rem;
       text-transform: capitalize;

@@ -3,14 +3,13 @@
 // Styling for modal
 
 .m-modal {
-    position: absolute;
-    width: 100%;
+    position: fixed;
     height: 100vh;
     padding: 0 $size-s;
+    z-index: $z-l;
 
     .inner {
         @extend .m-card;
-        z-index: $z-l;
         position: relative;
         top: 50%;
         width: 100%;
@@ -24,7 +23,10 @@
 
             h2 {
                 @extend .icon;
-                @extend .icon-book;
+
+                &.dictionary {
+                    @extend .icon-book;
+                }
             }
         }
     }
@@ -38,19 +40,62 @@
         color: $clr-tertiary;
     }
     p {
-        text-transform: capitalize;
         font-size: $font-l;
         font-weight: 400;
         margin-top: $size-s;
         padding-bottom: 0;
+
+        &::first-letter {
+            text-transform: capitalize;
+        }
     }
-    .dictionary-definitions {
+    .definitions {
 
         li {
             text-transform: capitalize;
 
             &:nth-of-type(1n+4) {
                 display: none;
+            }
+        }
+    }
+    input {
+        width: 100px;
+    }
+    .colour-wrap {
+        margin-left: 0;
+        @extend %cf;
+
+        li {
+            float: left; 
+            list-style: none;
+
+            a {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin: 0;
+                padding: 0;
+                margin-right: $size-s;
+            }
+            &:nth-of-type(1) a {
+                background-color: #1abc9c;
+            }
+            &:nth-of-type(2) a {
+                background-color: #3498db;
+            }
+            &:nth-of-type(3) a {
+                background-color: #9b59b6;
+            }
+            &:nth-of-type(4) a {
+                background-color: #f1c40f;
+            }
+            &:nth-of-type(5) a {
+                background-color: #e67e22;
+            }
+            &:nth-of-type(6) a {
+                background-color: #e74c3c;
             }
         }
     }

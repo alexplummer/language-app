@@ -4,7 +4,6 @@ import { cl, clv, pickRandom, checkQuery } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
 import { addHearts } from 'viewCreation';
-import { updateDataCount } from 'termCreation';
 
 // Exports
 export { createNewQuery };
@@ -12,29 +11,23 @@ export { createNewQuery };
 // Sets up query
 const createNewQuery = function createNewQuery() {
 
-    // If no stored data for reveal countdowns
-    if (ops.storedData.queryTerms === undefined) {
-        ops.storedData.queryTerms = {};
-    }
-
     // Pick a term for query
     let randomTerm;
     let i = 0;
 
+    // If no stored data for reveal countdowns
+    ops.storedData.queryTerms = ops.storedData.queryTerms || {};
+
     // Set correctTerms storage if not exists
-    if (ops.storedData.correctTerms === undefined) {
-        ops.storedData.correctTerms = {};
-    }
+    ops.storedData.correctTerms = ops.storedData.correctTerms || {};
 
     // Set incorrectTerms storage if not exists
-    if (ops.storedData.incorrectTerms === undefined) {
-        ops.storedData.incorrectTerms = {};
-    }
+    ops.storedData.incorrectTerms = ops.storedData.incorrectTerms || {};
 
     // Prevent choosing query already answered correct
     while (i < Object.keys(ops.storedData.viewedTerms).length) {
 
-        if (ops.storedData.dailyQuery === undefined) {  
+        if (ops.storedData.dailyQuery === undefined) {
             // Pick a random term
             randomTerm = pickRandom(ops.storedData.viewedTerms);
             ops.storedData.dailyQuery = randomTerm;
@@ -65,7 +58,7 @@ const createNewQuery = function createNewQuery() {
             document.querySelector('.result-holder').classList.remove('hidden');
         }
     }
-    
+
     // Build the query
     function queryHandler() {
         let queryWrapper = document.querySelector('.m-query-wrapper');
@@ -96,7 +89,7 @@ const createNewQuery = function createNewQuery() {
                 winCase();
             }
             else if (checkQuery(queryInput, definition) === "mispelled") {
-                winCase("mispelled");
+                winCase("mispelled", queryInput);
             }
             else if (queryInput === "") {
                 resultHolder.innerHTML = "Enter a definition.";
@@ -108,19 +101,19 @@ const createNewQuery = function createNewQuery() {
         });
 
         // If definition is right
-        function winCase(spelling) {
+        function winCase(spelling, input) {
             // Hide the query input
             document.querySelector('.query-form').classList.add('hidden');
             heartHolder.classList.add('hidden');
             // If mispelled
             if (spelling === "mispelled") {
                 // Display win message
-                resultHolder.innerHTML = "Well done but check your spelling, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                resultHolder.innerHTML = "Well done but check your spelling (" + input + "), the definition is <strong>\"" + definition + "\"</strong>";
                 resultHolder.classList.remove('hidden');
             }
             else {
                 // Display win message
-                resultHolder.innerHTML = "Well done, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                resultHolder.innerHTML = "Well done, the definition is <strong>\"" + definition + "\"</strong>";
                 resultHolder.classList.remove('hidden');
             }
             // Add to score

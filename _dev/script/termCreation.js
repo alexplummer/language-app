@@ -5,7 +5,7 @@ import appData from 'verbs';
 import ops from 'app';
 
 // Exports
-export { getListOfTerms, updateDataCount };
+export { getListOfTerms };
 
 // Creates a list of terms
 const getListOfTerms = function getListOfTerms() {
@@ -67,6 +67,7 @@ const getListOfTerms = function getListOfTerms() {
         }
         // Choose terms to  display
         while (i < ops.displayedTerms) {
+            ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
             let viewedLength = Object.keys(ops.storedData.viewedTerms).length;
 
             // If all terms viewed
@@ -109,8 +110,6 @@ const getListOfTerms = function getListOfTerms() {
                     // Ensure term not viewed before
                     if (!ops.storedData.viewedTerms.hasOwnProperty(pickedTerm)) {
                         listOfTerms.push(pickedTerm);
-                        ops.storedData.viewedTerms[pickedTerm] = 0;
-                        localforage.setItem('ops.storedData', ops.storedData);
                         i++;
                     }
                 }
@@ -124,35 +123,4 @@ const getListOfTerms = function getListOfTerms() {
     }
     // Return final list of terms
     return listOfTerms;
-}
-
-// Handles count of a type of data
-const updateDataCount = function (dataType, termsToAdjust, baseValue) {
-
-    let dataTypeHolder = ops.storedData[dataType] || {};
-
-    // If no viewed data, create new 
-    if (!ops.storedData.hasOwnProperty(dataType)) {
-
-        for (let value of termsToAdjust) {
-            dataTypeHolder[value] = baseValue;
-        }
-    }
-    // If viewed data exists
-    else {
-        // If viewed term exists, update count
-        for (let value of termsToAdjust) {
-
-            if (ops.storedData[dataType].hasOwnProperty(value)) {
-                let count = ops.storedData[dataType][value];
-                count += 1;
-                dataTypeHolder[value] = count;
-            }
-            else {
-                dataTypeHolder[termsToAdjust] = baseValue;
-            }
-        }
-    }
-    // Pass back final object
-    return dataTypeHolder;
 }

@@ -17,7 +17,9 @@ export {
     checkQuery,
     appBlur,
     jsonp,
-    findKeys
+    findKeys,
+    updateDataCount,
+    getCSS
 };
 
 // JS ready
@@ -113,7 +115,7 @@ function resetData() {
 function clickListener(elements, clickFunction) {
 
     for (let i = 0; i < elements.length; i++) {
-        elements[i].addEventListener("click", () => { clickFunction(i) });
+        elements[i].addEventListener("click", (e) => { e.preventDefault(); clickFunction(i) });
     }
 }
 
@@ -241,4 +243,45 @@ const findKeys = function findKeys(obj, key) {
         }
     }
     return keysList;
+}
+
+// Handles count of a type of data
+const updateDataCount = function updateDataCount(objectParent, newProps, baseValue) {
+
+    // If no viewed data, create new 
+    if (!objectParent.hasOwnProperty(newProps)) {
+
+        for (let value of newProps) {
+            objectParent[value] = baseValue;
+        }
+    }
+    // If viewed data exists
+    else {
+        // Update count
+        for (let value of newProps) {
+
+            if (objectParent.hasOwnProperty(value)) {
+                objectParent[value] += 1;
+            }
+            else {
+                objectParent[value] = baseValue;
+            }
+        }
+    }
+    // Pass back final object
+    return objectParent;
+}
+
+// Returns a CSS property for an elements
+const getCSS = function getCSS(style, selector) {
+
+    for (let i = 0; i < document.styleSheets.length; i++) {
+        let mysheet = document.styleSheets[i];
+        let myrules = mysheet.cssRules ? mysheet.cssRules : mysheet.rules;
+        for (let j = 0; j < myrules.length; j++) {
+            if (myrules[j].selectorText && myrules[j].selectorText.toLowerCase() === selector) {
+                return myrules[j].style[style];
+            }
+        }
+    }
 }

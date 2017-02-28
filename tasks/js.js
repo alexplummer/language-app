@@ -69,7 +69,7 @@ gulp.task('js', () => {
 			plugins.rollupPluginIncludepaths({paths:[paths.dev+'/script/']})
 		]
 	})
-	.on('error', plugins.util.log)
+	//.on('error', plugins.util.log)
 	// Prepare files for sourcemap
 	.pipe(plugins.vinylSourceStream('app.js', paths.dev+'/script/'))
 	.pipe(plugins.vinylBuffer())

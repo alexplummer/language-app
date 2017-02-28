@@ -16,7 +16,6 @@
     "bower_components"
   ],
   "devDependencies": {
-    "localforage": "^1.4.3",
-    "fetch": "^2.0.2"
+    "localforage": "^1.4.3"
   }
 }

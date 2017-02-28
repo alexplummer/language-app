@@ -79,8 +79,8 @@ var app = function () {
     // Adds click functionality to selectors
     function clickListener(elements, clickFunction) {
         var _loop = function _loop(i) {
-            elements[i].addEventListener("click", function () {
-                clickFunction(i);
+            elements[i].addEventListener("click", function (e) {
+                e.preventDefault();clickFunction(i);
             });
         };
 
@@ -1745,6 +1745,7 @@ var app = function () {
                 }
                 // Choose terms to  display
                 while (i < ops$1.displayedTerms) {
+                    ops$1.storedData.viewedTerms = ops$1.storedData.viewedTerms || {};
                     var viewedLength = Object.keys(ops$1.storedData.viewedTerms).length;
 
                     // If all terms viewed
@@ -1787,8 +1788,6 @@ var app = function () {
                                 // Ensure term not viewed before
                                 if (!ops$1.storedData.viewedTerms.hasOwnProperty(_pickedTerm)) {
                                     listOfTerms.push(_pickedTerm);
-                                    ops$1.storedData.viewedTerms[_pickedTerm] = 0;
-                                    localforage.setItem('ops.storedData', ops$1.storedData);
                                     i++;
                                 }
                             }
@@ -1804,78 +1803,6 @@ var app = function () {
         return listOfTerms;
     };
 
-    // Handles count of a type of data
-    var updateDataCount = function updateDataCount(dataType, termsToAdjust, baseValue) {
-
-        var dataTypeHolder = ops$1.storedData[dataType] || {};
-
-        // If no viewed data, create new 
-        if (!ops$1.storedData.hasOwnProperty(dataType)) {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-
-                for (var _iterator = termsToAdjust[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var value = _step.value;
-
-                    dataTypeHolder[value] = baseValue;
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-        }
-        // If viewed data exists
-        else {
-                // If viewed term exists, update count
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
-
-                try {
-                    for (var _iterator2 = termsToAdjust[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var _value = _step2.value;
-
-
-                        if (ops$1.storedData[dataType].hasOwnProperty(_value)) {
-                            var count = ops$1.storedData[dataType][_value];
-                            count += 1;
-                            dataTypeHolder[_value] = count;
-                        } else {
-                            dataTypeHolder[termsToAdjust] = baseValue;
-                        }
-                    }
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-                    } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
-                        }
-                    }
-                }
-            }
-        // Pass back final object
-        return dataTypeHolder;
-    };
-
     // Imports
     // Create app view
     var viewCreate = function viewCreate(termsToCreate) {
@@ -1883,13 +1810,13 @@ var app = function () {
         var viewHTML = "";
 
         // Create HTML for terms
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
         try {
-            for (var _iterator3 = termsToCreate[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var value = _step3.value;
+            for (var _iterator = termsToCreate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var value = _step.value;
 
 
                 // Get terms and definitions from data
@@ -1900,44 +1827,81 @@ var app = function () {
                 var viewsCount = void 0;
 
                 // Check storage for revealed count
-                if (ops$1.storedData.revealedTermCount === undefined) {
+                if (ops$1.storedData.revealDailyBonus === undefined) {
                     viewsCount = 0;
                 } else {
-                    viewsCount = ops$1.storedData.revealedTermCount[value] || 0;
+                    viewsCount = ops$1.storedData.revealDailyBonus[value] || 0;
                 }
 
                 // Create terms HTML
-                var newHolder = '<div class="m-term-wrapper">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + ops$1.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
+                var newHolder = '<div class="m-term-wrapper ' + termValue + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"></div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + ops$1.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
 
                 viewHTML += newHolder;
-                // Cycle for of loop
             }
             // Add to view
         } catch (err) {
-            _didIteratorError3 = true;
-            _iteratorError3 = err;
+            _didIteratorError = true;
+            _iteratorError = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                    _iterator3.return();
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
                 }
             } finally {
-                if (_didIteratorError3) {
-                    throw _iteratorError3;
+                if (_didIteratorError) {
+                    throw _iteratorError;
                 }
             }
         }
 
         ops$1.container.innerHTML = viewHTML;
 
-        // Add countdown timers to term buttons
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        // Add theme to previously created terms
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
         try {
-            for (var _iterator4 = termsToCreate[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var _value2 = _step4.value;
+            for (var _iterator2 = termsToCreate[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var _value = _step2.value;
+
+                var _termValue = appData.terms[_value].term;
+
+                // Check storage for assigned colour
+                ops$1.storedData.viewedTerms = ops$1.storedData.viewedTerms || {};
+
+                if (ops$1.storedData.viewedTerms[_termValue] !== undefined && ops$1.storedData.viewedTerms[_termValue].colour !== undefined) {
+                    var termWrapper = document.querySelector('.' + _termValue + '');
+                    var pickedColour = ops$1.storedData.viewedTerms[_termValue].colour;
+                    // Add colour to object
+                    termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+                    termWrapper.querySelector('.term-holder').style.color = "#fff";
+                }
+            }
+
+            // Add countdown timers to term buttons
+        } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
+                }
+            } finally {
+                if (_didIteratorError2) {
+                    throw _iteratorError2;
+                }
+            }
+        }
+
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+            for (var _iterator3 = termsToCreate[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                var _value2 = _step3.value;
 
 
                 // Check if timer data exists
@@ -1960,16 +1924,16 @@ var app = function () {
                 }
             }
         } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                    _iterator4.return();
+                if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                    _iterator3.return();
                 }
             } finally {
-                if (_didIteratorError4) {
-                    throw _iteratorError4;
+                if (_didIteratorError3) {
+                    throw _iteratorError3;
                 }
             }
         }
@@ -2014,24 +1978,18 @@ var app = function () {
     // Sets up query
     var createNewQuery = function createNewQuery() {
 
-        // If no stored data for reveal countdowns
-        if (ops$1.storedData.queryTerms === undefined) {
-            ops$1.storedData.queryTerms = {};
-        }
-
         // Pick a term for query
         var randomTerm = void 0;
         var i = 0;
 
+        // If no stored data for reveal countdowns
+        ops$1.storedData.queryTerms = ops$1.storedData.queryTerms || {};
+
         // Set correctTerms storage if not exists
-        if (ops$1.storedData.correctTerms === undefined) {
-            ops$1.storedData.correctTerms = {};
-        }
+        ops$1.storedData.correctTerms = ops$1.storedData.correctTerms || {};
 
         // Set incorrectTerms storage if not exists
-        if (ops$1.storedData.incorrectTerms === undefined) {
-            ops$1.storedData.incorrectTerms = {};
-        }
+        ops$1.storedData.incorrectTerms = ops$1.storedData.incorrectTerms || {};
 
         // Prevent choosing query already answered correct
         while (i < Object.keys(ops$1.storedData.viewedTerms).length) {
@@ -2096,7 +2054,7 @@ var app = function () {
                 if (checkQuery(queryInput, definition) === true) {
                     winCase();
                 } else if (checkQuery(queryInput, definition) === "mispelled") {
-                    winCase("mispelled");
+                    winCase("mispelled", queryInput);
                 } else if (queryInput === "") {
                     resultHolder.innerHTML = "Enter a definition.";
                     resultHolder.classList.remove('hidden');
@@ -2106,18 +2064,18 @@ var app = function () {
             });
 
             // If definition is right
-            function winCase(spelling) {
+            function winCase(spelling, input) {
                 // Hide the query input
                 document.querySelector('.query-form').classList.add('hidden');
                 heartHolder.classList.add('hidden');
                 // If mispelled
                 if (spelling === "mispelled") {
                     // Display win message
-                    resultHolder.innerHTML = "Well done but check your spelling, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                    resultHolder.innerHTML = "Well done but check your spelling (" + input + "), the definition is <strong>\"" + definition + "\"</strong>";
                     resultHolder.classList.remove('hidden');
                 } else {
                     // Display win message
-                    resultHolder.innerHTML = "Well done, the definition for <strong>\"" + randomTerm + "\"</strong> is <strong>\"" + definition + "\"</strong>";
+                    resultHolder.innerHTML = "Well done, the definition is <strong>\"" + definition + "\"</strong>";
                     resultHolder.classList.remove('hidden');
                 }
                 // Add to score
@@ -2201,22 +2159,15 @@ var app = function () {
             // Show definition
             definitionWrapper.classList.remove('hidden');
 
-            // Increase count by one
-            countHolder.innerHTML = count + 1;
-
-            // Pass to updateDataCount function
-            var dataCount = updateDataCount('revealedTermCount', term, 1);
-
             // Set storedData
-            ops$1.storedData.revealedTermCount = dataCount;
+            ops$1.storedData.viewedTerms = ops$1.storedData.viewedTerms || {};
+            ops$1.storedData.viewedTerms[term] = ops$1.storedData.viewedTerms[term] || {};
+            ops$1.storedData.viewedTerms[term].viewCount = ops$1.storedData.viewedTerms[term].viewCount || -1;
+            ops$1.storedData.viewedTerms[term].viewCount += 1;
 
             // Daily reveal bonus
             var revealBonusCount = void 0;
 
-            // If no daily bonus data
-            if (ops$1.storedData.revealDailyBonus === undefined) {
-                ops$1.storedData.revealDailyBonus = {};
-            }
             // If no existing term bonus
             if (ops$1.storedData.revealDailyBonus[term] === undefined) {
                 revealBonusCount = 1;
@@ -2226,6 +2177,8 @@ var app = function () {
                     revealBonusCount = ops$1.storedData.revealDailyBonus[term];
                     revealBonusCount += 1;
                 }
+            // Update DOM
+            countHolder.innerHTML = revealBonusCount;
             // If bonus is met
             if (revealBonusCount === ops$1.revealDailyBonusTarget) {
                 // If daily bonus not already triggered
@@ -2254,12 +2207,9 @@ var app = function () {
     var createRevealTimer = function createRevealTimer(revealBtn) {
 
         // If no stored data for reveal countdowns
-        if (ops$1.storedData.revealCountdowns === undefined) {
-            ops$1.storedData.revealCountdowns = {};
-        }
+        ops$1.storedData.revealCountdowns = ops$1.storedData.revealCountdowns || {};
 
         var term = [revealBtn.parentNode.parentNode.querySelector('.term-holder').innerHTML];
-
         var minutes = ops$1.counterMins;
         var seconds = ops$1.counterSecs;
         var remainingMinutes = void 0;
@@ -2371,11 +2321,11 @@ var app = function () {
         }
     };
 
+    // Retrieves dictionary references
     var dictionaryLookup = function dictionaryLookup() {
 
         var dictionaryBtn = document.querySelectorAll('.lookup');
         var modal = document.querySelector('.m-modal');
-        var definitionHolder = document.querySelector('.dictionary-definitions');
 
         clickListener(dictionaryBtn, function (i) {
             var term = dictionaryBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
@@ -2383,7 +2333,10 @@ var app = function () {
             // Bring up modal
             modal.classList.remove('hidden');
             document.querySelector('.container').classList.add('modal-active');
-            modal.getElementsByTagName('p')[0].innerHTML = term + ":";
+
+            var view = '<header>\n                        <a class="close" href="#"></a>\n                        <h2 class="dictionary">Dictionary definitions</h2>\n                    </header>\n                    <p>' + term + ':</p>\n                    <ul class="definitions">\n                    </ul>';
+            modal.querySelector('.inner').innerHTML += view;
+            var definitionHolder = modal.querySelector('.definitions');
 
             // Make request to Glosbe
             jsonp('https://glosbe.com/gapi/translate?from=ita&dest=eng&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
@@ -2408,7 +2361,6 @@ var app = function () {
                             }
                             return out;
                         };
-
                         // Add to DOM
 
 
@@ -2422,16 +2374,90 @@ var app = function () {
                 }
             });
         });
+        // Reassign hide modal
+        hideModal();
+    };
 
-        // Hide modal, clear it's contents
+    // Allows for text to speech
+    var textToSpeech = function textToSpeech() {
+
+        var termHolder = document.querySelectorAll('.term-holder');
+
+        clickListener(termHolder, function (i) {
+            var speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
+            speech.lang = "it";
+            window.speechSynthesis.speak(speech);
+        });
+    };
+
+    // Adds colours to term holders
+    var addColour = function addColour() {
+
+        var modal = document.querySelector('.m-modal');
+        var colourBtn = document.querySelectorAll('.colour');
+        var picker = void 0;
+        var colours = void 0;
+
+        clickListener(colourBtn, function (i) {
+            // Bring up modal
+            modal.classList.remove('hidden');
+            document.querySelector('.container').classList.add('modal-active');
+
+            var termHolder = colourBtn[i].parentNode.parentNode.parentNode;
+            var term = colourBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
+
+            var view = '<header>\n                        <a class="close" href="#"></a>\n                        <h2 class="colour">Colour picker</h2>\n                    </header>\n                    <p>Click below to add a colour for "<span class="colour-term">' + term + '</span>":</p>\n                    <ul class="colour-wrap">\n                        <li><a href="#" data-colour="#1abc9c"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#3498db"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#9b59b6"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#f1c40f"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e67e22"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e74c3c"></a></li>\n                    </ul>';
+
+            // Add view
+            modal.querySelector('.inner').innerHTML += view;
+
+            var coloursHolder = modal.querySelector('.colour-wrap');
+            // Add colour vars
+            colours = coloursHolder.getElementsByTagName('a');
+            colourListener();
+        });
+
+        // Add colour function
+        function colourListener() {
+            var term = document.querySelector('.colour-term').innerHTML;
+            var termWrapper = document.querySelector('.' + term + '');
+
+            // Pick a colour
+            clickListener(colours, function (i) {
+                var pickedColour = colours[i].getAttribute('data-colour');
+                // Add colour to object
+                termWrapper.querySelector('.theme-holder').style.background = pickedColour;
+                termWrapper.querySelector('.term-holder').style.color = "#fff";
+                // Set storage
+                ops$1.storedData.viewedTerms[term].colour = pickedColour;
+                localforage.setItem('ops.storedData', ops$1.storedData);
+                // Hide modal
+                hideModal(true);
+            });
+        }
+        // Reassign hide modal
+        hideModal();
+    };
+
+    // Hide modal
+    var hideModal = function hideModal(trigger) {
+        var modal = document.querySelector('.m-modal');
         var modalClose = modal.querySelector('.close');
 
-        modalClose.addEventListener("click", function () {
-            // Hide modal
-            modal.classList.add('hidden');
-            document.querySelector('.container').classList.remove('modal-active');
-            defintionHolder.innerHTML = "";
+        modalClose.addEventListener("click", function (e) {
+            e.preventDefault();
+            closeModal();
         });
+        // Programatically close modal
+        if (trigger) {
+            closeModal();
+        }
+        // Hide modal
+        function closeModal() {
+            document.querySelector('.container').classList.remove('modal-active');
+            modal.classList.add('hidden');
+            modal.querySelector('.inner').innerHTML = "";
+        }
     };
 
     // Imports
@@ -2443,7 +2469,7 @@ var app = function () {
         revealDailyBonusTarget: 3,
         wordAccuracy: 0.5,
         container: document.querySelector(".terms-wrapper"),
-        addDay: true,
+        addDay: false,
         debug: true,
         points: {
             correct: 50,
@@ -2535,6 +2561,7 @@ var app = function () {
 
                 // Clear daily goals
                 delete ops$1.storedData.revealedTermCount;
+                delete ops$1.storedData.revealDailyBonus;
 
                 // Set daily limit
                 ops$1.storedData.revealDailyBonus = ops$1.storedData.revealDailyBonus || {};
@@ -2549,7 +2576,6 @@ var app = function () {
         // Create opened date, daily terms, viewed terms
         ops$1.storedData.dateOpened = getTodaysDate();
         ops$1.storedData.dailyTerms = pickedTerms;
-        ops$1.storedData.viewedTerms = updateDataCount('viewedTerms', pickedTerms, 0);
 
         // Add to storage
         localforage.setItem('ops.storedData', ops$1.storedData);
@@ -2557,6 +2583,9 @@ var app = function () {
         // Handles events for revealed terms
         revealedBtnHandler();
         dictionaryLookup();
+        textToSpeech();
+        addColour();
+        hideModal();
 
         // Keep query active each day
         ops$1.storedData.queryComplete = ops$1.storedData.queryComplete || {};
