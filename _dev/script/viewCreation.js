@@ -1,8 +1,8 @@
 
 // Imports
 import { cl, clv } from 'helperFunctions';
-import appData from 'verbs';
-import ops from 'app';
+import appData from 'appData';
+import tinyTerms from 'app';
 import { createRevealTimer } from 'termInteraction';
 
 // Exports
@@ -17,19 +17,22 @@ const viewCreate = function viewCreate(termsToCreate) {
     for (let value of termsToCreate) {
 
         // Get terms and definitions from data
-        let termValue = appData.terms[value].term;
-        let definitionValue = appData.terms[value].definition;
-        let supportValue = appData.terms[value].support;
+        let termValue = tinyTerms[tinyTerms.pickedList].terms[value].term;
+        let definitionValue = tinyTerms[tinyTerms.pickedList].terms[value].definition;
+        let supportValue = tinyTerms[tinyTerms.pickedList].terms[value].support;
         let revealCounter;
         let viewsCount;
 
         // Check storage for revealed count
-        if (ops.storedData.revealDailyBonus === undefined) {
+        if (tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus === undefined) {
             viewsCount = 0;
         }
         else {
-            viewsCount = ops.storedData.revealDailyBonus[value] || 0;
+            viewsCount = tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[value] || 0;
         }
+
+        document.querySelector('h1').innerHTML = tinyTerms.pickedList;
+        document.querySelector('.list-action').innerHTML = tinyTerms[tinyTerms.pickedList].action + '<span class="query-holder"></span>';
 
         // Create terms HTML
         let newHolder =
@@ -37,7 +40,7 @@ const viewCreate = function viewCreate(termsToCreate) {
                 <p class="term-holder">${termValue}</p>
                 <div class="theme-holder"><p class="symbol-holder"></p></div>
                 <div class="right">
-                    <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${ops.revealDailyBonusTarget}</p>
+                    <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${tinyTerms[tinyTerms.pickedList].ops.revealDailyBonusTarget}</p>
                     <button class="reveal">Reveal</button>
                 </div>
                 <div class="definition-wrapper hidden">
@@ -54,18 +57,18 @@ const viewCreate = function viewCreate(termsToCreate) {
         viewHTML += newHolder;
     }
     // Add to view
-    ops.container.innerHTML = viewHTML;
+    document.querySelector('.terms-wrapper').innerHTML = viewHTML;
 
     // Add theme to previously created terms
     for (let value of termsToCreate) {
-        let termValue = appData.terms[value].term;
+        let termValue = tinyTerms[tinyTerms.pickedList].terms[value].term;
 
         // Check storage for assigned colour
-        ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
 
-        if (ops.storedData.viewedTerms[termValue] !== undefined && ops.storedData.viewedTerms[termValue].colour !== undefined) {
+        if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] !== undefined && tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].colour !== undefined) {
             let termWrapper = document.querySelector('.' + termValue + '');
-            let pickedColour = ops.storedData.viewedTerms[termValue].colour;
+            let pickedColour = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].colour;
             // Add colour to object
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
             termWrapper.querySelector('.theme-holder').classList.add('bg-active');
@@ -73,9 +76,9 @@ const viewCreate = function viewCreate(termsToCreate) {
             termWrapper.querySelector('.right').style.border = "0";
         }
         // Check storage for assigned symbol
-        if (ops.storedData.viewedTerms[termValue] !== undefined && ops.storedData.viewedTerms[termValue].symbol !== undefined) {
+        if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] !== undefined && tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].symbol !== undefined) {
             let termWrapper = document.querySelector('.' + termValue + '');
-            let pickedSymbol = ops.storedData.viewedTerms[termValue].symbol;
+            let pickedSymbol = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].symbol;
             // Add symbol to object
             termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
             termWrapper.querySelector('.symbol-holder').classList.add(pickedSymbol);
@@ -86,10 +89,10 @@ const viewCreate = function viewCreate(termsToCreate) {
     for (let value of termsToCreate) {
 
         // Check if timer data exists
-        if (ops.storedData.revealCountdowns !== undefined) {
+        if (tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns !== undefined) {
 
             // Add countdown timers to buttons
-            if (ops.storedData.revealCountdowns[value] !== undefined) {
+            if (tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[value] !== undefined) {
 
                 let revealBtn = document.querySelectorAll('.reveal');
 
@@ -112,17 +115,17 @@ const addHearts = function addHearts() {
     let heartsHTML = "";
 
     // If no hearts data exists
-    if (ops.storedData.hearts === undefined) {
-        ops.storedData.hearts = ops.points.hearts;
+    if (tinyTerms[tinyTerms.pickedList].storedData.hearts === undefined) {
+        tinyTerms[tinyTerms.pickedList].storedData.hearts = tinyTerms[tinyTerms.pickedList].ops.points.hearts;
     }
-    for (let i = 0; i < ops.storedData.hearts; i++) {
+    for (let i = 0; i < tinyTerms[tinyTerms.pickedList].storedData.hearts; i++) {
         heartsHTML += '<p></p>';
     }
     // Add to view
     heartHolder.innerHTML = heartsHTML;
 
     // Add to storage
-    localforage.setItem('ops.storedData', ops.storedData);
+    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 }
 
 // Sets the score
@@ -131,11 +134,11 @@ const setScore = function setScore() {
     let scoreHolder = document.querySelector('.score-holder');
 
     // Set score if it doesn't exist
-    if (ops.storedData.score === undefined) {
-        ops.storedData.score = 0;
+    if (tinyTerms[tinyTerms.pickedList].storedData.score === undefined) {
+        tinyTerms[tinyTerms.pickedList].storedData.score = 0;
     }
 
-    let score = ops.storedData.score;
+    let score = tinyTerms[tinyTerms.pickedList].storedData.score;
 
     // Add to view
     scoreHolder.innerHTML = score;
@@ -144,9 +147,9 @@ const setScore = function setScore() {
 // Add progress bar
 const progressBar = function progressBar() {
     // Create correct terms default
-    ops.storedData.correctTerms = ops.storedData.correctTerms || {};
-    let completed = Object.keys(ops.storedData.viewedTerms).length;
-    let remaining = Object.keys(appData.terms).length;
+    tinyTerms[tinyTerms.pickedList].storedData.learnedTerms = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms || {};
+    let completed = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms).length;
+    let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length;
 
     // Add to DOM
     document.querySelector('.m-footer').querySelector('.completed').innerHTML = completed;

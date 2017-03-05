@@ -1,8 +1,8 @@
 
 // Imports
 import { cl, clv, clickListener, jsonp, findKeys } from 'helperFunctions';
-import appData from 'verbs';
-import ops from 'app';
+import appData from 'appData';
+import tinyTerms from 'app';
 import { createNewQuery } from 'queryInteraction';
 import { setScore, addHearts, progressBar } from 'viewCreation';
 
@@ -37,45 +37,48 @@ const revealedBtnHandler = function revealedBtnHandler() {
         revealBtn[i].parentNode.classList.add('rubberBand','animated');
 
         // Set storedData
-        ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
-        ops.storedData.viewedTerms[term] = ops.storedData.viewedTerms[term] || {};
-        ops.storedData.viewedTerms[term].viewCount = ops.storedData.viewedTerms[term].viewCount || -1;
-        ops.storedData.viewedTerms[term].viewCount += 1;
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term] = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term] || {};
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount || -1;
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount += 1;
 
         // Daily reveal bonus
         let revealBonusCount;
 
         // If no existing term bonus
-        if (ops.storedData.revealDailyBonus[term] === undefined) {
+        if (tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[term] === undefined) {
             revealBonusCount = 1;
         }
         // Add one to daily bonus
         else {
-            revealBonusCount = ops.storedData.revealDailyBonus[term];
+            revealBonusCount = tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[term];
             revealBonusCount += 1;
         }
-        // Update progress bar
-        progressBar();
         // Update DOM
         countHolder.innerHTML = revealBonusCount;
         // If bonus is met
-        if (revealBonusCount === ops.revealDailyBonusTarget) {
+        if (revealBonusCount === tinyTerms[tinyTerms.pickedList].ops.revealDailyBonusTarget) {
+            // Add term to learned terms list
+            tinyTerms[tinyTerms.pickedList].storedData.learnedTerms = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms || {};
+            tinyTerms[tinyTerms.pickedList].storedData.learnedTerms[term] = true;
+            // Update progress bar
+            progressBar();
             // If daily bonus not already triggered
-            if (ops.storedData.revealDailyBonus.complete === false) {
+            if (tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus.complete === false) {
                 // Keep query active 
-                ops.storedData.queryComplete = false;
+                tinyTerms[tinyTerms.pickedList].storedData.queryComplete = false;
                 // Create a new query
                 createNewQuery(true);
             }
             // Set only once a day
-            ops.storedData.revealDailyBonus.complete = true;
-            ops.storedData.score += ops.points.dailyBonus;
+            tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus.complete = true;
+            tinyTerms[tinyTerms.pickedList].storedData.score += tinyTerms[tinyTerms.pickedList].ops.points.dailyBonus;
             setScore();
         }
-        ops.storedData.revealDailyBonus[term] = revealBonusCount;
+        tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[term] = revealBonusCount;
 
         // Save to storage
-        localforage.setItem('ops.storedData', ops.storedData);
+        localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
         // Starts a timer 
         createRevealTimer(revealBtn[i]);
@@ -86,24 +89,24 @@ const revealedBtnHandler = function revealedBtnHandler() {
 const createRevealTimer = function createRevealTimer(revealBtn) {
 
     // If no stored data for reveal countdowns
-    ops.storedData.revealCountdowns = ops.storedData.revealCountdowns || {};
+    tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns = tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns || {};
 
     let term = [revealBtn.parentNode.parentNode.querySelector('.term-holder').innerHTML];
-    let minutes = ops.counterMins;
-    let seconds = ops.counterSecs;
+    let minutes = tinyTerms[tinyTerms.pickedList].ops.counterMins;
+    let seconds = tinyTerms[tinyTerms.pickedList].ops.counterSecs;
     let remainingMinutes;
     let remainingSeconds;
     let startTime;
     let timerEnded;
 
     // New timer
-    if (ops.storedData.revealCountdowns[term] === undefined) {
+    if (tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term] === undefined) {
 
         // Get a new time
         startTime = new Date().getTime();
 
         // Set storedData
-        ops.storedData.revealCountdowns[term] = {
+        tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term] = {
             "startTime": startTime,
             "timerEnded": false
         };
@@ -125,25 +128,25 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
         revealBtn.setAttribute("disabled", true);
 
         // Get terms start time for countdown
-        startTime = ops.storedData.revealCountdowns[term].startTime;
-        timerEnded = ops.storedData.revealCountdowns[term].timerEnded;
+        startTime = tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term].startTime;
+        timerEnded = tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term].timerEnded;
 
         // Get difference in seconds
         let diffSecs = Math.floor((nowTime - startTime) / 1000);
         // Get total in seconds
-        let totalSecs = (ops.counterMins * 60) + seconds;
+        let totalSecs = (tinyTerms[tinyTerms.pickedList].ops.counterMins * 60) + seconds;
 
         // NowTime overtaken startTime
         if (diffSecs >= totalSecs) {
             timerEnded = true;
             // Stop interval
-            clearInterval(ops.storedData.revealCountdowns[term].timerUpdate);
+            clearInterval(tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term].timerUpdate);
             // Clear storage for term timer
-            delete ops.storedData.revealCountdowns[term];
+            delete tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term];
         }
         // Timer stopped, return to normal
         if (timerEnded === true) {
-            localforage.setItem('ops.storedData', ops.storedData);
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
             return false;
         }
         // Set remaining time 
@@ -151,7 +154,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     }
 
     // Set start time to storage
-    localforage.setItem('ops.storedData', ops.storedData);
+    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
     let timeout;
     let checkCount = 0;
@@ -160,7 +163,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
     if (timerEnded === false) {
 
         // Start timer interval
-        ops.storedData.revealCountdowns[term].timerUpdate = setInterval(() => {
+        tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns[term].timerUpdate = setInterval(() => {
             // Resync timer in some devices when off screen
             checkCount += 1;
             if (checkCount % 5 === 0) {
@@ -212,7 +215,7 @@ const textToSpeech = function textToSpeech() {
 
     clickListener(termHolder, (i) => {
         let speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
-        speech.lang = "it";
+        speech.lang = tinyTerms[tinyTerms.pickedList].speechLang;
         window.speechSynthesis.speak(speech);
     });
 }
@@ -241,7 +244,7 @@ const dictionaryLookup = function dictionaryLookup() {
         let definitionHolder = modal.querySelector('.definitions');
 
         // Make request to Glosbe
-        jsonp('https://glosbe.com/gapi/translate?from=ita&dest=eng&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
+        jsonp('https://glosbe.com/gapi/translate?from='+tinyTerms[tinyTerms.pickedList].dictFrom+'a&dest='+tinyTerms[tinyTerms.pickedList].dictTo+'g&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
             let dictionaryResponses = "";
 
             try {
@@ -327,8 +330,8 @@ const addColour = function addColour() {
             termWrapper.querySelector('.term-holder').style.color = "#fff";
             termWrapper.querySelector('.right').style.border = "0";
             // Set storage
-            ops.storedData.viewedTerms[term].colour = pickedColour;
-            localforage.setItem('ops.storedData', ops.storedData);
+            tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].colour = pickedColour;
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
             // Hide modal
             hideModal(true);
         });
@@ -408,13 +411,12 @@ const pickSymbol = function pickSymbol() {
             e = e || window.event;
             let target = e.target || e.srcElement;
             pickedSymbol = target.getAttribute("class");   
-            cl(pickedSymbol);
             // Add symbol to object
             termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
             termWrapper.querySelector('.symbol-holder').classList.add(pickedSymbol);
             // Set storage
-            ops.storedData.viewedTerms[term].symbol = pickedSymbol;
-            localforage.setItem('ops.storedData', ops.storedData);
+            tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].symbol = pickedSymbol;
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
             // Hide modal
             hideModal(true);
         }, false);

@@ -1,17 +1,18 @@
 
 // Imports
-import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
+import { ready, cl, clv, buildData, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
 import { getListOfTerms } from 'termCreation';
 import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol } from 'termInteraction';
 import { viewCreate, addHearts, setScore, progressBar } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
-import appData from 'verbs';
+import { showHome } from 'homeScreen';
+import appData from 'appData';
 
 // Exports
-export default ops;
+export default tinyTerms;
 
-let sheetURL = "https://docs.google.com/spreadsheets/d/1Q1pmDXybg_GDB6bSXknuBET2Nm8L-Roi2Kj01SHm_WI/pubhtml";
-let tinyTermsData = {};
+// App namespace
+let tinyTerms = tinyTerms || {};
 
 // Global options
 let ops = {
@@ -20,115 +21,122 @@ let ops = {
     counterSecs: 0,
     revealDailyBonusTarget: 5,
     wordAccuracy: 0.7,
-    container: document.querySelector(".terms-wrapper"),
     addDay: false,
     debug: true,
+    loadDelay: 2500,
     points: {
         correct: 50,
         dailyBonus: 10,
         hearts: 3
+    }
+}
+
+// Default list choices
+tinyTerms.listChoices = {
+    "Italian Verbs (ENG)": {
+        name: "Italian Verbs (ENG)",
+        sheetURL: "https://docs.google.com/spreadsheets/d/1Q1pmDXybg_GDB6bSXknuBET2Nm8L-Roi2Kj01SHm_WI/pubhtml"
     },
-    storedData: {}
+    "Computer Components": {
+        name: "Computer Components",
+        sheetURL: "https://docs.google.com/spreadsheets/d/1Ho5Viqg71mIBlbyAIjLIqHEWRr4znDCLZSBtwVTtZk0/edit"
+    }
 }
 
 // Initialise modules on load
 ready(function () {
     'use strict';
-    getData(sheetURL);
-    checkFirstTime();
-    // Resets button
-    resetData();
+    pickList();
 });
 
-// Gets data from Google Sheets
-const getData = function getData(sheetURL) {
+// Pick a list
+const pickList = function pickList(skipDefaultCheck) {    
+    let tinyTermsDefault;
 
-    function init() {
-        Tabletop.init({
-            key: sheetURL,
-            callback: buildData,
-            simpleSheet: false
-        })
-    }
+    // Check for default list, used on very first load
+    localforage.getItem('tinyTermsDefault', function(err, value) {
+        tinyTermsDefault = value;
 
-    function buildData(data) {
-        let listName = data.Sheet1.columnNames[1];
-
-        tinyTermsData[listName] = {};
-        tinyTermsData[listName].speechLang = data.Sheet1.elements[0]["Italian Verbs"];
-        tinyTermsData[listName].dictFrom = data.Sheet1.elements[1]["Italian Verbs"];
-        tinyTermsData[listName].dictTo = data.Sheet1.elements[2]["Italian Verbs"];
-        tinyTermsData[listName].action = data.Sheet1.elements[3]["Italian Verbs"];
-        tinyTermsData[listName].terms = tinyTermsData[listName].terms || {};
-
-        for (let i = 1; i < data.Sheet1.elements.length; i++) {
-            let termContent = data.Sheet1.elements[i].Term;
-            let definitionContent = data.Sheet1.elements[i].Definition;
-            let supportContent = data.Sheet1.elements[i].Support;
-
-            tinyTermsData[listName].terms[termContent] = {};
-            tinyTermsData[listName].terms[termContent].term = termContent;
-            tinyTermsData[listName].terms[termContent].definition = definitionContent;
-            tinyTermsData[listName].terms[termContent].support = supportContent;
+        if (tinyTermsDefault === null) {
+            showHome();
         }
+        else {
+            checkDefault();
+        }
+    });
+    function checkDefault() {
+        // Check for existing data of newly picked list
+        localforage.getItem('tinyTerms'+tinyTermsDefault, function(err, value) {
+
+            if (value !== null) {
+                tinyTerms.pickedList = tinyTermsDefault;
+                normalLoad(tinyTerms.pickedList);
+            }
+            else {
+                firstLoad();
+            }
+        });
     }
-    window.addEventListener('DOMContentLoaded', init)
+    function normalLoad(defaultlist) {
+
+        tinyTerms.storedName = "tinyTerms"+defaultlist;
+
+        localforage.getItem('tinyTerms'+defaultlist, function(err, value) {
+            // Set session storage to stored
+            tinyTerms[tinyTerms.pickedList] = value;
+            // Update stored ops
+            tinyTerms[tinyTerms.pickedList].ops = ops;
+            initialise();
+        });
+    }
 }
 
-// Runs when app opens
-const checkFirstTime = function checkFirstTime() {
+// Sets up new list, gets data
+const firstLoad = function firstLoad() {
+    localforage.getItem('tinyTermsDefault', function(err, value) {
+        // Set session storage to stored
+        tinyTerms.pickedList = value;
+        // Set picked list and create data object for it
+        tinyTerms[tinyTerms.pickedList] = {};
+        tinyTerms[tinyTerms.pickedList].storedData = {};
+        tinyTerms[tinyTerms.pickedList].ops = ops;
+        tinyTerms.storedName = "tinyTerms"+tinyTerms.pickedList;
+        // Set new list to storage, add as default
+        localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+        // Fetch data for list
+        fetchData(tinyTerms.listChoices[tinyTerms.pickedList].sheetURL, firstTime);
+    });
+}
 
-    // Check if this is the first time app has run
-    localforage.length().then(numberOfKeys => {
-
-        // If first time
-        if (numberOfKeys === 0) {
-            firstTime();
-        }
-        // Not first time
-        else {
-            ops.storedData.firstTime = false;
-            initialise();
-        }
-    }).catch(err => {
-        console.log(err);
+// Fetches list data
+const fetchData = function fetchData(sheetURL, postBuildCallback) {
+    // Add a callback method
+    tinyTerms.postBuildCallback = postBuildCallback;
+    
+    // Get data from sheets
+    Tabletop.init({
+        key: sheetURL,
+        callback: buildData,
+        simpleSheet: false
     });
 }
 
 // Runs if first time app has run
 const firstTime = function firstTime() {
-
     // Create terms
     appBuildHandler();
-    // Set first time to false
-    ops.storedData.firstTime = false;
-
+    // Then set first time to false
+    tinyTerms[tinyTerms.pickedList].storedData.firstTime = false;
     // Add to storage
-    localforage.setItem('ops.storedData', ops.storedData);
+    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 }
 
 // Initialises data and app
 const initialise = function initialise() {
-
-    // Get stored data
-    localforage.getItem('ops.storedData').then(retrievedData => {
-        checkData(retrievedData);
-    }).catch(err => {
-        console.log(err);
-    });
-
-    // Handle retrieved data
-    function checkData(retrievedData) {
-
-        // Set data in app from storage
-        ops.storedData = retrievedData;
-
-        // Check if a new day
-        checkSameDay();
-
-        // Start build
-        appBuildHandler();
-    }
+    // Check if a new day
+    checkSameDay();
+    // Start build
+    appBuildHandler();
 }
 
 // Calls functions to handle app creation and running
@@ -136,54 +144,52 @@ const appBuildHandler = function appBuildHandler() {
 
     // Get initial terms
     let pickedTerms;
-
+    
     // If same day, used daily terms
-    if (ops.storedData.newDay === false) {
-        pickedTerms = ops.storedData.dailyTerms;
+    if (tinyTerms[tinyTerms.pickedList].storedData.newDay === false) {
+        pickedTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
     }
     // Else get new  
     else {
         pickedTerms = getListOfTerms();
 
         // Clear daily goals
-        delete ops.storedData.revealedTermCount;
-        delete ops.storedData.revealDailyBonus;
+        delete tinyTerms[tinyTerms.pickedList].storedData.revealedTermCount;
+        delete tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus;
+        delete tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns;
+        delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
+        delete tinyTerms[tinyTerms.pickedList].storedData.dailyReminder;
 
         // Set daily limit
-        ops.storedData.revealDailyBonus = ops.storedData.revealDailyBonus || {};
+        tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus = {};
         // Reset daily reveal bonus
-        ops.storedData.revealDailyBonus.complete = false;
-    }
+        tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus.complete = false;
+        
+        // Create query if revealed terms
+        if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms !== undefined) {
+            createNewQuery();
+        }
 
+        // Create reminded terms default
+        tinyTerms[tinyTerms.pickedList].storedData.remindedTerms = tinyTerms[tinyTerms.pickedList].storedData.remindedTerms || {}
+    }
+    
     // Create initial view
     viewCreate(pickedTerms);
     setScore();
 
     // Create opened date, daily terms, viewed terms
-    ops.storedData.dateOpened = getTodaysDate();
-    ops.storedData.dailyTerms = pickedTerms;
+    tinyTerms[tinyTerms.pickedList].storedData.dateOpened = getTodaysDate();
+    tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = pickedTerms;
 
     // Add to storage
-    localforage.setItem('ops.storedData', ops.storedData);
+    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
     // Keep query active each day
-    ops.storedData.queryComplete = ops.storedData.queryComplete || {};
+    tinyTerms[tinyTerms.pickedList].storedData.queryComplete = tinyTerms[tinyTerms.pickedList].storedData.queryComplete || {};
 
-    if (ops.storedData.newDay === true) {
-        // Reset daily counters
-        delete ops.storedData.dailyQuery;
-        delete ops.storedData.dailyReminder;
-        delete ops.storedData.revealCountdowns;
-
-        ops.storedData.remindedTerms = ops.storedData.remindedTerms || {}
-
-        // Delete daily reminder
-        if (ops.storedData.remindedTerms.dailyReminder !== undefined) {
-            delete ops.storedData.remindedTerms.dailyReminder;
-        }
-    }
-    // Create query if revealed terms
-    if (ops.storedData.viewedTerms !== undefined && ops.storedData.queryComplete !== true && ops.storedData.newDay === true) {
+    // Load query if it exists already
+    if (tinyTerms[tinyTerms.pickedList].storedData.dailyQuery !== undefined && tinyTerms[tinyTerms.pickedList].storedData.queryComplete !== true) {
         createNewQuery();
     }
 
@@ -195,6 +201,8 @@ const appBuildHandler = function appBuildHandler() {
     pickSymbol();
     hideModal();
     progressBar();
+    
+    resetData();
 
     // Refresh window on blur
     appBlur();
@@ -203,18 +211,25 @@ const appBuildHandler = function appBuildHandler() {
     setTimeout(() => {
         document.getElementsByTagName('body')[0].classList = "";
         document.querySelector('.m-query-wrapper').classList.add('animated', 'slideInDown');
-    }, 3000);
+    }, tinyTerms[tinyTerms.pickedList].ops.loadDelay);
+
+     // Set menu button listener
+    let menuTrigger = document.getElementsByTagName('h1');
+
+    menuTrigger[0].addEventListener('click', ()=>{
+        showHome();
+    });
 
 
     // Debug code
-    if (ops.debug === true) {
-        cl(ops.storedData);
+    if (tinyTerms[tinyTerms.pickedList].ops.debug === true) {
+        cl(tinyTerms);
         //cl('Revealed terms count:');
-        //cl(ops.storedData.revealedTermCount);
+        //cl(tinyTerms[tinyTerms.pickedList].storedData.revealedTermCount);
         //cl('Viewed terms count:');
-        //cl(ops.storedData.viewedTerms);
+        //cl(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms);
         //cl('Revealed terms timer:');
-        //cl(ops.storedData.revealCountdowns);
+        //cl(tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns);
     };
 }
 

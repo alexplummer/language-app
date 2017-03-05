@@ -1,8 +1,8 @@
 
 // Imports
 import { cl, clv, pickRandom, checkQuery } from 'helperFunctions';
-import appData from 'verbs';
-import ops from 'app';
+import appData from 'appData';
+import tinyTerms from 'app';
 import { addHearts } from 'viewCreation';
 
 // Exports
@@ -16,38 +16,38 @@ const createNewQuery = function createNewQuery(bonus) {
     let i = 0;
 
     // If no stored data for reveal countdowns
-    ops.storedData.queryTerms = ops.storedData.queryTerms || {};
+    tinyTerms[tinyTerms.pickedList].storedData.queryTerms = tinyTerms[tinyTerms.pickedList].storedData.queryTerms || {};
 
     // Set correctTerms storage if not exists
-    ops.storedData.correctTerms = ops.storedData.correctTerms || {};
+    tinyTerms[tinyTerms.pickedList].storedData.correctTerms = tinyTerms[tinyTerms.pickedList].storedData.correctTerms || {};
 
     // Set incorrectTerms storage if not exists
-    ops.storedData.incorrectTerms = ops.storedData.incorrectTerms || {};
+    tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms = tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms || {};
 
     let cycledTerms = [];
     // Choose term from viewed terms
-    while (i < Object.keys(ops.storedData.viewedTerms).length) {
+    while (i < Object.keys(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms).length) {
 
         // If no daily term
-        if (ops.storedData.dailyQuery === undefined) {
+        if (tinyTerms[tinyTerms.pickedList].storedData.dailyQuery === undefined) {
             // Pick a random term
-            randomTerm = pickRandom(ops.storedData.viewedTerms);
+            randomTerm = pickRandom(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms);
         }
         else {
-            randomTerm = ops.storedData.dailyQuery;
+            randomTerm = tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
         }
         // Make sure not answered correctly before
-        if (!ops.storedData.correctTerms.hasOwnProperty(randomTerm)) {
+        if (!tinyTerms[tinyTerms.pickedList].storedData.correctTerms.hasOwnProperty(randomTerm)) {
 
             // If query not from daily reminder term
-            if (ops.storedData.dailyReminder !== undefined) {
-                if (!ops.storedData.dailyReminder.hasOwnProperty(randomTerm)) {
+            if (tinyTerms[tinyTerms.pickedList].storedData.dailyReminder !== undefined) {
+                if (!tinyTerms[tinyTerms.pickedList].storedData.dailyReminder.hasOwnProperty(randomTerm)) {
                     queryHandler();
                     break;
                 }
             }
             // If query not from daily terms
-            else if (!ops.storedData.dailyTerms.hasOwnProperty(randomTerm)) {
+            else if (!tinyTerms[tinyTerms.pickedList].storedData.dailyTerms.hasOwnProperty(randomTerm)) {
                 queryHandler();
                 break;
             }
@@ -56,7 +56,7 @@ const createNewQuery = function createNewQuery(bonus) {
             i++
         }
         // Else look for another
-        if (i === Object.keys(ops.storedData.viewedTerms).length) {
+        if (i === Object.keys(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms).length) {
             document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
             document.querySelector('.result-holder').classList.remove('hidden');
         }
@@ -71,12 +71,14 @@ const createNewQuery = function createNewQuery(bonus) {
         let scoreHolder = document.querySelector('.score-holder');
         let heartHolder = document.querySelector('.hearts');
         let score = parseInt(scoreHolder.innerHTML);
-        let definition = appData.terms[randomTerm].definition;
+        let definition = tinyTerms[tinyTerms.pickedList].terms[randomTerm].definition;
         let count = 0;
 
-        // Add to storage
-        ops.storedData.dailyQuery = randomTerm;
-        ops.storedData.queryComplete = false;
+        // Save to storage
+        tinyTerms[tinyTerms.pickedList].storedData.dailyQuery = randomTerm;
+        tinyTerms[tinyTerms.pickedList].storedData.queryComplete = false;
+
+        localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
         // Hide daily term definition if same
         if (document.querySelector('.' + randomTerm + '') !== null) {
@@ -84,7 +86,7 @@ const createNewQuery = function createNewQuery(bonus) {
         }
 
         // Add hearts
-        delete ops.storedData.hearts;
+        delete tinyTerms[tinyTerms.pickedList].storedData.hearts;
         addHearts();
 
         // Show the query wrapper
@@ -92,7 +94,7 @@ const createNewQuery = function createNewQuery(bonus) {
 
         // Change title if bonus
         if (bonus === true) {
-            queryWrapper.getElementsByTagName('h2')[0].innerHTML = "Bonus Test"
+            queryWrapper.getElementsByTagName('h2')[0].innerHTML = "Bonus Test";
         }
 
         // Set value of query
@@ -140,21 +142,21 @@ const createNewQuery = function createNewQuery(bonus) {
                 resultHolder.classList.remove('hidden');
             }
             // Add to score
-            score += ops.points.correct;
+            score += tinyTerms[tinyTerms.pickedList].ops.points.correct;
             // Update view
             scoreHolder.innerHTML = score;
             // Add to stored data
-            ops.storedData.score = score;
-            ops.storedData.correctTerms[randomTerm] = definition;
-            ops.storedData.queryComplete = true;
-            delete ops.storedData.dailyQuery;
+            tinyTerms[tinyTerms.pickedList].storedData.score = score;
+            tinyTerms[tinyTerms.pickedList].storedData.correctTerms[randomTerm] = definition;
+            tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;
+            delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
             // Check if whole term list answered correctly
-            if (Object.keys(ops.storedData.correctTerms).length === Object.keys(appData.terms).length) {
-                ops.storedData.gameWon = true;
+            if (Object.keys(tinyTerms[tinyTerms.pickedList].storedData.correctTerms).length === Object.keys(tinyTerms[tinyTerms.pickedList].terms).length) {
+                tinyTerms[tinyTerms.pickedList].storedData.gameWon = true;
                 gameWon();
             }
             // Save to storage
-            localforage.setItem('ops.storedData', ops.storedData);
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
         }
         // If definition is wrong
         function loseCase() {
@@ -168,9 +170,9 @@ const createNewQuery = function createNewQuery(bonus) {
             queryInput.value = "";
             // Lose a heart
             heartHolder.removeChild(heartHolder.getElementsByTagName('p')[0]);
-            ops.storedData.hearts -= 1;
+            tinyTerms[tinyTerms.pickedList].storedData.hearts -= 1;
             // If all hearts lost
-            if (ops.storedData.hearts === 0) {
+            if (tinyTerms[tinyTerms.pickedList].storedData.hearts === 0) {
                 // Hide query 
                 document.querySelector('.query-form').classList.add('hidden');
                 heartHolder.classList.add('hidden');
@@ -181,12 +183,12 @@ const createNewQuery = function createNewQuery(bonus) {
                 resultHolder.innerHTML = "Sorry, you are out of attempts!";
                 resultHolder.classList.remove('hidden');
                 // Add to storedDatta 
-                ops.storedData.incorrectTerms[randomTerm] = definition;
-                ops.storedData.queryComplete = true;
-                delete ops.storedData.hearts;
+                tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms[randomTerm] = definition;
+                tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;
+                delete tinyTerms[tinyTerms.pickedList].storedData.hearts;
             }
             // Save to storage
-            localforage.setItem('ops.storedData', ops.storedData);
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
         }
         // If game won
         function gameWon() {

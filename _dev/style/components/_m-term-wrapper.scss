@@ -15,12 +15,17 @@
         position: relative;
         z-index: $z-m;
         top: 26px;
+        min-height: 86px;
+        padding-right: 150px;
+        padding-left: 30px;
         @extend .icon;
         @extend .icon-volume;
 
         &:before {
             cursor: pointer;
             margin-right: $size-s;
+            position: absolute;
+            left: -5px;
         }
     }
     .theme-holder {
@@ -46,8 +51,8 @@
         }
     }
     .right {
-        float: right;
-        position: relative;
+        position: absolute;
+        right: $size-s;
         z-index: $z-l;
         border-left: 1px solid #ddd;
         padding: 0 $size-s;
@@ -83,6 +88,7 @@
             font-size: $font-l;
             text-transform: capitalize;
             padding-bottom: $size-s;
+            padding-right: 140px;
         }
         .helpers {
             position: absolute;
@@ -117,14 +123,25 @@
             @extend %cf;
             border-top: 1px solid #ddd;
             padding-top: $size-s;
+            text-align: center;
 
             div {
                 width: 50%;
                 float: left;
             }
+            table {
+                text-align: left;
+            }
             .irregular {
                 font-weight: bold;
                 color: $clr-tertiary;
+            }
+            img {
+                max-width: 100%;
+            }
+            p {
+                margin-bottom: $size-m;
+                text-align: left;
             }
         }
     }

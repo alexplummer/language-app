@@ -1,8 +1,7 @@
 
 // Imports
 import { cl, clv, pickRandom } from 'helperFunctions';
-import appData from 'verbs';
-import ops from 'app';
+import tinyTerms from 'app';
 
 // Exports
 export { getListOfTerms };
@@ -14,18 +13,18 @@ const getListOfTerms = function getListOfTerms() {
     let j = 0;
     let listOfTerms = [];
     let scannedTerms = [];
-    const dataLength = Object.keys(appData.terms).length;
+    const dataLength = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length;
 
     // Prevent overflow
-    if (ops.displayedTerms > dataLength) {
-        ops.displayedTerms = dataLength;
+    if (tinyTerms[tinyTerms.pickedList].ops.displayedTerms > dataLength) {
+        tinyTerms[tinyTerms.pickedList].ops.displayedTerms = dataLength;
     }
 
     // First time app opened
-    if (ops.storedData.firstTime === undefined) {
+    if (tinyTerms[tinyTerms.pickedList].storedData.firstTime === undefined) {
 
-        while (i < ops.displayedTerms) {
-            let pickedTerm = pickRandom(appData.terms);
+        while (i < tinyTerms[tinyTerms.pickedList].ops.displayedTerms) {
+            let pickedTerm = pickRandom(tinyTerms[tinyTerms.pickedList].terms);
 
             // Ensure term hasn't been already scanned
             if (!listOfTerms.includes(pickedTerm)) {
@@ -38,37 +37,37 @@ const getListOfTerms = function getListOfTerms() {
     else {
 
         // Add reminder for previous incorrect term
-        ops.storedData.incorrectTerms = ops.storedData.incorrectTerms || {};
+        tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms = tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms || {};
 
-        if (Object.keys(ops.storedData.incorrectTerms).length > 0) {
+        if (Object.keys(tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms).length > 0) {
             
             let reminderTerm;
 
             // Add reminded terms list
-            ops.storedData.remindedTerms = ops.storedData.remindedTerms || {};
+            tinyTerms[tinyTerms.pickedList].storedData.remindedTerms = tinyTerms[tinyTerms.pickedList].storedData.remindedTerms || {};
 
             // Keep reminded term the same
-            if (ops.storedData.dailyReminder === undefined) {
-                ops.storedData.dailyReminder = {};
-                reminderTerm = pickRandom(ops.storedData.incorrectTerms);
-                ops.storedData.dailyReminder[reminderTerm] = appData.terms[reminderTerm].definition; 
+            if (tinyTerms[tinyTerms.pickedList].storedData.dailyReminder === undefined) {
+                tinyTerms[tinyTerms.pickedList].storedData.dailyReminder = {};
+                reminderTerm = pickRandom(tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms);
+                tinyTerms[tinyTerms.pickedList].storedData.dailyReminder[reminderTerm] = tinyTerms[tinyTerms.pickedList].terms[reminderTerm].definition; 
             }
             else { 
-                reminderTerm = ops.storedData.dailyReminder;
+                reminderTerm = tinyTerms[tinyTerms.pickedList].storedData.dailyReminder;
                 reminderTerm = Object.getOwnPropertyNames(reminderTerm);
             }
             // Add to terms
             listOfTerms.push(reminderTerm);
             // Remove from incorrect terms
-            delete ops.storedData.incorrectTerms[reminderTerm];
+            delete tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms[reminderTerm];
             // Add to list of reminded terms
-            ops.storedData.remindedTerms[reminderTerm] = appData.terms[reminderTerm].definition;
+            tinyTerms[tinyTerms.pickedList].storedData.remindedTerms[reminderTerm] = tinyTerms[tinyTerms.pickedList].terms[reminderTerm].definition;
             i++;
         }
         // Choose terms to  display
-        while (i < ops.displayedTerms) {
-            ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
-            let viewedLength = Object.keys(ops.storedData.viewedTerms).length;
+        while (i < tinyTerms[tinyTerms.pickedList].ops.displayedTerms) {
+            tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
+            let viewedLength = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms).length;
 
             // If all terms viewed
             if (viewedLength === dataLength) {
@@ -76,13 +75,13 @@ const getListOfTerms = function getListOfTerms() {
                 let viewedSorted = [];
 
                 // Convert viewed terms to array
-                for (let term in ops.storedData.viewedTerms) {
-                    viewedSorted.push([term, ops.storedData.viewedTerms[term]]);
+                for (let term in tinyTerms[tinyTerms.pickedList].storedData.viewedTerms) {
+                    viewedSorted.push([term, tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term]]);
                 }
                 // If reminder term picked remove from selection
-                if (ops.storedData.dailyReminder !== undefined) {
+                if (tinyTerms[tinyTerms.pickedList].storedData.dailyReminder !== undefined) {
                     for (let m=viewedSorted.length-1; m>=0; m--) {
-                        if (ops.storedData.dailyReminder.hasOwnProperty(viewedSorted[m][0])) { 
+                        if (tinyTerms[tinyTerms.pickedList].storedData.dailyReminder.hasOwnProperty(viewedSorted[m][0])) { 
                             viewedSorted.splice(m, 1);
                         }
                     }
@@ -92,7 +91,7 @@ const getListOfTerms = function getListOfTerms() {
                     return a[1] - b[1]
                 })
                 // Finish off iterator with lowest viewed terms
-                while (i < ops.displayedTerms) {
+                while (i < tinyTerms[tinyTerms.pickedList].ops.displayedTerms) {
                     listOfTerms.push(viewedSorted[i][0]);
                     i++;
                 }
@@ -101,14 +100,14 @@ const getListOfTerms = function getListOfTerms() {
             }
             // Still unviewed terms in data
             else {
-                let pickedTerm = pickRandom(appData.terms);
+                let pickedTerm = pickRandom(tinyTerms[tinyTerms.pickedList].terms);
 
                 // Ensure term hasn't been already scanned
                 if (!scannedTerms.includes(pickedTerm)) {
                     scannedTerms.push(pickedTerm);
 
                     // Ensure term not viewed before
-                    if (!ops.storedData.viewedTerms.hasOwnProperty(pickedTerm)) {
+                    if (!tinyTerms[tinyTerms.pickedList].storedData.viewedTerms.hasOwnProperty(pickedTerm)) {
                         listOfTerms.push(pickedTerm);
                         i++;
                     }
@@ -116,7 +115,7 @@ const getListOfTerms = function getListOfTerms() {
             }
             // Overflow protection
             if (j > 10000) {
-                i = ops.displayedTerms;
+                i = tinyTerms[tinyTerms.pickedList].ops.displayedTerms;
             }
             j++;
         }

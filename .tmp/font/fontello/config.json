@@ -55,10 +55,18 @@
       "src": "entypo"
     },
     {
-      "uid": "c55fdf978f617992b43ee7cbaa6ef87e",
+      "uid": "fbb839229fa0a8b11859340577e64e42",
       "css": "menu",
-      "code": 61448,
-      "src": "mfglabs"
+      "code": 59398,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M0 167.6H1508.5V0H0ZM0 583.8H1508.5V416.2H0ZM0 1000H1508.5V832.4H0Z",
+        "width": 1508
+      },
+      "search": [
+        "menu"
+      ]
     }
   ]
 }

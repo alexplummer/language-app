@@ -1,12 +1,13 @@
 
 // Imports
-import ops from 'app';
+import tinyTerms from 'app';
 
 // Exports
 export {
     ready,
     cl,
     clv,
+    buildData,
     checkSameDay,
     resetData,
     arrayCheck,
@@ -41,6 +42,27 @@ function clv(term, log) {
     console.log(term + '= ' + log);
 }
 
+// Gets data from Google Sheets
+const buildData = function buildData(data) {
+    tinyTerms[tinyTerms.pickedList].speechLang = data.Sheet1.elements[0][tinyTerms.pickedList];
+    tinyTerms[tinyTerms.pickedList].dictFrom = data.Sheet1.elements[1][tinyTerms.pickedList];
+    tinyTerms[tinyTerms.pickedList].dictTo = data.Sheet1.elements[2][tinyTerms.pickedList];
+    tinyTerms[tinyTerms.pickedList].action = data.Sheet1.elements[3][tinyTerms.pickedList];
+    tinyTerms[tinyTerms.pickedList].terms = tinyTerms[tinyTerms.pickedList].terms || {};
+
+    for (let i = 1; i < data.Sheet1.elements.length; i++) {
+        let termContent = data.Sheet1.elements[i].Term;
+        let definitionContent = data.Sheet1.elements[i].Definition;
+        let supportContent = data.Sheet1.elements[i].Support;
+
+        tinyTerms[tinyTerms.pickedList].terms[termContent] = {};
+        tinyTerms[tinyTerms.pickedList].terms[termContent].term = termContent;
+        tinyTerms[tinyTerms.pickedList].terms[termContent].definition = definitionContent;
+        tinyTerms[tinyTerms.pickedList].terms[termContent].support = supportContent;
+    }
+    tinyTerms.postBuildCallback();
+}
+
 // Checks if the same or new day
 function checkSameDay() {
 
@@ -48,16 +70,16 @@ function checkSameDay() {
     let storedDate = [];
 
     // Get date last stored
-    storedDate = Array.from(ops.storedData.dateOpened);
+    storedDate = Array.from(tinyTerms[tinyTerms.pickedList].storedData.dateOpened);
 
     // Check if same day
     if (arrayCheck(todaysDate, storedDate) === true) {
-        if (ops.addDay === true) { ops.storedData.newDay = true }
-        else { ops.storedData.newDay = false }
+        if (tinyTerms[tinyTerms.pickedList].ops.addDay === true) { tinyTerms[tinyTerms.pickedList].storedData.newDay = true }
+        else { tinyTerms[tinyTerms.pickedList].storedData.newDay = false }
     }
     // Otherwise a new day
     else {
-        ops.storedData.newDay = true;
+        tinyTerms[tinyTerms.pickedList].storedData.newDay = true;
     }
 }
 
@@ -166,7 +188,7 @@ function checkQuery(item1, item2) {
         return 0.0;
     };
     let relevance = stringSimilarity(item1, item2);
-    if (relevance > ops.wordAccuracy) return "mispelled";
+    if (relevance > tinyTerms[tinyTerms.pickedList].ops.wordAccuracy) return "mispelled";
     
     // Else false
     return false;
@@ -200,10 +222,12 @@ const appBlur = function appBlur() {
         };
 
     evt = evt || window.event;
-    if (evt.type in evtMap)
-      cl(evtMap[evt.type]);
-    else
-      location.reload();
+    if (evt.type in evtMap) {
+        //cl(evtMap[evt.type]);
+    }
+    else {
+        location.reload();
+    } 
   }
 
   // set the initial state (but only if browser supports the Page Visibility API)
