@@ -1,0 +1,73 @@
+// Header
+// ============
+// Styling for the header module
+
+.m-onboarding {
+    position: absolute;
+    z-index: $z-l + 1;
+    background: rgba(0, 0, 0, 0.8);
+    margin-top: $size-m;
+    padding: 0 $size-s;
+    max-width: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+
+    &:before {
+        content: "";
+        top: -15px;
+        left: 31px;
+        position: absolute;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 15px solid rgba(0, 0, 0, 0.8);
+    }
+    &.onboard-right:before {
+        left: auto;
+        right: 31px;
+    }
+    p {
+        color: #fff;
+        font-size: $font-l;
+
+        &:last-of-type {
+            border-bottom: 1px solid fade-out($clr-tertiary, 0.5);
+            padding-bottom: $size-m;
+            margin-bottom: $size-s;
+        }
+    }
+    button {
+        background: $clr-tertiary;
+        padding: $size-s;
+        float: right;
+        width: 70px;
+    }
+}
+.m-modal.onboard {
+
+    .inner {
+        overflow: hidden;
+        padding-bottom: 0;
+    }
+    .close {
+        display: none;
+    }
+    p {
+        &:last-of-type {
+            border-bottom: 1px solid fade-out($clr-tertiary, 0.5);
+            padding-bottom: $size-m;
+            margin-bottom: $size-s;
+        }
+    }
+
+    button {
+        background: $clr-tertiary;
+        padding: $size-s;
+        float: right;
+        width: 150px;
+    }
+    a {
+        color: $clr-tertiary;
+    }
+}

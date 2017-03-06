@@ -1,11 +1,12 @@
 
 // Imports
-import { ready, cl, clv, buildData, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
+import { ready, cl, clv, buildData, checkSameDay,arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
 import { getListOfTerms } from 'termCreation';
 import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol } from 'termInteraction';
 import { viewCreate, addHearts, setScore, progressBar } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
 import { showHome } from 'homeScreen';
+import { onboardShow, optionsDisplay } from 'introInstructions';
 import appData from 'appData';
 
 // Exports
@@ -23,7 +24,7 @@ let ops = {
     wordAccuracy: 0.7,
     addDay: false,
     debug: true,
-    loadDelay: 2500,
+    loadDelay: 0,
     points: {
         correct: 50,
         dailyBonus: 10,
@@ -40,6 +41,10 @@ tinyTerms.listChoices = {
     "Computer Components": {
         name: "Computer Components",
         sheetURL: "https://docs.google.com/spreadsheets/d/1Ho5Viqg71mIBlbyAIjLIqHEWRr4znDCLZSBtwVTtZk0/edit"
+    },
+    "Periodic Symbols": {
+        name: "Periodic Symbols",
+        sheetURL: "https://docs.google.com/spreadsheets/d/1sL3kTrZq3Hdb_iBo7hC8x9oGXXownlxmmdmmvALAPlU/edit#gid=0"
     }
 }
 
@@ -81,12 +86,16 @@ const pickList = function pickList(skipDefaultCheck) {
 
         tinyTerms.storedName = "tinyTerms"+defaultlist;
 
-        localforage.getItem('tinyTerms'+defaultlist, function(err, value) {
-            // Set session storage to stored
-            tinyTerms[tinyTerms.pickedList] = value;
-            // Update stored ops
-            tinyTerms[tinyTerms.pickedList].ops = ops;
-            initialise();
+        localforage.getItem('tinyTerms.tutComplete', function(err, value) {
+            tinyTerms.tutComplete = value;
+        
+            localforage.getItem('tinyTerms'+defaultlist, function(err, value) {
+                // Set session storage to stored
+                tinyTerms[tinyTerms.pickedList] = value;
+                // Update stored ops
+                tinyTerms[tinyTerms.pickedList].ops = ops;
+                initialise();
+            });
         });
     }
 }
@@ -125,6 +134,11 @@ const fetchData = function fetchData(sheetURL, postBuildCallback) {
 const firstTime = function firstTime() {
     // Create terms
     appBuildHandler();
+    // Show intro onboarding
+    cl(tinyTerms.tutComplete);
+    if (tinyTerms.tutComplete === undefined) {
+        onboardShow();
+    }
     // Then set first time to false
     tinyTerms[tinyTerms.pickedList].storedData.firstTime = false;
     // Add to storage
@@ -201,15 +215,16 @@ const appBuildHandler = function appBuildHandler() {
     pickSymbol();
     hideModal();
     progressBar();
-    
-    resetData();
 
+    // Shows options menu
+    optionsDisplay();
+    
     // Refresh window on blur
     appBlur();
 
     // Once loaded
     setTimeout(() => {
-        document.getElementsByTagName('body')[0].classList = "";
+        document.getElementsByTagName('body')[0].classList.remove('loading');
         document.querySelector('.m-query-wrapper').classList.add('animated', 'slideInDown');
     }, tinyTerms[tinyTerms.pickedList].ops.loadDelay);
 
@@ -220,6 +235,10 @@ const appBuildHandler = function appBuildHandler() {
         showHome();
     });
 
+    // Show onboard if incomplete
+    if (tinyTerms.tutComplete === false) {
+        onboardShow();
+    }
 
     // Debug code
     if (tinyTerms[tinyTerms.pickedList].ops.debug === true) {

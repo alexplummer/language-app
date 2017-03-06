@@ -1087,7 +1087,7 @@ dt {
 * {
   box-sizing: border-box; }
 
-.container, .m-modal, .m-footer {
+.container, .m-modal, .m-footer, .m-onboarding {
   box-sizing: border-box;
   max-width: 1400px;
   margin: 0 auto;
@@ -1095,19 +1095,19 @@ dt {
   padding-right: 3rem; }
 
 @media only screen and (min-width: 768px) {
-  .container, .m-modal, .m-footer {
+  .container, .m-modal, .m-footer, .m-onboarding {
     width: 100%; } }
 
 @media only screen and (min-width: 992px) {
-  .container, .m-modal, .m-footer {
+  .container, .m-modal, .m-footer, .m-onboarding {
     width: 100%; } }
 
 @media only screen and (min-width: 1200px) {
-  .container, .m-modal, .m-footer {
+  .container, .m-modal, .m-footer, .m-onboarding {
     width: 100%; } }
 
 @media only screen and (min-width: 1400px) {
-  .container, .m-modal, .m-footer {
+  .container, .m-modal, .m-footer, .m-onboarding {
     width: 1376px; } }
 
 /*!
@@ -1211,8 +1211,8 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
 /* csslint ignore:end */
 @font-face {
   font-family: 'fontello';
-  src: url("../font/fontello.eot?28696545");
-  src: url("../font/fontello.eot?28696545#iefix") format("embedded-opentype"), url("../font/fontello.woff2?28696545") format("woff2"), url("../font/fontello.woff?28696545") format("woff"), url("../font/fontello.ttf?28696545") format("truetype"), url("../font/fontello.svg?28696545#fontello") format("svg");
+  src: url("../font/fontello.eot?12413217");
+  src: url("../font/fontello.eot?12413217#iefix") format("embedded-opentype"), url("../font/fontello.woff2?12413217") format("woff2"), url("../font/fontello.woff?12413217") format("woff"), url("../font/fontello.ttf?12413217") format("truetype"), url("../font/fontello.svg?12413217#fontello") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1222,7 +1222,7 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?28696545#fontello') format('svg');
+    src: url('../font/fontello.svg?12413217#fontello') format('svg');
   }
 }
 */
@@ -1281,6 +1281,26 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
   content: '\e806'; }
 
 /* '' */
+.icon-right-open-big:before {
+  content: '\e807'; }
+
+/* '' */
+.icon-award-empty:before {
+  content: '\e808'; }
+
+/* '' */
+.icon-award:before {
+  content: '\e809'; }
+
+/* '' */
+.icon-award-1:before {
+  content: '\e80a'; }
+
+/* '' */
+.icon-cog-outline:before {
+  content: '\e80b'; }
+
+/* '' */
 .icon-garden:before, .m-modal .inner header h2.symbol:before, .m-term-wrapper .definition-wrapper .helpers .symbol:before {
   content: '\e81a'; }
 
@@ -1289,6 +1309,10 @@ a.icon:before, .m-header .right a.settings:before, .m-modal a.close:before, .m-t
   content: '\f19d'; }
 
 /* '' */
+.icon-child:before {
+  content: '\f1ae'; }
+
+/* '' */
 body {
   background: #f2f2f2; }
   body.loading {
@@ -1349,14 +1373,26 @@ table {
 .hidden {
   display: none; }
 
+.pulse-glow {
+  animation: pulse-glow 0.5s infinite alternate; }
+
+@keyframes pulse-glow {
+  from {
+    box-shadow: 0px 0px 10px 3px rgba(27, 46, 101, 0.2); }
+  to {
+    box-shadow: 0px 0px 20px 5px rgba(27, 46, 101, 0.2); } }
+
 .container {
   padding-bottom: 1.5rem; }
 
-.container, .m-modal, .m-footer {
+.container, .m-modal, .m-footer, .m-onboarding {
   width: 600px;
   max-width: 100%;
   min-height: 100vh;
   z-index: 10; }
+
+.m-onboarding {
+  min-height: 0; }
 
 .m-menu {
   position: absolute;
@@ -2813,6 +2849,29 @@ h2 {
     .m-menu .create-list button {
       background: #eca90b; }
 
+.options .inner {
+  padding-bottom: 0.75rem; }
+
+.options p {
+  border-bottom: 0; }
+
+.options a {
+  display: block;
+  font-size: 1rem;
+  color: #e21657;
+  margin-bottom: 0;
+  text-decoration: none; }
+  .options a:before {
+    font-family: fontello; }
+
+.options .delete-cancel, .options .delete-confirm {
+  background: #e21657;
+  margin-right: 1.5rem;
+  margin-top: 1.5rem; }
+
+.options .delete-confirm {
+  background: #b41145; }
+
 .m-modal {
   position: fixed;
   height: 100vh;
@@ -2891,6 +2950,62 @@ h2 {
         background-color: #e67e22; }
       .m-modal .colour-wrap li:nth-of-type(6) a {
         background-color: #e74c3c; }
+
+.m-onboarding {
+  position: absolute;
+  z-index: 101;
+  background: rgba(0, 0, 0, 0.8);
+  margin-top: 1.5rem;
+  padding: 0 0.75rem;
+  max-width: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px; }
+  .m-onboarding:before {
+    content: "";
+    top: -15px;
+    left: 31px;
+    position: absolute;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid rgba(0, 0, 0, 0.8); }
+  .m-onboarding.onboard-right:before {
+    left: auto;
+    right: 31px; }
+  .m-onboarding p {
+    color: #fff;
+    font-size: 1.25rem; }
+    .m-onboarding p:last-of-type {
+      border-bottom: 1px solid rgba(226, 22, 87, 0.5);
+      padding-bottom: 1.5rem;
+      margin-bottom: 0.75rem; }
+  .m-onboarding button {
+    background: #e21657;
+    padding: 0.75rem;
+    float: right;
+    width: 70px; }
+
+.m-modal.onboard .inner {
+  overflow: hidden;
+  padding-bottom: 0; }
+
+.m-modal.onboard .close {
+  display: none; }
+
+.m-modal.onboard p:last-of-type {
+  border-bottom: 1px solid rgba(226, 22, 87, 0.5);
+  padding-bottom: 1.5rem;
+  margin-bottom: 0.75rem; }
+
+.m-modal.onboard button {
+  background: #e21657;
+  padding: 0.75rem;
+  float: right;
+  width: 150px; }
+
+.m-modal.onboard a {
+  color: #e21657; }
 
 .m-query-wrapper {
   padding-top: 0.75rem;

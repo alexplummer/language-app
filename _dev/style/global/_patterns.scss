@@ -5,3 +5,10 @@
 .hidden {
     display: none;
 }
+.pulse-glow {
+    animation:pulse-glow 0.5s infinite alternate;
+}
+@keyframes pulse-glow {
+  from { box-shadow:0px 0px 10px 3px fade-out($clr-primary, 0.8) }
+  to { box-shadow:0px 0px 20px 5px fade-out($clr-primary, 0.8) }
+}

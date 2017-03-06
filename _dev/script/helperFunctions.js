@@ -9,7 +9,6 @@ export {
     clv,
     buildData,
     checkSameDay,
-    resetData,
     arrayCheck,
     getTodaysDate,
     pickRandom,
@@ -121,16 +120,6 @@ function arrayCheck(arr1, arr2) {
     }
     // Else false
     return false;
-}
-
-// Resets stored data
-function resetData() {
-
-    document.querySelector('.reset').addEventListener('click', (e) => {
-        e.preventDefault;
-        localforage.clear();
-        cl('APP RESET');
-    })
 }
 
 // Adds click functionality to selectors

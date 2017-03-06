@@ -5,12 +5,15 @@
 .container {
     padding-bottom: $size-m;
 }
-.container, .m-modal, .m-footer {
+.container, .m-modal, .m-footer, .m-onboarding {
     @extend %container;
     width: 600px;   
     max-width: 100%;
     min-height: 100vh;
     z-index: $z-s;
+}
+.m-onboarding {
+    min-height: 0;
 }
 .m-menu {
     position: absolute;

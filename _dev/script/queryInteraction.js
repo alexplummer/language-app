@@ -93,7 +93,7 @@ const createNewQuery = function createNewQuery(bonus) {
         queryWrapper.classList.remove('hidden');
 
         // Change title if bonus
-        if (bonus === true) {
+        if (bonus) {
             queryWrapper.getElementsByTagName('h2')[0].innerHTML = "Bonus Test";
         }
 

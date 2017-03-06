@@ -19,6 +19,15 @@ const showHome = function showHome() {
     let homeWrapper = document.querySelector('.m-menu');
     homeWrapper.classList.remove('hidden');
 
+    // Show list of stored list
+    let lists = "";
+
+    for (let val in tinyTerms.listChoices) {
+        lists += '<a href="#">'+tinyTerms.listChoices[val].name+'</a>';
+    }
+
+    homeWrapper.querySelector('.choose-list').getElementsByTagName('nav')[0].innerHTML = lists;
+
     // Add listener to nav
     let listItem = document.querySelector('.choose-list').querySelectorAll('a');
     

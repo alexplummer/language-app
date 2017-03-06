@@ -82,3 +82,31 @@
         }
     }
 }
+.options {
+    
+    .inner {
+        padding-bottom: $size-s;
+    }
+    p {
+        border-bottom: 0;
+    }
+    a {
+        display: block;
+        font-size: $font-s;
+        color: $clr-tertiary;
+        margin-bottom: 0;
+        text-decoration: none;
+
+        &:before {
+            font-family: fontello;
+        }
+    }
+    .delete-cancel, .delete-confirm {
+        background: $clr-tertiary;
+        margin-right: $size-m;
+        margin-top: $size-m;
+    }
+    .delete-confirm {
+        background: darken($clr-tertiary, 10%);
+    }
+}
