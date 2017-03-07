@@ -39,6 +39,7 @@ const onboardShow = function onboardShow() {
     });
 
     document.querySelector('.onboard-1').addEventListener('click', (e) => {
+        e.preventDefault;
         onboardStage2();
     });
     function onboardStage2() {
@@ -56,6 +57,7 @@ const onboardShow = function onboardShow() {
         onBoardText.style.top = termOffset + "px";
 
         document.querySelector('.onboard-2').addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage3();
         });
     }
@@ -69,6 +71,7 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.add('onboard-right');
 
         document.querySelector('.onboard-3').addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage4();
         });
     }
@@ -81,6 +84,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = view;
 
         topTerm.getElementsByTagName('button')[0].addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage5();
         });
     }
@@ -98,6 +102,7 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.remove('onboard-right');
 
         document.querySelector('.onboard-5').addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage6();
         });
     }
@@ -113,6 +118,7 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.add('onboard-right');
 
         document.querySelector('.onboard-6').addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage7();
         });
     }
@@ -130,6 +136,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = view;
 
         document.querySelector('.onboard-7').addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage8();
         });
     }
@@ -139,10 +146,12 @@ const onboardShow = function onboardShow() {
         topTerm.querySelector('.colour').removeAttribute('disabled');
         topTerm.querySelector('.symbol').removeAttribute('disabled');
         topTerm.style.zIndex = "50";
-        let queryWrap = document.querySelector('.m-query-wrapper');
+        let queryWrap = document.querySelector('.m-query');
         document.querySelector('.query-submit').setAttribute('disabled', 'true');
 
         createNewQuery(true);
+        delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
+        localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
         let termOffset = queryWrap.offsetTop + queryWrap.offsetHeight;
         onBoardText.style.top = termOffset + "px";
@@ -153,6 +162,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = view;
 
         document.querySelector('.onboard-8').addEventListener('click', (e) => {
+            e.preventDefault;
             onboardStage9();
         });
     }
@@ -161,7 +171,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = "";
         onBoardText.classList.add('hidden');
         document.getElementsByTagName('body')[0].classList.add('modal-active');
-        let queryWrap = document.querySelector('.m-query-wrapper');
+        let queryWrap = document.querySelector('.m-query');
         document.querySelector('.query-submit').removeAttribute('disabled');
 
         queryWrap.style.zIndex = "50";
@@ -171,14 +181,14 @@ const onboardShow = function onboardShow() {
         let view = `<header>
                         <h2 class="">That's about it</h2>
                     </header>
-                    <p>Fill the progress bar by completing the goal meters to finish the list! You get points for answering tests correctly and completing goal meters, use them to unlock cool stuff. <br>Good luck!</p>
+                    <p>Fill the progress bar by completing the goal meters to finish the list! You get points for answering tests correctly and completing goal meters, use them to unlock cool stuff. <br><br>Good luck!</p>
                     <button class="close-tut">Close the tutorial</button>
                     `;
         modal.querySelector('.content').innerHTML = view;
         modal.classList.add('onboard');
-        document.querySelector('.close-tut').addEventListener("click", () => {
+        document.querySelector('.close-tut').addEventListener("click", (e) => {
+            e.preventDefault;
             hideModal(true);
-            delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
             tinyTerms.tutComplete = true;
             localforage.setItem("tinyTerms.tutComplete", tinyTerms.tutComplete);
             modal.classList.remove('onboard');
@@ -204,6 +214,8 @@ const optionsDisplay = function optionsDisplay() {
                         <a href="#" class="icon-award-empty points-neon-colours">1000: Unlock neon colours</a>
                         <a href="#" class="icon-award points-life-glyphs">5000: Unlock solid symbols</a>
                         <a href="#" class="icon-award-1 points-metal-colours">10000: Unlock metal colours</a>
+                        <p>Help</p>
+                        <a href="#" class="icon-right-open-big show-tut">Show the tutorial again</a>
                         <p>More Options</p>
                         <a href="#" class="icon-right-open-big reset-list">Reset list progress</a>
                         <a href="#" class="icon-right-open-big reset">Reset the app</a>
@@ -215,8 +227,19 @@ const optionsDisplay = function optionsDisplay() {
         let resetList = document.querySelector('.reset-list');
         let resetApp = document.querySelector('.reset');
 
+        document.querySelector('.show-tut').addEventListener('click', (e) => {e.preventDefault; onboardShow()});
+
+        function resetMenu() {
+            if (document.querySelector('.delete-confirm') !== null) {
+                resetList.innerHTML = "Reset list progress";
+                resetApp.innerHTML = "Reset the app";
+                document.querySelector('.delete-confirm').parentNode.removeChild(document.querySelector('.delete-cancel'));
+                document.querySelector('.delete-confirm').parentNode.removeChild(document.querySelector('.delete-confirm'));
+            }
+        }
         resetList.addEventListener('click', (e) => {
             e.preventDefault;
+            resetMenu();
             resetList.innerHTML = "Are you sure you want to delete progress for this list? (Can't undo)";
             resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
             resetList.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
@@ -232,9 +255,10 @@ const optionsDisplay = function optionsDisplay() {
         });
         document.querySelector('.reset').addEventListener('click', (e) => {
             e.preventDefault;
-            resetList.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
-            resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
-            resetList.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
+            resetMenu();
+            resetApp.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
+            resetApp.parentNode.insertBefore(document.createElement("div"), resetApp.nextSibling);
+            resetApp.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
 
             document.querySelector('.delete-confirm').addEventListener('click', () => { 
                 localforage.clear();

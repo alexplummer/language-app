@@ -9,8 +9,7 @@
     margin-top: $size-m;
     padding: 0 $size-s;
     max-width: 300px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 10px;
     border-radius: 10px;
 
     &:before {
@@ -23,9 +22,14 @@
         border-right: 15px solid transparent;
         border-bottom: 15px solid rgba(0, 0, 0, 0.8);
     }
-    &.onboard-right:before {
+    &.onboard-right {
+        right: 10px;
         left: auto;
-        right: 31px;
+        
+        &:before {
+            left: auto;
+            right: 31px;
+        }
     }
     p {
         color: #fff;

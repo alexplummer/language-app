@@ -34,7 +34,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,800" rel="stylesheet">
-    <link rel="stylesheet" href="style/style-1dd521fd96.css"/>
+    <link rel="stylesheet" href="style/style-74ba332882.css"/>
 </head>
 
 <body class="loading">
@@ -51,7 +51,9 @@
                 <div class="content"></div>
             </div>
         </div>
-        <div class="m-onboarding hidden"></div>
+        <div class="onboard-wrap">
+            <div class="m-onboarding hidden"></div>
+        </div>
         <div class="m-menu hidden">
             <a class="close" href="#"></a>
             <div class="animated-bg">
@@ -70,16 +72,16 @@
             <img src="img/brand/logo_white.svg" />
             <h2>Choose a list to learn:</h2>
             <div class="choose-list">
-                <nav><a href="#">Computer Components</a><a href="#">Italian Verbs (ENG)</a>
-                </nav>
+                <nav></nav>
             </div>
             <div class="create-list">
                 <h3>Or add your own:</h3>
                 <button class="upload-info">Create a list</button>
+                <p class="legal">© Copyright 2017 Alex Plummer</p>
             </div>
         </div>
         <header class="m-header">
-            <h1>Italian Verbs</h1>
+            <h1> </h1>
             <div class="right">
                 <a class="settings" href="#"></a>
                 <div class="score">
@@ -88,20 +90,22 @@
                 </div>
             </div>
         </header>
-        <div class="m-query-wrapper hidden">
-            <header>
-                <h2>Daily Test</h2>
-                <div class="hearts"></div>
-            </header>
-            <p class="list-action">Translate: <span class="query-holder"></span>
-            </p>
-            <div class="query-form">
-                <div class="input-wrap">
-                    <input class="query-input" type="text" placeholder="Enter definition" />
+        <div class="query-wrapper hidden">
+            <div class="m-query">
+                <header>
+                    <h2>Daily Test</h2>
+                    <div class="hearts"></div>
+                </header>
+                <p class="list-action">Translate: <span class="query-holder"></span>
+                </p>
+                <div class="query-form">
+                    <div class="input-wrap">
+                        <input class="query-input" type="text" placeholder="Enter definition" />
+                    </div>
+                    <button class="query-submit">Check</button>
                 </div>
-                <button class="query-submit">Check</button>
+                <p class="result-holder hidden"></p>
             </div>
-            <p class="result-holder hidden"></p>
         </div>
         <div class="terms-wrapper"></div>
         <footer class="m-footer">
@@ -109,7 +113,7 @@
             <h4>Progress: <span class="completed">0 </span><span class="remaining">/ 0</span></h4>
         </footer>
     </div>
-    <script src="script/script-8f60674471.js"></script>
+    <script src="script/script-0f84941742.js"></script>
 </body>
 
 </html>

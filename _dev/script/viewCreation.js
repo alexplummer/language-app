@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv } from 'helperFunctions';
+import { cl, clv, makeSafeClass } from 'helperFunctions';
 import appData from 'appData';
 import tinyTerms from 'app';
 import { createRevealTimer } from 'termInteraction';
@@ -20,15 +20,17 @@ const viewCreate = function viewCreate(termsToCreate) {
         let termValue = tinyTerms[tinyTerms.pickedList].terms[value].term;
         let definitionValue = tinyTerms[tinyTerms.pickedList].terms[value].definition;
         let supportValue = tinyTerms[tinyTerms.pickedList].terms[value].support;
+        let termEncode = makeSafeClass(termValue);
         let revealCounter;
         let viewsCount;
 
         // Check storage for revealed count
-        if (tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus === undefined) {
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
+        if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] === undefined) {
             viewsCount = 0;
         }
         else {
-            viewsCount = tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[value] || 0;
+            viewsCount = (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].viewCount + 1) || 0;
         }
 
         document.querySelector('h1').innerHTML = tinyTerms.pickedList;
@@ -36,7 +38,7 @@ const viewCreate = function viewCreate(termsToCreate) {
 
         // Create terms HTML
         let newHolder =
-            `<div class="m-term-wrapper ${termValue}">
+            `<div class="m-term-wrapper ${termEncode}">
                 <p class="term-holder">${termValue}</p>
                 <div class="theme-holder"><p class="symbol-holder"></p></div>
                 <div class="right">
@@ -62,12 +64,13 @@ const viewCreate = function viewCreate(termsToCreate) {
     // Add theme to previously created terms
     for (let value of termsToCreate) {
         let termValue = tinyTerms[tinyTerms.pickedList].terms[value].term;
+        let termEncode = makeSafeClass(termValue);
 
         // Check storage for assigned colour
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
 
         if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] !== undefined && tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].colour !== undefined) {
-            let termWrapper = document.querySelector('.' + termValue + '');
+            let termWrapper = document.querySelector('.' + termEncode + '');
             let pickedColour = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].colour;
             // Add colour to object
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
@@ -77,7 +80,7 @@ const viewCreate = function viewCreate(termsToCreate) {
         }
         // Check storage for assigned symbol
         if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] !== undefined && tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].symbol !== undefined) {
-            let termWrapper = document.querySelector('.' + termValue + '');
+            let termWrapper = document.querySelector('.' + termEncode + '');
             let pickedSymbol = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].symbol;
             // Add symbol to object
             termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');

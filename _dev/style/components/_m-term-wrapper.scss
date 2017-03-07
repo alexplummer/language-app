@@ -27,6 +27,13 @@
             position: absolute;
             left: -5px;
         }
+        &.no-speak {
+            padding-left: 0;
+            
+            &:before {
+                display: none;
+            }
+        }
     }
     .theme-holder {
         position: absolute;

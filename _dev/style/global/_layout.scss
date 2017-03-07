@@ -5,19 +5,27 @@
 .container {
     padding-bottom: $size-m;
 }
-.container, .m-modal, .m-footer, .m-onboarding {
+.container, .m-modal, .m-footer {
     @extend %container;
-    width: 600px;   
+    width: 768px;   
     max-width: 100%;
     min-height: 100vh;
     z-index: $z-s;
+}
+.onboard-wrap, .m-modal {
+    position: absolute;
+    z-index: $z-l + 1;
+    max-width: 400px;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .m-onboarding {
     min-height: 0;
 }
 .m-menu {
     position: absolute;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     overflow: hidden;
     z-index: $z-l;
@@ -26,8 +34,14 @@
     position: relative;
     z-index: $z-m;
 }
-.terms-wrapper {
-    padding-bottom: 10px;
+.terms-wrapper, .query-wrapper {
+    padding: 0 $size-s;
+    width: 500px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+.query-wrapper {
+    margin: $size-m auto;
 }
 .m-footer {
     min-height: 0;

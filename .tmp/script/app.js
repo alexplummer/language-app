@@ -76,6 +76,16 @@ var app = function () {
         return todayDate;
     }
 
+    // Makes a safe class name
+    var makeSafeClass = function makeSafeClass(name) {
+        return name.replace(/[^a-z0-9]/g, function (s) {
+            var c = s.charCodeAt(0);
+            if (c == 32) return '-';
+            if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+            return '__' + ('000' + c.toString(16)).slice(-4);
+        });
+    };
+
     // Check if arrays are the same
     function arrayCheck(arr1, arr2) {
 
@@ -363,21 +373,23 @@ var app = function () {
                 var termValue = tinyTerms$1[tinyTerms$1.pickedList].terms[value].term;
                 var definitionValue = tinyTerms$1[tinyTerms$1.pickedList].terms[value].definition;
                 var supportValue = tinyTerms$1[tinyTerms$1.pickedList].terms[value].support;
+                var termEncode = makeSafeClass(termValue);
                 var revealCounter = void 0;
                 var viewsCount = void 0;
 
                 // Check storage for revealed count
-                if (tinyTerms$1[tinyTerms$1.pickedList].storedData.revealDailyBonus === undefined) {
+                tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms || {};
+                if (tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[termValue] === undefined) {
                     viewsCount = 0;
                 } else {
-                    viewsCount = tinyTerms$1[tinyTerms$1.pickedList].storedData.revealDailyBonus[value] || 0;
+                    viewsCount = tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[termValue].viewCount + 1 || 0;
                 }
 
                 document.querySelector('h1').innerHTML = tinyTerms$1.pickedList;
                 document.querySelector('.list-action').innerHTML = tinyTerms$1[tinyTerms$1.pickedList].action + '<span class="query-holder"></span>';
 
                 // Create terms HTML
-                var newHolder = '<div class="m-term-wrapper ' + termValue + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"><p class="symbol-holder"></p></div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + tinyTerms$1[tinyTerms$1.pickedList].ops.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
+                var newHolder = '<div class="m-term-wrapper ' + termEncode + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"><p class="symbol-holder"></p></div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + tinyTerms$1[tinyTerms$1.pickedList].ops.revealDailyBonusTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
 
                 viewHTML += newHolder;
             }
@@ -409,12 +421,13 @@ var app = function () {
                 var _value = _step2.value;
 
                 var _termValue = tinyTerms$1[tinyTerms$1.pickedList].terms[_value].term;
+                var _termEncode = makeSafeClass(_termValue);
 
                 // Check storage for assigned colour
                 tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms || {};
 
                 if (tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue] !== undefined && tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue].colour !== undefined) {
-                    var termWrapper = document.querySelector('.' + _termValue + '');
+                    var termWrapper = document.querySelector('.' + _termEncode + '');
                     var pickedColour = tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue].colour;
                     // Add colour to object
                     termWrapper.querySelector('.theme-holder').style.background = pickedColour;
@@ -424,7 +437,7 @@ var app = function () {
                 }
                 // Check storage for assigned symbol
                 if (tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue] !== undefined && tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue].symbol !== undefined) {
-                    var _termWrapper = document.querySelector('.' + _termValue + '');
+                    var _termWrapper = document.querySelector('.' + _termEncode + '');
                     var pickedSymbol = tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue].symbol;
                     // Add symbol to object
                     _termWrapper.querySelector('.symbol-holder').classList = 'symbol-holder';
@@ -596,7 +609,7 @@ var app = function () {
 
         // Build the query
         function queryHandler() {
-            var queryWrapper = document.querySelector('.m-query-wrapper');
+            var queryWrapper = document.querySelector('.query-wrapper');
             var queryHolder = document.querySelector('.query-holder');
             var querySubmit = document.querySelector('.query-submit');
             var resultHolder = document.querySelector('.result-holder');
@@ -612,9 +625,11 @@ var app = function () {
 
             localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
 
+            var termEncode = makeSafeClass(randomTerm);
+
             // Hide daily term definition if same
-            if (document.querySelector('.' + randomTerm + '') !== null) {
-                document.querySelector('.' + randomTerm + '').querySelector('.definition-wrapper').classList.add('hidden');
+            if (document.querySelector('.' + termEncode + '') !== null) {
+                document.querySelector('.' + termEncode + '').querySelector('.definition-wrapper').classList.add('hidden');
             }
 
             // Add hearts
@@ -934,6 +949,11 @@ var app = function () {
             speech.lang = tinyTerms$1[tinyTerms$1.pickedList].speechLang;
             window.speechSynthesis.speak(speech);
         });
+        if (tinyTerms$1[tinyTerms$1.pickedList].speechLang === undefined || tinyTerms$1[tinyTerms$1.pickedList].speechLang === "") {
+            for (var k = 0; k < termHolder.length; k++) {
+                termHolder[k].classList.add('no-speak');
+            }
+        }
     };
 
     // Retrieves dictionary references
@@ -956,6 +976,7 @@ var app = function () {
 
             // Make request to Glosbe
             jsonp('https://glosbe.com/gapi/translate?from=' + tinyTerms$1[tinyTerms$1.pickedList].dictFrom + 'a&dest=' + tinyTerms$1[tinyTerms$1.pickedList].dictTo + 'g&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
+
                 var dictionaryResponses = "";
 
                 try {
@@ -1008,7 +1029,7 @@ var app = function () {
             var termHolder = colourBtn[i].parentNode.parentNode.parentNode;
             var term = colourBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
 
-            var view = '<header>\n                        <h2 class="colour">Colour picker</h2>\n                    </header>\n                    <p>Click below to add a colour for "<span class="colour-term">' + term + '</span>":</p>\n                    <ul class="colour-wrap">\n                        <li><a href="#" data-colour="#1abc9c"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#3498db"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#9b59b6"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#f1c40f"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e67e22"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e74c3c"></a></li>\n                    </ul>';
+            var view = '<header>\n                        <h2 class="colour">Colour picker</h2>\n                    </header>\n                    <p>Click below to add a colour for <br>"<span class="colour-term">' + term + '</span>":</p>\n                    <ul class="colour-wrap">\n                        <li><a href="#" data-colour="#1abc9c"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#3498db"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#9b59b6"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#f1c40f"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e67e22"></a></li>\n\t\t\t\t\t\t<li><a href="#" data-colour="#e74c3c"></a></li>\n                    </ul>';
 
             // Add view
             modal.querySelector('.content').innerHTML += view;
@@ -1022,7 +1043,8 @@ var app = function () {
         // Add colour function
         function colourListener() {
             var term = document.querySelector('.colour-term').innerHTML;
-            var termWrapper = document.querySelector('.' + term + '');
+            var termEncode = makeSafeClass(term);
+            var termWrapper = document.querySelector('.' + termEncode + '');
 
             // Pick a colour
             clickListener(colours, function (i) {
@@ -1087,7 +1109,7 @@ var app = function () {
             var termHolder = symbolBtn[i].parentNode.parentNode.parentNode;
             var term = symbolBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
 
-            var view = '<header>\n                        <h2 class="symbol">Glyph picker</h2>\n                    </header>\n                    <p>Click below to add a glyph for "<span class="symbol-term">' + term + '</span>":</p>\n                    <div class="symbol-wrap">\n                        <table>' + symbolHTML + '</table>\n                    </div>';
+            var view = '<header>\n                        <h2 class="symbol">Glyph picker</h2>\n                    </header>\n                    <p>Click below to add a glyph for <br>"<span class="symbol-term">' + term + '</span>":</p>\n                    <div class="symbol-wrap">\n                        <table>' + symbolHTML + '</table>\n                    </div>';
 
             // Add view
             modal.querySelector('.content').innerHTML += view;
@@ -1097,7 +1119,8 @@ var app = function () {
         // Check for clicked symbol
         function symbolListener() {
             var term = document.querySelector('.symbol-term').innerHTML;
-            var termWrapper = document.querySelector('.' + term + '');
+            var termEncode = makeSafeClass(term);
+            var termWrapper = document.querySelector('.' + termEncode + '');
             var pickedSymbol = "";
 
             modal.getElementsByTagName('table')[0].addEventListener('click', function (e) {
@@ -1144,12 +1167,13 @@ var app = function () {
         // Once loaded
         setTimeout(function () {
             document.getElementsByTagName('body')[0].classList = "";
-            document.querySelector('.m-query-wrapper').classList.add('animated', 'slideInDown');
+            document.querySelector('.query-wrapper').classList.add('animated', 'slideInDown');
         }, 1000);
 
         // Show home screen
         var homeWrapper = document.querySelector('.m-menu');
         homeWrapper.classList.remove('hidden');
+        document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         // Show list of stored list
         var lists = "";
@@ -1164,12 +1188,29 @@ var app = function () {
         var listItem = document.querySelector('.choose-list').querySelectorAll('a');
 
         for (var i = 0; i < listItem.length; i++) {
-            listItem[i].addEventListener('click', function (event) {
+            listItem[i].addEventListener('click', function (e) {
+                e.preventDefault;
                 tinyTerms$1.pickedList = this.innerHTML;
                 localforage.setItem('tinyTermsDefault', tinyTerms$1.pickedList);
                 location.reload();
             });
         }
+
+        // Upload list button
+        document.querySelector('.upload-info').addEventListener('click', function (e) {
+            e.preventDefault;
+
+            var modal = document.querySelector('.m-modal');
+
+            // Bring up modal
+            modal.classList.remove('hidden');
+            modal.style.zIndex = "101";
+
+            var view = '<header>\n                        <h2 class="">Upload a list</h2>\n                    </header>\n                    <p>Create your very own list of Tiny Terms! For more info please visit:</p>\n                    <a href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>\n                    <div class="list-uploader">\n                        <input type="text" placeholder="Paste list URL">\n                        <button class="upload-list">Upload</button>\n                    </div>';
+
+            // Add view
+            modal.querySelector('.content').innerHTML += view;
+        });
     };
 
     // Imports
@@ -1198,6 +1239,7 @@ var app = function () {
         });
 
         document.querySelector('.onboard-1').addEventListener('click', function (e) {
+            e.preventDefault;
             onboardStage2();
         });
         function onboardStage2() {
@@ -1214,6 +1256,7 @@ var app = function () {
             onBoardText.style.top = termOffset + "px";
 
             document.querySelector('.onboard-2').addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage3();
             });
         }
@@ -1226,6 +1269,7 @@ var app = function () {
             onBoardText.classList.add('onboard-right');
 
             document.querySelector('.onboard-3').addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage4();
             });
         }
@@ -1237,6 +1281,7 @@ var app = function () {
             onBoardText.innerHTML = view;
 
             topTerm.getElementsByTagName('button')[0].addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage5();
             });
         }
@@ -1253,6 +1298,7 @@ var app = function () {
             onBoardText.classList.remove('onboard-right');
 
             document.querySelector('.onboard-5').addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage6();
             });
         }
@@ -1267,6 +1313,7 @@ var app = function () {
             onBoardText.classList.add('onboard-right');
 
             document.querySelector('.onboard-6').addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage7();
             });
         }
@@ -1283,6 +1330,7 @@ var app = function () {
             onBoardText.innerHTML = view;
 
             document.querySelector('.onboard-7').addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage8();
             });
         }
@@ -1292,10 +1340,12 @@ var app = function () {
             topTerm.querySelector('.colour').removeAttribute('disabled');
             topTerm.querySelector('.symbol').removeAttribute('disabled');
             topTerm.style.zIndex = "50";
-            var queryWrap = document.querySelector('.m-query-wrapper');
+            var queryWrap = document.querySelector('.m-query');
             document.querySelector('.query-submit').setAttribute('disabled', 'true');
 
             createNewQuery(true);
+            delete tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyQuery;
+            localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
 
             var termOffset = queryWrap.offsetTop + queryWrap.offsetHeight;
             onBoardText.style.top = termOffset + "px";
@@ -1305,6 +1355,7 @@ var app = function () {
             onBoardText.innerHTML = view;
 
             document.querySelector('.onboard-8').addEventListener('click', function (e) {
+                e.preventDefault;
                 onboardStage9();
             });
         }
@@ -1313,19 +1364,19 @@ var app = function () {
             onBoardText.innerHTML = "";
             onBoardText.classList.add('hidden');
             document.getElementsByTagName('body')[0].classList.add('modal-active');
-            var queryWrap = document.querySelector('.m-query-wrapper');
+            var queryWrap = document.querySelector('.m-query');
             document.querySelector('.query-submit').removeAttribute('disabled');
 
             queryWrap.style.zIndex = "50";
             queryWrap.classList.add('hidden');
             topTerm.querySelector('.definition-wrapper').classList.remove('hidden');
 
-            var view = '<header>\n                        <h2 class="">That\'s about it</h2>\n                    </header>\n                    <p>Fill the progress bar by completing the goal meters to finish the list! You get points for answering tests correctly and completing goal meters, use them to unlock cool stuff. <br>Good luck!</p>\n                    <button class="close-tut">Close the tutorial</button>\n                    ';
+            var view = '<header>\n                        <h2 class="">That\'s about it</h2>\n                    </header>\n                    <p>Fill the progress bar by completing the goal meters to finish the list! You get points for answering tests correctly and completing goal meters, use them to unlock cool stuff. <br><br>Good luck!</p>\n                    <button class="close-tut">Close the tutorial</button>\n                    ';
             modal.querySelector('.content').innerHTML = view;
             modal.classList.add('onboard');
-            document.querySelector('.close-tut').addEventListener("click", function () {
+            document.querySelector('.close-tut').addEventListener("click", function (e) {
+                e.preventDefault;
                 hideModal(true);
-                delete tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyQuery;
                 tinyTerms$1.tutComplete = true;
                 localforage.setItem("tinyTerms.tutComplete", tinyTerms$1.tutComplete);
                 modal.classList.remove('onboard');
@@ -1343,15 +1394,28 @@ var app = function () {
             modal.classList.remove('hidden');
             document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-            var view = '<header>\n                        <h2 class="icon-cog-outline">Options</h2>\n                    </header>\n                    <div class="options">\n                        <p>Spend points: (coming soon)</p>\n                        <a href="#" class="icon-award-empty points-neon-colours">1000: Unlock neon colours</a>\n                        <a href="#" class="icon-award points-life-glyphs">5000: Unlock solid symbols</a>\n                        <a href="#" class="icon-award-1 points-metal-colours">10000: Unlock metal colours</a>\n                        <p>More Options</p>\n                        <a href="#" class="icon-right-open-big reset-list">Reset list progress</a>\n                        <a href="#" class="icon-right-open-big reset">Reset the app</a>\n                    </div>\n                    ';
+            var view = '<header>\n                        <h2 class="icon-cog-outline">Options</h2>\n                    </header>\n                    <div class="options">\n                        <p>Spend points: (coming soon)</p>\n                        <a href="#" class="icon-award-empty points-neon-colours">1000: Unlock neon colours</a>\n                        <a href="#" class="icon-award points-life-glyphs">5000: Unlock solid symbols</a>\n                        <a href="#" class="icon-award-1 points-metal-colours">10000: Unlock metal colours</a>\n                        <p>Help</p>\n                        <a href="#" class="icon-right-open-big show-tut">Show the tutorial again</a>\n                        <p>More Options</p>\n                        <a href="#" class="icon-right-open-big reset-list">Reset list progress</a>\n                        <a href="#" class="icon-right-open-big reset">Reset the app</a>\n                    </div>\n                    ';
 
             // Add view
             modal.querySelector('.content').innerHTML += view;
             var resetList = document.querySelector('.reset-list');
             var resetApp = document.querySelector('.reset');
 
+            document.querySelector('.show-tut').addEventListener('click', function (e) {
+                e.preventDefault;onboardShow();
+            });
+
+            function resetMenu() {
+                if (document.querySelector('.delete-confirm') !== null) {
+                    resetList.innerHTML = "Reset list progress";
+                    resetApp.innerHTML = "Reset the app";
+                    document.querySelector('.delete-confirm').parentNode.removeChild(document.querySelector('.delete-cancel'));
+                    document.querySelector('.delete-confirm').parentNode.removeChild(document.querySelector('.delete-confirm'));
+                }
+            }
             resetList.addEventListener('click', function (e) {
                 e.preventDefault;
+                resetMenu();
                 resetList.innerHTML = "Are you sure you want to delete progress for this list? (Can't undo)";
                 resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
                 resetList.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
@@ -1367,9 +1431,10 @@ var app = function () {
             });
             document.querySelector('.reset').addEventListener('click', function (e) {
                 e.preventDefault;
-                resetList.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
-                resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
-                resetList.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
+                resetMenu();
+                resetApp.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
+                resetApp.parentNode.insertBefore(document.createElement("div"), resetApp.nextSibling);
+                resetApp.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
 
                 document.querySelector('.delete-confirm').addEventListener('click', function () {
                     localforage.clear();
@@ -1410,11 +1475,16 @@ var app = function () {
             name: "Computer Components",
             sheetURL: "https://docs.google.com/spreadsheets/d/1Ho5Viqg71mIBlbyAIjLIqHEWRr4znDCLZSBtwVTtZk0/edit"
         },
-        "Periodic Symbols": {
-            name: "Periodic Symbols",
+        "Periodic Elements": {
+            name: "Periodic Elements",
             sheetURL: "https://docs.google.com/spreadsheets/d/1sL3kTrZq3Hdb_iBo7hC8x9oGXXownlxmmdmmvALAPlU/edit#gid=0"
         }
     };
+
+    // Crash protection
+    setTimeout(function () {
+        document.getElementsByTagName('body')[0].classList.remove('loading');
+    }, 10000);
 
     // Initialise modules on load
     ready(function () {
@@ -1427,15 +1497,19 @@ var app = function () {
     var pickList = function pickList(skipDefaultCheck) {
         var tinyTermsDefault = void 0;
 
-        // Check for default list, used on very first load
-        localforage.getItem('tinyTermsDefault', function (err, value) {
-            tinyTermsDefault = value;
+        localforage.getItem('tinyTerms.tutComplete', function (err, tutStatus) {
+            tinyTerms$1.tutComplete = tutStatus;
 
-            if (tinyTermsDefault === null) {
-                showHome();
-            } else {
-                checkDefault();
-            }
+            // Check for default list, used on very first load
+            localforage.getItem('tinyTermsDefault', function (err, value) {
+                tinyTermsDefault = value;
+
+                if (tinyTermsDefault === null) {
+                    showHome();
+                } else {
+                    checkDefault();
+                }
+            });
         });
         function checkDefault() {
             // Check for existing data of newly picked list
@@ -1453,16 +1527,12 @@ var app = function () {
 
             tinyTerms$1.storedName = "tinyTerms" + defaultlist;
 
-            localforage.getItem('tinyTerms.tutComplete', function (err, value) {
-                tinyTerms$1.tutComplete = value;
-
-                localforage.getItem('tinyTerms' + defaultlist, function (err, value) {
-                    // Set session storage to stored
-                    tinyTerms$1[tinyTerms$1.pickedList] = value;
-                    // Update stored ops
-                    tinyTerms$1[tinyTerms$1.pickedList].ops = ops;
-                    initialise();
-                });
+            localforage.getItem('tinyTerms' + defaultlist, function (err, value) {
+                // Set session storage to stored
+                tinyTerms$1[tinyTerms$1.pickedList] = value;
+                // Update stored ops
+                tinyTerms$1[tinyTerms$1.pickedList].ops = ops;
+                initialise();
             });
         }
     };
@@ -1502,8 +1572,7 @@ var app = function () {
         // Create terms
         appBuildHandler();
         // Show intro onboarding
-        cl(tinyTerms$1.tutComplete);
-        if (tinyTerms$1.tutComplete === undefined) {
+        if (tinyTerms$1.tutComplete === null) {
             onboardShow();
         }
         // Then set first time to false
@@ -1592,13 +1661,14 @@ var app = function () {
         // Once loaded
         setTimeout(function () {
             document.getElementsByTagName('body')[0].classList.remove('loading');
-            document.querySelector('.m-query-wrapper').classList.add('animated', 'slideInDown');
+            document.querySelector('.m-query').classList.add('animated', 'slideInDown');
         }, tinyTerms$1[tinyTerms$1.pickedList].ops.loadDelay);
 
         // Set menu button listener
         var menuTrigger = document.getElementsByTagName('h1');
 
-        menuTrigger[0].addEventListener('click', function () {
+        menuTrigger[0].addEventListener('click', function (e) {
+            e.preventDefault;
             showHome();
         });
 

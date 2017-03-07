@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv, clickListener, jsonp, findKeys } from 'helperFunctions';
+import { cl, clv, clickListener, jsonp, findKeys, makeSafeClass } from 'helperFunctions';
 import appData from 'appData';
 import tinyTerms from 'app';
 import { createNewQuery } from 'queryInteraction';
@@ -218,6 +218,11 @@ const textToSpeech = function textToSpeech() {
         speech.lang = tinyTerms[tinyTerms.pickedList].speechLang;
         window.speechSynthesis.speak(speech);
     });
+    if (tinyTerms[tinyTerms.pickedList].speechLang === undefined || tinyTerms[tinyTerms.pickedList].speechLang === "") {
+        for (let k = 0; k < termHolder.length; k++){
+            termHolder[k].classList.add('no-speak');
+        }
+    }
 }
 
 // Retrieves dictionary references
@@ -244,7 +249,11 @@ const dictionaryLookup = function dictionaryLookup() {
         let definitionHolder = modal.querySelector('.definitions');
 
         // Make request to Glosbe
-        jsonp('https://glosbe.com/gapi/translate?from='+tinyTerms[tinyTerms.pickedList].dictFrom+'a&dest='+tinyTerms[tinyTerms.pickedList].dictTo+'g&format=json&pretty=true&phrase=' + term.toLowerCase() + '').then(function (data) {
+        jsonp('https://glosbe.com/gapi/translate?from='+tinyTerms[tinyTerms.pickedList]
+        .dictFrom+'a&dest='+tinyTerms[tinyTerms.pickedList]
+        .dictTo+'g&format=json&pretty=true&phrase=' + term.toLowerCase() + '')
+        .then(function (data) {
+            
             let dictionaryResponses = "";
 
             try {
@@ -297,7 +306,7 @@ const addColour = function addColour() {
         let view = `<header>
                         <h2 class="colour">Colour picker</h2>
                     </header>
-                    <p>Click below to add a colour for "<span class="colour-term">${term}</span>":</p>
+                    <p>Click below to add a colour for <br>"<span class="colour-term">${term}</span>":</p>
                     <ul class="colour-wrap">
                         <li><a href="#" data-colour="#1abc9c"></a></li>
 						<li><a href="#" data-colour="#3498db"></a></li>
@@ -319,7 +328,8 @@ const addColour = function addColour() {
     // Add colour function
     function colourListener() {
         let term = document.querySelector('.colour-term').innerHTML;
-        let termWrapper = document.querySelector('.' + term + '');
+        let termEncode = makeSafeClass(term);
+        let termWrapper = document.querySelector('.' + termEncode + '');
 
         // Pick a colour
         clickListener(colours, (i) => {
@@ -391,7 +401,7 @@ const pickSymbol = function pickSymbol() {
         let view = `<header>
                         <h2 class="symbol">Glyph picker</h2>
                     </header>
-                    <p>Click below to add a glyph for "<span class="symbol-term">${term}</span>":</p>
+                    <p>Click below to add a glyph for <br>"<span class="symbol-term">${term}</span>":</p>
                     <div class="symbol-wrap">
                         <table>${symbolHTML}</table>
                     </div>`;
@@ -404,7 +414,8 @@ const pickSymbol = function pickSymbol() {
     // Check for clicked symbol
     function symbolListener() {
         let term = document.querySelector('.symbol-term').innerHTML;
-        let termWrapper = document.querySelector('.' + term + '');
+        let termEncode = makeSafeClass(term);
+        let termWrapper = document.querySelector('.' + termEncode + '');
         let pickedSymbol = "";
 
         modal.getElementsByTagName('table')[0].addEventListener('click', function(e) {

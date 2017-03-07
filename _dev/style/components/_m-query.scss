@@ -2,10 +2,10 @@
 // ============
 // Wraps around the query
 
-.m-query-wrapper {
+.m-query {
     @extend .m-card;
     padding-top: $size-s;
-    margin: $size-m $size-s;
+    margin: 0;
     position: relative;
     animation-duration: 0.5s;
 

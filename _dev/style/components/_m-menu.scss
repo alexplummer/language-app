@@ -9,12 +9,13 @@
     text-align: center;
 
     img {
-        max-width: 60%;
+        max-width: 200px;
     }
     h3 {
         @extend %small-caps;
         font-size: $font-m;
         color: rgba(250,250,250,0.8);
+        margin-bottom: $size-s;
     }
     h2 {
         color: rgba(250,250,250,0.7);
@@ -74,12 +75,30 @@
         margin-top: $size-m;
         position: absolute;
         left: -50%;
-        bottom: -10%;
+        bottom: -95px;
         width: 200%;
 
         button {
             background: $clr-hlight;
+            margin-bottom: $size-m;
         }
+        .legal {
+            color: #fff;
+            font-size: $font-xs;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+.list-uploader {
+
+    a {
+        display: block;
+        text-align: center;
+    }
+
+    input[type="text"] {
+        width: 100%;
     }
 }
 .options {

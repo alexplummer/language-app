@@ -10,6 +10,7 @@ export {
     buildData,
     checkSameDay,
     arrayCheck,
+    makeSafeClass,
     getTodaysDate,
     pickRandom,
     clickListener,
@@ -110,6 +111,17 @@ function getTimeComplete() {
 
     return timeComplete;
 }
+
+// Makes a safe class name
+const makeSafeClass = function makeSafeClass(name) {
+    return name.replace(/[^a-z0-9]/g, function(s) {
+        var c = s.charCodeAt(0);
+        if (c == 32) return '-';
+        if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+        return '__' + ('000' + c.toString(16)).slice(-4);
+    });
+}
+
 
 // Check if arrays are the same
 function arrayCheck(arr1, arr2) {

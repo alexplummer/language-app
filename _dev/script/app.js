@@ -42,11 +42,16 @@ tinyTerms.listChoices = {
         name: "Computer Components",
         sheetURL: "https://docs.google.com/spreadsheets/d/1Ho5Viqg71mIBlbyAIjLIqHEWRr4znDCLZSBtwVTtZk0/edit"
     },
-    "Periodic Symbols": {
-        name: "Periodic Symbols",
+    "Periodic Elements": {
+        name: "Periodic Elements",
         sheetURL: "https://docs.google.com/spreadsheets/d/1sL3kTrZq3Hdb_iBo7hC8x9oGXXownlxmmdmmvALAPlU/edit#gid=0"
     }
 }
+
+// Crash protection
+setTimeout(() => {
+    document.getElementsByTagName('body')[0].classList.remove('loading');
+}, 10000);
 
 // Initialise modules on load
 ready(function () {
@@ -58,16 +63,20 @@ ready(function () {
 const pickList = function pickList(skipDefaultCheck) {    
     let tinyTermsDefault;
 
-    // Check for default list, used on very first load
-    localforage.getItem('tinyTermsDefault', function(err, value) {
-        tinyTermsDefault = value;
+    localforage.getItem('tinyTerms.tutComplete', function(err, tutStatus) {
+        tinyTerms.tutComplete = tutStatus;
 
-        if (tinyTermsDefault === null) {
-            showHome();
-        }
-        else {
-            checkDefault();
-        }
+        // Check for default list, used on very first load
+        localforage.getItem('tinyTermsDefault', function(err, value) {
+            tinyTermsDefault = value;
+
+            if (tinyTermsDefault === null) {
+                showHome();
+            }
+            else {
+                checkDefault();
+            }
+        });
     });
     function checkDefault() {
         // Check for existing data of newly picked list
@@ -86,16 +95,12 @@ const pickList = function pickList(skipDefaultCheck) {
 
         tinyTerms.storedName = "tinyTerms"+defaultlist;
 
-        localforage.getItem('tinyTerms.tutComplete', function(err, value) {
-            tinyTerms.tutComplete = value;
-        
-            localforage.getItem('tinyTerms'+defaultlist, function(err, value) {
-                // Set session storage to stored
-                tinyTerms[tinyTerms.pickedList] = value;
-                // Update stored ops
-                tinyTerms[tinyTerms.pickedList].ops = ops;
-                initialise();
-            });
+        localforage.getItem('tinyTerms'+defaultlist, function(err, value) {
+            // Set session storage to stored
+            tinyTerms[tinyTerms.pickedList] = value;
+            // Update stored ops
+            tinyTerms[tinyTerms.pickedList].ops = ops;
+            initialise();
         });
     }
 }
@@ -135,8 +140,7 @@ const firstTime = function firstTime() {
     // Create terms
     appBuildHandler();
     // Show intro onboarding
-    cl(tinyTerms.tutComplete);
-    if (tinyTerms.tutComplete === undefined) {
+    if (tinyTerms.tutComplete === null) {
         onboardShow();
     }
     // Then set first time to false
@@ -225,13 +229,14 @@ const appBuildHandler = function appBuildHandler() {
     // Once loaded
     setTimeout(() => {
         document.getElementsByTagName('body')[0].classList.remove('loading');
-        document.querySelector('.m-query-wrapper').classList.add('animated', 'slideInDown');
+        document.querySelector('.m-query').classList.add('animated', 'slideInDown');
     }, tinyTerms[tinyTerms.pickedList].ops.loadDelay);
 
      // Set menu button listener
     let menuTrigger = document.getElementsByTagName('h1');
 
-    menuTrigger[0].addEventListener('click', ()=>{
+    menuTrigger[0].addEventListener('click', (e)=>{
+        e.preventDefault;
         showHome();
     });
 

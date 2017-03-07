@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv, pickRandom, checkQuery } from 'helperFunctions';
+import { cl, clv, pickRandom, checkQuery, makeSafeClass } from 'helperFunctions';
 import appData from 'appData';
 import tinyTerms from 'app';
 import { addHearts } from 'viewCreation';
@@ -64,7 +64,7 @@ const createNewQuery = function createNewQuery(bonus) {
 
     // Build the query
     function queryHandler() {
-        let queryWrapper = document.querySelector('.m-query-wrapper');
+        let queryWrapper = document.querySelector('.query-wrapper');
         let queryHolder = document.querySelector('.query-holder');
         let querySubmit = document.querySelector('.query-submit');
         let resultHolder = document.querySelector('.result-holder');
@@ -80,9 +80,11 @@ const createNewQuery = function createNewQuery(bonus) {
 
         localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
+        let termEncode = makeSafeClass(randomTerm);
+
         // Hide daily term definition if same
-        if (document.querySelector('.' + randomTerm + '') !== null) {
-            document.querySelector('.' + randomTerm + '').querySelector('.definition-wrapper').classList.add('hidden');
+        if (document.querySelector('.' + termEncode + '') !== null) {
+            document.querySelector('.' + termEncode + '').querySelector('.definition-wrapper').classList.add('hidden');
         }
 
         // Add hearts
