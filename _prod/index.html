@@ -34,14 +34,21 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,800" rel="stylesheet">
-    <link rel="stylesheet" href="style/style-36277f84cb.css"/>
+    <link rel="stylesheet" href="style/style-382b0a1aa1.css"/>
 </head>
 
-<body>
+<body class="loading">
+    <div class="m-loader">
+        <div class="splash-icon"></div>
+        <div class="loader">
+            <img src="img/brand/logo.svg" /><span class="loader-item">L</span><span class="loader-item">O</span><span class="loader-item">A</span><span class="loader-item">D</span><span class="loader-item">I</span><span class="loader-item">N</span><span class="loader-item">G</span>
+        </div>
+    </div>
     <div class="container">
         <div class="m-modal hidden">
             <div class="inner">
                 <a class="close" href="#"></a>
+                <div class="content"></div>
             </div>
         </div>
         <header class="m-header">
@@ -70,8 +77,12 @@
             <p class="result-holder hidden"></p>
         </div>
         <div class="terms-wrapper"></div>
+        <footer class="m-footer">
+            <div class="progress-bar"></div>
+            <h4>Progress: <span class="completed">0 </span><span class="remaining">/ 0</span></h4>
+        </footer>
     </div>
-    <script src="script/script-c44cb3d55e.js"></script>
+    <script src="script/script-5cd78df95b.js"></script>
 </body>
 
 </html>

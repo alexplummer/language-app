@@ -5,7 +5,7 @@
 
 $clr-primary:   #1b2e65;
 $clr-secondary: #1A56A5;
-$clr-tertiary:  #f7004e;
+$clr-tertiary:  #e21657;
 $clr-hlight:    #eca90b;
 $clr-shade:     #3F4747;
 
@@ -14,7 +14,7 @@ $clr-link-hover: lighten($clr-link, 10%);
 
 $clr-light:   #BED4D2;
 $clr-lighter: #eee;
-$clr-dark:    #574b5d;
+$clr-dark:    darken($clr-primary, 5%);
 $clr-darker:  #333333;
 
 $clr-primary-textoverlay:   #FFFFFF;
@@ -45,7 +45,7 @@ $xheight-body:   1;
 $font-xxxl: /* 96px */ 6      * 1rem;
 $font-xxl:  /* 48px */ 3      * 1rem;
 $font-xl:   /* 36px */ 2.25   * 1rem;
-$font-l:    /* 24px */ 1.5    * 1rem;
+$font-l:    /* 20px */ 1.25   * 1rem;
 $font-m:    /* 18px */ 1.125  * 1rem;
 $font-s:    /* 16px */ 1      * 1rem;
 $font-xs:   /* 12px */ 0.75   * 1rem;

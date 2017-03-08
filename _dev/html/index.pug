@@ -5,6 +5,18 @@ block title
 
 block content
 
+	.m-loader
+		.splash-icon
+		.loader
+			img(src="img/brand/logo.svg")
+			span.loader-item L
+			span.loader-item O
+			span.loader-item A
+			span.loader-item D
+			span.loader-item I
+			span.loader-item N
+			span.loader-item G
+
 	.container
 		.m-modal.hidden
 			.inner
@@ -33,6 +45,12 @@ block content
 				button.query-submit Check
 			p.result-holder.hidden
 		.terms-wrapper
+
+		footer.m-footer
+			.progress-bar
+			h4 Progress: 
+				span.completed 0 
+				span.remaining / 0
 	
 	include includes/_under
 

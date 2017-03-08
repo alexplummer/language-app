@@ -16,6 +16,8 @@
     "bower_components"
   ],
   "devDependencies": {
-    "localforage": "^1.4.3"
+    "localforage": "^1.4.3",
+    "animate.css": "^3.5.2",
+    "tabletop": "^1.5.1"
   }
 }

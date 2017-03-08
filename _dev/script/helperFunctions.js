@@ -201,7 +201,7 @@ const appBlur = function appBlur() {
 
     evt = evt || window.event;
     if (evt.type in evtMap)
-      document.body.className = evtMap[evt.type];
+      cl(evtMap[evt.type]);
     else
       location.reload();
   }

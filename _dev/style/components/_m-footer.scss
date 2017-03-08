@@ -1,0 +1,35 @@
+// Footer
+// ============
+// Styling for the footer module
+
+.m-footer {
+    background: $clr-tertiary;
+    padding: 0;
+    text-align: center;
+    background: $clr-primary;
+    box-shadow: 0 0 15px 0 rgba(0,0,0,0.7);
+
+    h4 {
+        @extend %small-caps;
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        z-index: $z-m;
+
+        span {
+            font-size: $font-s;
+            color: #fff;
+            font-weight: 100;
+        }
+    }
+    .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: $z-m - 1;
+        width: 0;
+        height: 100%;
+        background: $clr-tertiary;
+    }
+}

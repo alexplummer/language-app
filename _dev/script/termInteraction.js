@@ -4,7 +4,7 @@ import { cl, clv, clickListener, jsonp, findKeys } from 'helperFunctions';
 import appData from 'verbs';
 import ops from 'app';
 import { createNewQuery } from 'queryInteraction';
-import { setScore, addHearts } from 'viewCreation';
+import { setScore, addHearts, progressBar } from 'viewCreation';
 
 // Exports
 export { revealedBtnHandler, createRevealTimer, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol };
@@ -32,6 +32,10 @@ const revealedBtnHandler = function revealedBtnHandler() {
         // Show definition
         definitionWrapper.classList.remove('hidden');
 
+        // Animations
+        definitionWrapper.classList.add('slideInUp','animated');
+        revealBtn[i].parentNode.classList.add('rubberBand','animated');
+
         // Set storedData
         ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
         ops.storedData.viewedTerms[term] = ops.storedData.viewedTerms[term] || {};
@@ -50,6 +54,8 @@ const revealedBtnHandler = function revealedBtnHandler() {
             revealBonusCount = ops.storedData.revealDailyBonus[term];
             revealBonusCount += 1;
         }
+        // Update progress bar
+        progressBar();
         // Update DOM
         countHolder.innerHTML = revealBonusCount;
         // If bonus is met
@@ -59,7 +65,7 @@ const revealedBtnHandler = function revealedBtnHandler() {
                 // Keep query active 
                 ops.storedData.queryComplete = false;
                 // Create a new query
-                createNewQuery();
+                createNewQuery(true);
             }
             // Set only once a day
             ops.storedData.revealDailyBonus.complete = true;
@@ -113,7 +119,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
 
     function startTimer() {
         let nowTime = new Date().getTime();
-
+        
         // Disable button
         revealBtn.classList.add('disabled');
         revealBtn.setAttribute("disabled", true);
@@ -164,6 +170,11 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
             buttonTimer();
         }, 1000)
     }
+    else {
+        revealBtn.innerHTML = ("Reveal");
+        revealBtn.classList.remove('disabled');
+        revealBtn.disabled = false;
+    }
 
     // Builds the timer
     function buttonTimer() {
@@ -172,7 +183,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
         let hiddenZero = '';
 
         // Timer end
-        if (remainingSeconds === 0) {
+        if (remainingSeconds <= 0) {
             revealBtn.innerHTML = ("Reveal");
             revealBtn.classList.remove('disabled');
             revealBtn.disabled = false;
@@ -217,7 +228,7 @@ const dictionaryLookup = function dictionaryLookup() {
 
         // Bring up modal
         modal.classList.remove('hidden');
-        document.querySelector('.container').classList.add('modal-active');
+        document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let view = `<header>
                         <h2 class="dictionary">Dictionary definitions</h2>
@@ -258,7 +269,7 @@ const dictionaryLookup = function dictionaryLookup() {
                 definitionHolder.innerHTML = dictionaryResponses;
             }
             catch (err) {
-                cl('error');
+                console.log('error');
             }
         });
     });
@@ -275,7 +286,7 @@ const addColour = function addColour() {
     clickListener(colourBtn, (i) => {
         // Bring up modal
         modal.classList.remove('hidden');
-        document.querySelector('.container').classList.add('modal-active');
+        document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let termHolder = colourBtn[i].parentNode.parentNode.parentNode;
         let term = colourBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
@@ -314,6 +325,7 @@ const addColour = function addColour() {
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
             termWrapper.querySelector('.theme-holder').classList.add('bg-active');
             termWrapper.querySelector('.term-holder').style.color = "#fff";
+            termWrapper.querySelector('.right').style.border = "0";
             // Set storage
             ops.storedData.viewedTerms[term].colour = pickedColour;
             localforage.setItem('ops.storedData', ops.storedData);
@@ -327,10 +339,25 @@ const addColour = function addColour() {
 const pickSymbol = function pickSymbol() {
     let modal = document.querySelector('.m-modal');
     let symbolBtn = document.querySelectorAll('.symbol');
-    let symbolRanges = [[0x2600,0x26FF],[0x1200, 0x135A],[0xA000, 0xA48C]];
     let symbolHTML = "<tr>";
+    let symbols = appData.fonts;
     let k = 0;
 
+    for (let i = 0; i < appData.fonts.feather.length; i++) {
+
+        if (k % 5 === 0 && k != 0) {
+            symbolHTML += '</tr><tr>';
+        }
+        symbolHTML += '<td><p class='+appData.fonts.feather[i]+'></p></td>';
+        k++;
+
+        if (i === (appData.fonts.feather.length - 1)) {
+            symbolHTML += "</tr>"
+        }
+    }
+
+    /* OLD UNICODE SYMOBLS
+    let symbolRanges = [[0x2600,0x26FF]]; //,[0x1200, 0x135A],[0xA000, 0xA48C]
     for (let j = 0; j < symbolRanges.length; j++) {
 
         for (let i = symbolRanges[j][0]; i < symbolRanges[j][1]; i++) {
@@ -340,7 +367,7 @@ const pickSymbol = function pickSymbol() {
             }
 
             let symbol = String.fromCodePoint(i);
-            symbolHTML += '<td><p>' + symbol + '</p></td>';
+            symbolHTML += '<td><p>' + symbol + '&#xFE0E;</p></td>';
             k++;
 
             if (i === (symbolRanges[j][1] - 1)) {
@@ -348,11 +375,12 @@ const pickSymbol = function pickSymbol() {
             }
         }
     }
+    */
 
     clickListener(symbolBtn, (i) => {
         // Bring up modal
         modal.classList.remove('hidden');
-        document.querySelector('.container').classList.add('modal-active');
+        document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let termHolder = symbolBtn[i].parentNode.parentNode.parentNode;
         let term = symbolBtn[i].parentNode.parentNode.parentNode.querySelector('.term-holder').innerHTML;
@@ -379,10 +407,11 @@ const pickSymbol = function pickSymbol() {
         modal.getElementsByTagName('table')[0].addEventListener('click', function(e) {
             e = e || window.event;
             let target = e.target || e.srcElement;
-            pickedSymbol = target.innerHTML.replace(/(<p[^>]+?>|<p>|<\/p>)/img, "");   
-            
+            pickedSymbol = target.getAttribute("class");   
+            cl(pickedSymbol);
             // Add symbol to object
-            termWrapper.querySelector('.symbol-holder').innerHTML = pickedSymbol;
+            termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
+            termWrapper.querySelector('.symbol-holder').classList.add(pickedSymbol);
             // Set storage
             ops.storedData.viewedTerms[term].symbol = pickedSymbol;
             localforage.setItem('ops.storedData', ops.storedData);
@@ -407,7 +436,7 @@ const hideModal = function hideModal(trigger) {
     }
     // Hide modal
     function closeModal() {
-        document.querySelector('.container').classList.remove('modal-active');
+        document.getElementsByTagName('body')[0].classList.remove('modal-active');
         modal.classList.add('hidden');
         modal.querySelector('.content').innerHTML = "";
     }

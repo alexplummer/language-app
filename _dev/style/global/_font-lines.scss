@@ -1,0 +1,345 @@
+@font-face {
+  font-family: 'lines';
+  src: url('../font/lines.eot?88480697');
+  src: url('../font/lines.eot?88480697#iefix') format('embedded-opentype'),
+       url('../font/lines.woff2?88480697') format('woff2'),
+       url('../font/lines.woff?88480697') format('woff'),
+       url('../font/lines.ttf?88480697') format('truetype'),
+       url('../font/lines.svg?88480697#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url('../font/fontello.svg?88480697#fontello') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "lines";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+ 
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-lines-and-angles_accommodate:before { content: '\21'; } /* '!' */
+.icon-lines-and-angles_adapt:before { content: '\22'; } /* '&quot;' */
+.icon-lines-and-angles_add:before { content: '\23'; } /* '#' */
+.icon-lines-and-angles_adjust:before { content: '\24'; } /* '$' */
+.icon-lines-and-angles_agitate:before { content: '\25'; } /* '%' */
+.icon-lines-and-angles_agree:before { content: '\26'; } /* '&amp;' */
+.icon-lines-and-angles_aid:before { content: '\27'; } /* ''' */
+.icon-lines-and-angles_alarm:before { content: '\28'; } /* '(' */
+.icon-lines-and-angles_alert:before { content: '\29'; } /* ')' */
+.icon-lines-and-angles_amaze:before { content: '\2a'; } /* '*' */
+.icon-lines-and-angles_amplify:before { content: '\2b'; } /* '+' */
+.icon-lines-and-angles_analyze:before { content: '\2c'; } /* ',' */
+.icon-lines-and-angles_announce:before { content: '\2d'; } /* '-' */
+.icon-lines-and-angles_arrest:before { content: '\2e'; } /* '.' */
+.icon-lines-and-angles_ascend:before { content: '\2f'; } /* '/' */
+.icon-lines-and-angles_ask:before { content: '\30'; } /* '0' */
+.icon-lines-and-angles_assist:before { content: '\31'; } /* '1' */
+.icon-lines-and-angles_attract:before { content: '\32'; } /* '2' */
+.icon-lines-and-angles_augment:before { content: '\33'; } /* '3' */
+.icon-lines-and-angles_bake:before { content: '\34'; } /* '4' */
+.icon-lines-and-angles_balance:before { content: '\35'; } /* '5' */
+.icon-lines-and-angles_battle:before { content: '\36'; } /* '6' */
+.icon-lines-and-angles_be:before { content: '\37'; } /* '7' */
+.icon-lines-and-angles_believe:before { content: '\38'; } /* '8' */
+.icon-lines-and-angles_birth:before { content: '\39'; } /* '9' */
+.icon-lines-and-angles_blaze:before { content: '\3a'; } /* ':' */
+.icon-lines-and-angles_blend:before { content: '\3b'; } /* ';' */
+.icon-lines-and-angles_bloom:before { content: '\3c'; } /* '&lt;' */
+.icon-lines-and-angles_blow:before { content: '\3d'; } /* '=' */
+.icon-lines-and-angles_bookmark:before { content: '\3e'; } /* '&gt;' */
+.icon-lines-and-angles_bootleg:before { content: '\3f'; } /* '?' */
+.icon-lines-and-angles_bounce:before { content: '\40'; } /* '@' */
+.icon-lines-and-angles_break:before { content: '\41'; } /* 'A' */
+.icon-lines-and-angles_brew:before { content: '\42'; } /* 'B' */
+.icon-lines-and-angles_broadcast:before { content: '\43'; } /* 'C' */
+.icon-lines-and-angles_browse:before { content: '\44'; } /* 'D' */
+.icon-lines-and-angles_build:before { content: '\45'; } /* 'E' */
+.icon-lines-and-angles_burn:before { content: '\46'; } /* 'F' */
+.icon-lines-and-angles_bury:before { content: '\47'; } /* 'G' */
+.icon-lines-and-angles_buy:before { content: '\48'; } /* 'H' */
+.icon-lines-and-angles_caffeinate:before { content: '\49'; } /* 'I' */
+.icon-lines-and-angles_calculate:before { content: '\4a'; } /* 'J' */
+.icon-lines-and-angles_calibrate:before { content: '\4b'; } /* 'K' */
+.icon-lines-and-angles_carry:before { content: '\4c'; } /* 'L' */
+.icon-lines-and-angles_carve:before { content: '\4d'; } /* 'M' */
+.icon-lines-and-angles_cast:before { content: '\4e'; } /* 'N' */
+.icon-lines-and-angles_catch:before { content: '\4f'; } /* 'O' */
+.icon-lines-and-angles_cease:before { content: '\50'; } /* 'P' */
+.icon-lines-and-angles_celebrate:before { content: '\51'; } /* 'Q' */
+.icon-lines-and-angles_challenge:before { content: '\52'; } /* 'R' */
+.icon-lines-and-angles_charge:before { content: '\53'; } /* 'S' */
+.icon-lines-and-angles_charm:before { content: '\54'; } /* 'T' */
+.icon-lines-and-angles_chart:before { content: '\55'; } /* 'U' */
+.icon-lines-and-angles_chat:before { content: '\56'; } /* 'V' */
+.icon-lines-and-angles_choose:before { content: '\57'; } /* 'W' */
+.icon-lines-and-angles_chop:before { content: '\58'; } /* 'X' */
+.icon-lines-and-angles_clean:before { content: '\59'; } /* 'Y' */
+.icon-lines-and-angles_cleanse:before { content: '\5a'; } /* 'Z' */
+.icon-lines-and-angles_climb:before { content: '\5b'; } /* '[' */
+.icon-lines-and-angles_drum:before { content: '\5c'; } /* '\' */
+.icon-lines-and-angles_eat:before { content: '\5d'; } /* ']' */
+.icon-lines-and-angles_edit:before { content: '\5e'; } /* '^' */
+.icon-lines-and-angles_enhance:before { content: '\5f'; } /* '_' */
+.icon-lines-and-angles_enlarge:before { content: '\60'; } /* '`' */
+.icon-lines-and-angles_enter:before { content: '\61'; } /* 'a' */
+.icon-lines-and-angles_equal:before { content: '\62'; } /* 'b' */
+.icon-lines-and-angles_erase:before { content: '\63'; } /* 'c' */
+.icon-lines-and-angles_examine:before { content: '\64'; } /* 'd' */
+.icon-lines-and-angles_experiment:before { content: '\65'; } /* 'e' */
+.icon-lines-and-angles_explore:before { content: '\66'; } /* 'f' */
+.icon-lines-and-angles_extrude:before { content: '\67'; } /* 'g' */
+.icon-lines-and-angles_feed:before { content: '\69'; } /* 'i' */
+.icon-lines-and-angles_fight:before { content: '\6a'; } /* 'j' */
+.icon-lines-and-angles_fill:before { content: '\6b'; } /* 'k' */
+.icon-lines-and-angles_film:before { content: '\6c'; } /* 'l' */
+.icon-lines-and-angles_filter:before { content: '\6d'; } /* 'm' */
+.icon-lines-and-angles_find:before { content: '\6e'; } /* 'n' */
+.icon-lines-and-angles_finish:before { content: '\6f'; } /* 'o' */
+.icon-lines-and-angles_fix:before { content: '\70'; } /* 'p' */
+.icon-lines-and-angles_flag:before { content: '\71'; } /* 'q' */
+.icon-lines-and-angles_float:before { content: '\72'; } /* 'r' */
+.icon-lines-and-angles_flow:before { content: '\73'; } /* 's' */
+.icon-lines-and-angles_fly:before { content: '\74'; } /* 't' */
+.icon-lines-and-angles_focus:before { content: '\75'; } /* 'u' */
+.icon-lines-and-angles_fold:before { content: '\76'; } /* 'v' */
+.icon-lines-and-angles_forbid:before { content: '\77'; } /* 'w' */
+.icon-lines-and-angles_forebode:before { content: '\78'; } /* 'x' */
+.icon-lines-and-angles_fork:before { content: '\79'; } /* 'y' */
+.icon-lines-and-angles_format:before { content: '\7a'; } /* 'z' */
+.icon-lines-and-angles_game:before { content: '\7b'; } /* '{' */
+.icon-lines-and-angles_give:before { content: '\7c'; } /* '|' */
+.icon-lines-and-angles_glance:before { content: '\7d'; } /* '}' */
+.icon-lines-and-angles_grill:before { content: '\7e'; } /* '~' */
+.icon-lines-and-angles_grow:before { content: '\e800'; } /* '' */
+.icon-lines-and-angles_guide:before { content: '\e801'; } /* '' */
+.icon-lines-and-angles_hang:before { content: '\e802'; } /* '' */
+.icon-lines-and-angles_harvest:before { content: '\e803'; } /* '' */
+.icon-lines-and-angles_haunt:before { content: '\e804'; } /* '' */
+.icon-lines-and-angles_heal:before { content: '\e805'; } /* '' */
+.icon-lines-and-angles_hear:before { content: '\e806'; } /* '' */
+.icon-lines-and-angles_hide:before { content: '\e807'; } /* '' */
+.icon-lines-and-angles_hold:before { content: '\e808'; } /* '' */
+.icon-lines-and-angles_home:before { content: '\e809'; } /* '' */
+.icon-lines-and-angles_identify:before { content: '\e80a'; } /* '' */
+.icon-lines-and-angles_imagine:before { content: '\e80b'; } /* '' */
+.icon-lines-and-angles_influence:before { content: '\e80c'; } /* '' */
+.icon-lines-and-angles_inject:before { content: '\e80d'; } /* '' */
+.icon-lines-and-angles_invade:before { content: '\e80e'; } /* '' */
+.icon-lines-and-angles_iron:before { content: '\e80f'; } /* '' */
+.icon-lines-and-angles_jam:before { content: '\e810'; } /* '' */
+.icon-lines-and-angles_join:before { content: '\e811'; } /* '' */
+.icon-lines-and-angles_judge:before { content: '\e812'; } /* '' */
+.icon-lines-and-angles_keep:before { content: '\e813'; } /* '' */
+.icon-lines-and-angles_kick:before { content: '\e814'; } /* '' */
+.icon-lines-and-angles_pitch:before { content: '\e815'; } /* '' */
+.icon-lines-and-angles_plan:before { content: '\e816'; } /* '' */
+.icon-lines-and-angles_plant:before { content: '\e817'; } /* '' */
+.icon-lines-and-angles_play:before { content: '\e818'; } /* '' */
+.icon-lines-and-angles_push:before { content: '\e819'; } /* '' */
+.icon-lines-and-angles_rain:before { content: '\e81a'; } /* '' */
+.icon-lines-and-angles_read:before { content: '\e81b'; } /* '' */
+.icon-lines-and-angles_record:before { content: '\e81c'; } /* '' */
+.icon-lines-and-angles_redo:before { content: '\e81d'; } /* '' */
+.icon-lines-and-angles_reheat:before { content: '\e81e'; } /* '' */
+.icon-lines-and-angles_remind:before { content: '\e81f'; } /* '' */
+.icon-lines-and-angles_repeat:before { content: '\e820'; } /* '' */
+.icon-lines-and-angles_report:before { content: '\e821'; } /* '' */
+.icon-lines-and-angles_resurrect:before { content: '\e822'; } /* '' */
+.icon-lines-and-angles_rewind:before { content: '\e823'; } /* '' */
+.icon-lines-and-angles_ride:before { content: '\e824'; } /* '' */
+.icon-lines-and-angles_ring:before { content: '\e825'; } /* '' */
+.icon-lines-and-angles_rise:before { content: '\e826'; } /* '' */
+.icon-lines-and-angles_rock:before { content: '\e827'; } /* '' */
+.icon-lines-and-angles_roll:before { content: '\e828'; } /* '' */
+.icon-lines-and-angles_rule:before { content: '\e829'; } /* '' */
+.icon-lines-and-angles_run:before { content: '\e82a'; } /* '' */
+.icon-lines-and-angles_save:before { content: '\e82b'; } /* '' */
+.icon-lines-and-angles_schedule:before { content: '\e82c'; } /* '' */
+.icon-lines-and-angles_screw:before { content: '\e82d'; } /* '' */
+.icon-lines-and-angles_scroll:before { content: '\e82e'; } /* '' */
+.icon-lines-and-angles_search:before { content: '\e82f'; } /* '' */
+.icon-lines-and-angles_see:before { content: '\e830'; } /* '' */
+.icon-lines-and-angles_select:before { content: '\e831'; } /* '' */
+.icon-lines-and-angles_sell:before { content: '\e832'; } /* '' */
+.icon-lines-and-angles_send:before { content: '\e833'; } /* '' */
+.icon-lines-and-angles_sew:before { content: '\e835'; } /* '' */
+.icon-lines-and-angles_shade:before { content: '\e836'; } /* '' */
+.icon-lines-and-angles_shake:before { content: '\e837'; } /* '' */
+.icon-lines-and-angles_share:before { content: '\e838'; } /* '' */
+.icon-lines-and-angles_shine:before { content: '\e839'; } /* '' */
+.icon-lines-and-angles_shop:before { content: '\e83a'; } /* '' */
+.icon-lines-and-angles_shower:before { content: '\e83b'; } /* '' */
+.icon-lines-and-angles_shuffle:before { content: '\e83c'; } /* '' */
+.icon-lines-and-angles_sing:before { content: '\e83d'; } /* '' */
+.icon-lines-and-angles_sit:before { content: '\e83e'; } /* '' */
+.icon-lines-and-angles_skip:before { content: '\e83f'; } /* '' */
+.icon-lines-and-angles_sleep:before { content: '\e840'; } /* '' */
+.icon-lines-and-angles_slice:before { content: '\e841'; } /* '' */
+.icon-lines-and-angles_slide:before { content: '\e842'; } /* '' */
+.icon-lines-and-angles_smell:before { content: '\e843'; } /* '' */
+.icon-lines-and-angles_smuggle:before { content: '\e844'; } /* '' */
+.icon-lines-and-angles_snow:before { content: '\e845'; } /* '' */
+.icon-lines-and-angles_solve:before { content: '\e846'; } /* '' */
+.icon-lines-and-angles_sound:before { content: '\e847'; } /* '' */
+.icon-lines-and-angles_sparkle:before { content: '\e848'; } /* '' */
+.icon-lines-and-angles_speak:before { content: '\e849'; } /* '' */
+.icon-lines-and-angles_spin:before { content: '\e84a'; } /* '' */
+.icon-lines-and-angles_spy:before { content: '\e84b'; } /* '' */
+.icon-lines-and-angles_stack:before { content: '\e84c'; } /* '' */
+.icon-lines-and-angles_stamp:before { content: '\e84d'; } /* '' */
+.icon-lines-and-angles_steam:before { content: '\e84e'; } /* '' */
+.icon-lines-and-angles_stomp:before { content: '\e84f'; } /* '' */
+.icon-lines-and-angles_stop:before { content: '\e850'; } /* '' */
+.icon-lines-and-angles_strum:before { content: '\e851'; } /* '' */
+.icon-lines-and-angles_study:before { content: '\e852'; } /* '' */
+.icon-lines-and-angles_submerge:before { content: '\e853'; } /* '' */
+.icon-lines-and-angles_succeed:before { content: '\e854'; } /* '' */
+.icon-lines-and-angles_sweep:before { content: '\e855'; } /* '' */
+.icon-lines-and-angles_swim:before { content: '\e856'; } /* '' */
+.icon-lines-and-angles_sync:before { content: '\e857'; } /* '' */
+.icon-lines-and-angles_tag:before { content: '\e858'; } /* '' */
+.icon-lines-and-angles_target:before { content: '\e859'; } /* '' */
+.icon-lines-and-angles_teach:before { content: '\e85a'; } /* '' */
+.icon-lines-and-angles_think:before { content: '\e85b'; } /* '' */
+.icon-lines-and-angles_thunder:before { content: '\e85c'; } /* '' */
+.icon-lines-and-angles_tie:before { content: '\e85d'; } /* '' */
+.icon-lines-and-angles_tower:before { content: '\e85e'; } /* '' */
+.icon-lines-and-angles_transport:before { content: '\e85f'; } /* '' */
+.icon-lines-and-angles_trash:before { content: '\e860'; } /* '' */
+.icon-lines-and-angles_travel:before { content: '\e861'; } /* '' */
+.icon-lines-and-angles_trend:before { content: '\e862'; } /* '' */
+.icon-lines-and-angles_turn:before { content: '\e863'; } /* '' */
+.icon-lines-and-angles_type:before { content: '\e864'; } /* '' */
+.icon-lines-and-angles_undo:before { content: '\e865'; } /* '' */
+.icon-lines-and-angles_unlock:before { content: '\e866'; } /* '' */
+.icon-lines-and-angles_upload:before { content: '\e867'; } /* '' */
+.icon-lines-and-angles_use:before { content: '\e868'; } /* '' */
+.icon-lines-and-angles_wait:before { content: '\e869'; } /* '' */
+.icon-lines-and-angles_wash:before { content: '\e86a'; } /* '' */
+.icon-lines-and-angles_watch:before { content: '\e86b'; } /* '' */
+.icon-lines-and-angles_wear:before { content: '\e86c'; } /* '' */
+.icon-lines-and-angles_weigh:before { content: '\e86d'; } /* '' */
+.icon-lines-and-angles_win:before { content: '\e86e'; } /* '' */
+.icon-lines-and-angles_work:before { content: '\e86f'; } /* '' */
+.icon-lines-and-angles_worship:before { content: '\e870'; } /* '' */
+.icon-lines-and-angles_write:before { content: '\e871'; } /* '' */
+.icon-lines-and-angles_yell:before { content: '\e872'; } /* '' */
+.icon-lines-and-angles_clip:before { content: '\e873'; } /* '' */
+.icon-lines-and-angles_close:before { content: '\e874'; } /* '' */
+.icon-lines-and-angles_code:before { content: '\e875'; } /* '' */
+.icon-lines-and-angles_collect:before { content: '\e876'; } /* '' */
+.icon-lines-and-angles_commit:before { content: '\e877'; } /* '' */
+.icon-lines-and-angles_connect:before { content: '\e878'; } /* '' */
+.icon-lines-and-angles_contact:before { content: '\e879'; } /* '' */
+.icon-lines-and-angles_contain:before { content: '\e87a'; } /* '' */
+.icon-lines-and-angles_control:before { content: '\e87b'; } /* '' */
+.icon-lines-and-angles_cook:before { content: '\e87c'; } /* '' */
+.icon-lines-and-angles_cool:before { content: '\e87d'; } /* '' */
+.icon-lines-and-angles_copy:before { content: '\e87e'; } /* '' */
+.icon-lines-and-angles_crave:before { content: '\e87f'; } /* '' */
+.icon-lines-and-angles_create:before { content: '\e880'; } /* '' */
+.icon-lines-and-angles_creep:before { content: '\e881'; } /* '' */
+.icon-lines-and-angles_crop:before { content: '\e882'; } /* '' */
+.icon-lines-and-angles_cry:before { content: '\e883'; } /* '' */
+.icon-lines-and-angles_curdle:before { content: '\e884'; } /* '' */
+.icon-lines-and-angles_cut:before { content: '\e885'; } /* '' */
+.icon-lines-and-angles_dance:before { content: '\e886'; } /* '' */
+.icon-lines-and-angles_dazzle:before { content: '\e887'; } /* '' */
+.icon-lines-and-angles_decide:before { content: '\e888'; } /* '' */
+.icon-lines-and-angles_defend:before { content: '\e889'; } /* '' */
+.icon-lines-and-angles_deliver:before { content: '\e88a'; } /* '' */
+.icon-lines-and-angles_design:before { content: '\e88b'; } /* '' */
+.icon-lines-and-angles_destroy:before { content: '\e88c'; } /* '' */
+.icon-lines-and-angles_develop:before { content: '\e88d'; } /* '' */
+.icon-lines-and-angles_die:before { content: '\e88e'; } /* '' */
+.icon-lines-and-angles_disappear:before { content: '\e88f'; } /* '' */
+.icon-lines-and-angles_discard:before { content: '\e890'; } /* '' */
+.icon-lines-and-angles_discover:before { content: '\e891'; } /* '' */
+.icon-lines-and-angles_disguise:before { content: '\e892'; } /* '' */
+.icon-lines-and-angles_divide:before { content: '\e893'; } /* '' */
+.icon-lines-and-angles_download:before { content: '\e894'; } /* '' */
+.icon-lines-and-angles_draw:before { content: '\e895'; } /* '' */
+.icon-lines-and-angles_drill:before { content: '\e896'; } /* '' */
+.icon-lines-and-angles_drink:before { content: '\e897'; } /* '' */
+.icon-lines-and-angles_drive:before { content: '\e898'; } /* '' */
+.icon-lines-and-angles_drop:before { content: '\e899'; } /* '' */
+.icon-lines-and-angles_kiss:before { content: '\e89b'; } /* '' */
+.icon-lines-and-angles_launch:before { content: '\e89c'; } /* '' */
+.icon-lines-and-angles_lick:before { content: '\e89d'; } /* '' */
+.icon-lines-and-angles_lift:before { content: '\e89e'; } /* '' */
+.icon-lines-and-angles_light:before { content: '\e89f'; } /* '' */
+.icon-lines-and-angles_like:before { content: '\e8a0'; } /* '' */
+.icon-lines-and-angles_link:before { content: '\e8a1'; } /* '' */
+.icon-lines-and-angles_live:before { content: '\e8a2'; } /* '' */
+.icon-lines-and-angles_load:before { content: '\e8a3'; } /* '' */
+.icon-lines-and-angles_locate:before { content: '\e8a4'; } /* '' */
+.icon-lines-and-angles_lock:before { content: '\e8a5'; } /* '' */
+.icon-lines-and-angles_madho:before { content: '\e8a6'; } /* '' */
+.icon-lines-and-angles_manufacture:before { content: '\e8a7'; } /* '' */
+.icon-lines-and-angles_mark:before { content: '\e8a8'; } /* '' */
+.icon-lines-and-angles_measure:before { content: '\e8a9'; } /* '' */
+.icon-lines-and-angles_medicate:before { content: '\e8aa'; } /* '' */
+.icon-lines-and-angles_melt:before { content: '\e8ab'; } /* '' */
+.icon-lines-and-angles_merge:before { content: '\e8ac'; } /* '' */
+.icon-lines-and-angles_mill:before { content: '\e8ad'; } /* '' */
+.icon-lines-and-angles_move:before { content: '\e8ae'; } /* '' */
+.icon-lines-and-angles_multiply:before { content: '\e8af'; } /* '' */
+.icon-lines-and-angles_mute:before { content: '\e8b0'; } /* '' */
+.icon-lines-and-angles_navigate:before { content: '\e8b1'; } /* '' */
+.icon-lines-and-angles_open:before { content: '\e8b2'; } /* '' */
+.icon-lines-and-angles_pack:before { content: '\e8b3'; } /* '' */
+.icon-lines-and-angles_paint:before { content: '\e8b4'; } /* '' */
+.icon-lines-and-angles_park:before { content: '\e8b5'; } /* '' */
+.icon-lines-and-angles_paste:before { content: '\e8b6'; } /* '' */
+.icon-lines-and-angles_pause:before { content: '\e8b7'; } /* '' */
+.icon-lines-and-angles_pay:before { content: '\e8b8'; } /* '' */
+.icon-lines-and-angles_perform:before { content: '\e8b9'; } /* '' */
+.icon-lines-and-angles_photograph:before { content: '\e8ba'; } /* '' */
+.icon-lines-and-angles_pick:before { content: '\e8bb'; } /* '' */
+.icon-lines-and-angles_pin:before { content: '\e8bc'; } /* '' */
+.icon-lines-and-angles_plot:before { content: '\e8bd'; } /* '' */
+.icon-lines-and-angles_point:before { content: '\e8be'; } /* '' */
+.icon-lines-and-angles_poison:before { content: '\e8bf'; } /* '' */
+.icon-lines-and-angles_present:before { content: '\e8c0'; } /* '' */
+.icon-lines-and-angles_press:before { content: '\e8c1'; } /* '' */
+.icon-lines-and-angles_primp:before { content: '\e8c2'; } /* '' */
+.icon-lines-and-angles_print:before { content: '\e8c3'; } /* '' */
+.icon-lines-and-angles_pucker:before { content: '\e8c5'; } /* '' */

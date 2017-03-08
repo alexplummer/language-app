@@ -8,26 +8,37 @@
     @extend %cf;
 
     h1 {
+        @extend .icon;
+        @extend .icon-menu;
         float: left;
         color: #fff;
         padding: 0;
         margin: 0;
-        font-size: $font-l;
-        line-height: $font-l;
+        font-size: $font-m;
+        line-height: $font-m;
         font-weight: 100;
+        position: relative;
+        left: -30px;
+
+        &:before {
+            font-size: $font-xl;
+            line-height: 0;
+            position: relative;
+            top: 8px;
+        }
     }
     .right {
         float: right;
 
         .score {
             float: right;
-            margin-right: $size-m;
+            margin-right: $size-s;
 
             p, span {
                 color: #fff;
                 padding: 0;
                 margin: 0;
-                line-height: $font-l;
+                line-height: $font-m;
             }
             p {
                 @extend %small-caps;
@@ -41,14 +52,19 @@
             }
         }
         .settings {
-            @extend .icon-cog;
+            @extend .icon-dot-3;
             @extend .icon;
+            transform: rotate(90deg);
             color: #fff;
             font-size: $font-l;
             padding: 0;
             margin: 0;
             line-height: $font-m;
             float: right;
+
+            &:before {
+                line-height: $font-m;
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ import { addHearts } from 'viewCreation';
 export { createNewQuery };
 
 // Sets up query
-const createNewQuery = function createNewQuery() {
+const createNewQuery = function createNewQuery(bonus) {
 
     // Pick a term for query
     let randomTerm;
@@ -24,18 +24,19 @@ const createNewQuery = function createNewQuery() {
     // Set incorrectTerms storage if not exists
     ops.storedData.incorrectTerms = ops.storedData.incorrectTerms || {};
 
-    // Prevent choosing query already answered correct
+    let cycledTerms = [];
+    // Choose term from viewed terms
     while (i < Object.keys(ops.storedData.viewedTerms).length) {
 
+        // If no daily term
         if (ops.storedData.dailyQuery === undefined) {
             // Pick a random term
             randomTerm = pickRandom(ops.storedData.viewedTerms);
-            ops.storedData.dailyQuery = randomTerm;
         }
         else {
             randomTerm = ops.storedData.dailyQuery;
         }
-        // If query not from correct terms
+        // Make sure not answered correctly before
         if (!ops.storedData.correctTerms.hasOwnProperty(randomTerm)) {
 
             // If query not from daily reminder term
@@ -51,8 +52,10 @@ const createNewQuery = function createNewQuery() {
                 break;
             }
         }
+        if (!cycledTerms.indexOf(randomTerm)) {
+            i++
+        }
         // Else look for another
-        i++;
         if (i === Object.keys(ops.storedData.viewedTerms).length) {
             document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
             document.querySelector('.result-holder').classList.remove('hidden');
@@ -71,6 +74,15 @@ const createNewQuery = function createNewQuery() {
         let definition = appData.terms[randomTerm].definition;
         let count = 0;
 
+        // Add to storage
+        ops.storedData.dailyQuery = randomTerm;
+        ops.storedData.queryComplete = false;
+
+        // Hide daily term definition if same
+        if (document.querySelector('.' + randomTerm + '') !== null) {
+            document.querySelector('.' + randomTerm + '').querySelector('.definition-wrapper').classList.add('hidden');
+        }
+
         // Add hearts
         delete ops.storedData.hearts;
         addHearts();
@@ -78,8 +90,19 @@ const createNewQuery = function createNewQuery() {
         // Show the query wrapper
         queryWrapper.classList.remove('hidden');
 
+        // Change title if bonus
+        if (bonus === true) {
+            queryWrapper.getElementsByTagName('h2')[0].innerHTML = "Bonus Test"
+        }
+
         // Set value of query
         queryHolder.innerHTML = randomTerm;
+
+        window.addEventListener("keypress", function (e) {
+            if (e.keyCode === 13) {
+                querySubmit.click();
+            }
+        });
 
         // Query outcomes
         querySubmit.addEventListener("click", () => {
@@ -159,7 +182,6 @@ const createNewQuery = function createNewQuery() {
                 resultHolder.classList.remove('hidden');
                 // Add to storedDatta 
                 ops.storedData.incorrectTerms[randomTerm] = definition;
-                cl(ops.storedData.incorrectTerms);
                 ops.storedData.queryComplete = true;
                 delete ops.storedData.hearts;
             }

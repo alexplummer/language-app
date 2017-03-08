@@ -6,7 +6,7 @@ import ops from 'app';
 import { createRevealTimer } from 'termInteraction';
 
 // Exports
-export { viewCreate, addHearts, setScore };
+export { viewCreate, addHearts, setScore, progressBar };
 
 // Create app view
 const viewCreate = function viewCreate(termsToCreate) {
@@ -62,7 +62,7 @@ const viewCreate = function viewCreate(termsToCreate) {
 
         // Check storage for assigned colour
         ops.storedData.viewedTerms = ops.storedData.viewedTerms || {};
-        
+
         if (ops.storedData.viewedTerms[termValue] !== undefined && ops.storedData.viewedTerms[termValue].colour !== undefined) {
             let termWrapper = document.querySelector('.' + termValue + '');
             let pickedColour = ops.storedData.viewedTerms[termValue].colour;
@@ -70,13 +70,15 @@ const viewCreate = function viewCreate(termsToCreate) {
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
             termWrapper.querySelector('.theme-holder').classList.add('bg-active');
             termWrapper.querySelector('.term-holder').style.color = "#fff";
+            termWrapper.querySelector('.right').style.border = "0";
         }
         // Check storage for assigned symbol
         if (ops.storedData.viewedTerms[termValue] !== undefined && ops.storedData.viewedTerms[termValue].symbol !== undefined) {
             let termWrapper = document.querySelector('.' + termValue + '');
             let pickedSymbol = ops.storedData.viewedTerms[termValue].symbol;
             // Add symbol to object
-            termWrapper.querySelector('.symbol-holder').innerHTML = pickedSymbol;
+            termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
+            termWrapper.querySelector('.symbol-holder').classList.add(pickedSymbol);
         }
     }
 
@@ -123,7 +125,6 @@ const addHearts = function addHearts() {
     localforage.setItem('ops.storedData', ops.storedData);
 }
 
-
 // Sets the score
 const setScore = function setScore() {
 
@@ -133,9 +134,22 @@ const setScore = function setScore() {
     if (ops.storedData.score === undefined) {
         ops.storedData.score = 0;
     }
-    
+
     let score = ops.storedData.score;
 
     // Add to view
     scoreHolder.innerHTML = score;
+}
+
+// Add progress bar
+const progressBar = function progressBar() {
+    // Create correct terms default
+    ops.storedData.correctTerms = ops.storedData.correctTerms || {};
+    let completed = Object.keys(ops.storedData.viewedTerms).length;
+    let remaining = Object.keys(appData.terms).length;
+
+    // Add to DOM
+    document.querySelector('.m-footer').querySelector('.completed').innerHTML = completed;
+    document.querySelector('.m-footer').querySelector('.remaining').innerHTML = ' / ' + remaining;
+    document.querySelector('.m-footer').querySelector('.progress-bar').style.width = ((completed / remaining) * 100) + "%";
 }

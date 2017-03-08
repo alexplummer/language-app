@@ -3,20 +3,23 @@
 import { ready, cl, clv, checkSameDay, resetData, arrayCheck, getTodaysDate, appBlur } from 'helperFunctions';
 import { getListOfTerms } from 'termCreation';
 import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol } from 'termInteraction';
-import { viewCreate, addHearts, setScore } from 'viewCreation';
+import { viewCreate, addHearts, setScore, progressBar } from 'viewCreation';
 import { createNewQuery } from 'queryInteraction';
 import appData from 'verbs';
 
 // Exports
 export default ops;
 
+let sheetURL = "https://docs.google.com/spreadsheets/d/1Q1pmDXybg_GDB6bSXknuBET2Nm8L-Roi2Kj01SHm_WI/pubhtml";
+let tinyTermsData = {};
+
 // Global options
 let ops = {
-    displayedTerms: 3,
+    displayedTerms: 5,
     counterMins: 60,
     counterSecs: 0,
-    revealDailyBonusTarget: 3,
-    wordAccuracy: 0.5,
+    revealDailyBonusTarget: 5,
+    wordAccuracy: 0.7,
     container: document.querySelector(".terms-wrapper"),
     addDay: false,
     debug: true,
@@ -31,10 +34,46 @@ let ops = {
 // Initialise modules on load
 ready(function () {
     'use strict';
+    getData(sheetURL);
     checkFirstTime();
     // Resets button
     resetData();
 });
+
+// Gets data from Google Sheets
+const getData = function getData(sheetURL) {
+
+    function init() {
+        Tabletop.init({
+            key: sheetURL,
+            callback: buildData,
+            simpleSheet: false
+        })
+    }
+
+    function buildData(data) {
+        let listName = data.Sheet1.columnNames[1];
+
+        tinyTermsData[listName] = {};
+        tinyTermsData[listName].speechLang = data.Sheet1.elements[0]["Italian Verbs"];
+        tinyTermsData[listName].dictFrom = data.Sheet1.elements[1]["Italian Verbs"];
+        tinyTermsData[listName].dictTo = data.Sheet1.elements[2]["Italian Verbs"];
+        tinyTermsData[listName].action = data.Sheet1.elements[3]["Italian Verbs"];
+        tinyTermsData[listName].terms = tinyTermsData[listName].terms || {};
+
+        for (let i = 1; i < data.Sheet1.elements.length; i++) {
+            let termContent = data.Sheet1.elements[i].Term;
+            let definitionContent = data.Sheet1.elements[i].Definition;
+            let supportContent = data.Sheet1.elements[i].Support;
+
+            tinyTermsData[listName].terms[termContent] = {};
+            tinyTermsData[listName].terms[termContent].term = termContent;
+            tinyTermsData[listName].terms[termContent].definition = definitionContent;
+            tinyTermsData[listName].terms[termContent].support = supportContent;
+        }
+    }
+    window.addEventListener('DOMContentLoaded', init)
+}
 
 // Runs when app opens
 const checkFirstTime = function checkFirstTime() {
@@ -61,7 +100,6 @@ const firstTime = function firstTime() {
 
     // Create terms
     appBuildHandler();
-
     // Set first time to false
     ops.storedData.firstTime = false;
 
@@ -128,23 +166,15 @@ const appBuildHandler = function appBuildHandler() {
     // Add to storage
     localforage.setItem('ops.storedData', ops.storedData);
 
-    // Handles events for revealed terms
-    revealedBtnHandler();
-    dictionaryLookup();
-    textToSpeech();
-    addColour();
-    pickSymbol();
-    hideModal();
-
     // Keep query active each day
     ops.storedData.queryComplete = ops.storedData.queryComplete || {};
 
     if (ops.storedData.newDay === true) {
         // Reset daily counters
         delete ops.storedData.dailyQuery;
+        delete ops.storedData.dailyReminder;
         delete ops.storedData.revealCountdowns;
 
-        ops.storedData.queryComplete = false;
         ops.storedData.remindedTerms = ops.storedData.remindedTerms || {}
 
         // Delete daily reminder
@@ -153,12 +183,28 @@ const appBuildHandler = function appBuildHandler() {
         }
     }
     // Create query if revealed terms
-    if (ops.storedData.viewedTerms !== undefined && ops.storedData.queryComplete === false) {
+    if (ops.storedData.viewedTerms !== undefined && ops.storedData.queryComplete !== true && ops.storedData.newDay === true) {
         createNewQuery();
     }
 
+    // Handles events for revealed terms
+    revealedBtnHandler();
+    dictionaryLookup();
+    textToSpeech();
+    addColour();
+    pickSymbol();
+    hideModal();
+    progressBar();
+
     // Refresh window on blur
     appBlur();
+
+    // Once loaded
+    setTimeout(() => {
+        document.getElementsByTagName('body')[0].classList = "";
+        document.querySelector('.m-query-wrapper').classList.add('animated', 'slideInDown');
+    }, 3000);
+
 
     // Debug code
     if (ops.debug === true) {

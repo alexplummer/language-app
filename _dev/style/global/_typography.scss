@@ -11,7 +11,17 @@ h2 {
         
         &:before {
             margin-right: 12px;
-            color: #999;
+            color: #555;
         }
     }
+}
+%text-light {
+    font-size: $font-m;
+    font-weight: 400;
+}
+%small-caps {
+    font-size: $font-xs;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }

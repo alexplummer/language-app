@@ -7,6 +7,7 @@
     padding-top: $size-s;
     margin: $size-m $size-s;
     position: relative;
+    animation-duration: 0.5s;
 
     header {
         border-bottom: 1px solid #ddd;
@@ -38,11 +39,12 @@
     }
     p {
         @extend %small-caps;
+        padding-top: 0;
 
         .query-holder {
-            text-transform: capitalize;
+            @extend %text-light;
             font-size: $font-l;
-            font-weight: 400;
+            text-transform: capitalize;
             padding-left: $size-xs;
         }
     }

@@ -36,12 +36,19 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,800" rel="stylesheet">
     <!-- build:css style/style.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="../bower_components/animate.css/animate.css" />
     <!-- endbower -->
     <link rel="stylesheet" href="style/style.css">
     <!-- endbuild -->
 </head>
 
-<body>
+<body class="loading">
+    <div class="m-loader">
+        <div class="splash-icon"></div>
+        <div class="loader">
+            <img src="img/brand/logo.svg" /><span class="loader-item">L</span><span class="loader-item">O</span><span class="loader-item">A</span><span class="loader-item">D</span><span class="loader-item">I</span><span class="loader-item">N</span><span class="loader-item">G</span>
+        </div>
+    </div>
     <div class="container">
         <div class="m-modal hidden">
             <div class="inner">
@@ -75,10 +82,15 @@
             <p class="result-holder hidden"></p>
         </div>
         <div class="terms-wrapper"></div>
+        <footer class="m-footer">
+            <div class="progress-bar"></div>
+            <h4>Progress: <span class="completed">0 </span><span class="remaining">/ 0</span></h4>
+        </footer>
     </div>
     <!-- build:js script/script.js -->
     <!-- bower:js -->
     <script src="../bower_components/localforage/dist/localforage.js"></script>
+    <script src="../bower_components/tabletop/src/tabletop.js"></script>
     <!-- endbower -->
     <!-- inject:imports -->
     <script src="script/app.js"></script>

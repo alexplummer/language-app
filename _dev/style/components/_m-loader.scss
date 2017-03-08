@@ -1,0 +1,100 @@
+// Loading animation
+// ============
+// Shows while app loading
+
+$itemSize : 20;
+$itemSpacing : 2;
+$squareSize : 20;
+$loaderColor : rgba(250,250,250,0.1);
+$loaderDelay : 100;
+$loaderDuration : 2000;
+$animationTiming: cubic-bezier(.645, .045, .355, 1);
+
+.loading .m-loader {
+	display: block;
+}
+.m-loader {
+	display: none;
+	background: $clr-primary;
+	position: fixed;
+	z-index: $z-max;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+
+	h2 {
+		font-weight: 600;
+		color: $clr-tertiary;
+		font-size: $font-l;
+		text-align: center;
+		border-bottom: 1px solid rgba(250,250,250,0.2);
+		padding-bottom: $size-m;
+		margin-bottom: $size-m;
+	}
+	img {
+		width: 150px;
+		position: absolute;
+		top: -120px;
+		left: 5px;
+	}
+	.loader {
+		display: block;
+		position: absolute;
+		left: 50%;
+		top: 55%;
+		transform: translateY(-50%) translateX(-50%);
+		font-size: 0;
+		transform-style: preserve-3d;
+		perspective: 800px;
+	}
+	.loader-item {
+		display: inline-block;
+		width: $itemSize + px;
+		height: $itemSize + px;
+		margin-left: $itemSpacing + px;
+		background-color: $loaderColor;
+		color: rgba(250,250,250,0.7);
+		padding: 0;
+		text-align: center;
+
+		animation-duration: $loaderDuration + ms;
+		animation-timing-function: $animationTiming;
+		animation-iteration-count: infinite;
+		animation-name: flipDelay;
+
+		//loop through to add an animation delay
+		@for $i from 1 through 8 {
+			&:nth-child(#{$i}) {
+				animation-delay: ($i * $loaderDelay) + ms;
+			}
+		}
+	}
+	@keyframes flipDelay {
+		0% {
+			transform: rotateX(0deg);
+			transform-origin: 0 0 0;
+			opacity: 1;
+		}
+		30% {
+			transform: rotateX(90deg);
+			transform-origin: 0 0 0;
+			opacity: 0;
+		}
+		40% {
+			transform-origin: 0 0 0;
+		}
+		60% {
+			transform: rotateX(90deg);
+			opacity: 0;
+			transform-origin: 0 100% 0;
+		}
+		90% {
+			transform: rotateX(0deg);
+			opacity: 1;
+			transform-origin: 0 100% 0;
+		}
+	}
+}
+

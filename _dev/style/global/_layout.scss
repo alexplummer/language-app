@@ -2,17 +2,25 @@
 // ============
 // Major layout rules to go here
 
-.container, .m-modal {
+.container {
+    padding-bottom: $size-m;
+}
+.container, .m-modal, .m-footer {
     @extend %container;
     width: 600px;   
     max-width: 100%;
     min-height: 100vh;
     z-index: $z-s;
 }
-.m-card, .m-header {
+.m-card, .m-header, .m-footer {
     position: relative;
     z-index: $z-m;
 }
 .terms-wrapper {
     padding-bottom: 10px;
+}
+.m-footer {
+    min-height: 0;
+    position: fixed;
+    bottom: 0;
 }

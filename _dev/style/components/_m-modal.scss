@@ -27,6 +27,12 @@
                 &.dictionary {
                     @extend .icon-book;
                 }
+                &.colour {
+                    @extend .icon-tint;
+                }
+                &.symbol {
+                    @extend .icon-garden;
+                }
             }
         }
     }
@@ -74,12 +80,16 @@
         table {
             @extend .pure-table-bordered;
             font-size: $font-l;
+            max-width: 100%;
             width: 100%;
             text-align: center;
             cursor: pointer;
-            
+
+            td {
+                padding: $size-s;
+            }
             p { 
-                color: #aaa;
+                color: #444;
                 margin: 0;
                 padding: 0;
             }
