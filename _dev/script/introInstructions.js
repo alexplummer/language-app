@@ -39,7 +39,7 @@ const onboardShow = function onboardShow() {
     });
 
     document.querySelector('.onboard-1').addEventListener('click', (e) => {
-        e.preventDefault;
+        e.preventDefault();
         onboardStage2();
     });
     function onboardStage2() {
@@ -57,7 +57,7 @@ const onboardShow = function onboardShow() {
         onBoardText.style.top = termOffset + "px";
 
         document.querySelector('.onboard-2').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage3();
         });
     }
@@ -71,7 +71,7 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.add('onboard-right');
 
         document.querySelector('.onboard-3').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage4();
         });
     }
@@ -84,7 +84,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = view;
 
         topTerm.getElementsByTagName('button')[0].addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage5();
         });
     }
@@ -102,7 +102,7 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.remove('onboard-right');
 
         document.querySelector('.onboard-5').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage6();
         });
     }
@@ -118,7 +118,7 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.add('onboard-right');
 
         document.querySelector('.onboard-6').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage7();
         });
     }
@@ -136,7 +136,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = view;
 
         document.querySelector('.onboard-7').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage8();
         });
     }
@@ -162,7 +162,7 @@ const onboardShow = function onboardShow() {
         onBoardText.innerHTML = view;
 
         document.querySelector('.onboard-8').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage9();
         });
     }
@@ -187,7 +187,7 @@ const onboardShow = function onboardShow() {
         modal.querySelector('.content').innerHTML = view;
         modal.classList.add('onboard');
         document.querySelector('.close-tut').addEventListener("click", (e) => {
-            e.preventDefault;
+            e.preventDefault();
             hideModal(true);
             tinyTerms.tutComplete = true;
             localforage.setItem("tinyTerms.tutComplete", tinyTerms.tutComplete);
@@ -227,7 +227,7 @@ const optionsDisplay = function optionsDisplay() {
         let resetList = document.querySelector('.reset-list');
         let resetApp = document.querySelector('.reset');
 
-        document.querySelector('.show-tut').addEventListener('click', (e) => {e.preventDefault; onboardShow()});
+        document.querySelector('.show-tut').addEventListener('click', (e) => {e.preventDefault(); onboardShow()});
 
         function resetMenu() {
             if (document.querySelector('.delete-confirm') !== null) {
@@ -238,7 +238,7 @@ const optionsDisplay = function optionsDisplay() {
             }
         }
         resetList.addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             resetMenu();
             resetList.innerHTML = "Are you sure you want to delete progress for this list? (Can't undo)";
             resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
@@ -254,7 +254,7 @@ const optionsDisplay = function optionsDisplay() {
             });
         });
         document.querySelector('.reset').addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             resetMenu();
             resetApp.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
             resetApp.parentNode.insertBefore(document.createElement("div"), resetApp.nextSibling);

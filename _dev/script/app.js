@@ -24,7 +24,7 @@ let ops = {
     wordAccuracy: 0.7,
     addDay: false,
     debug: true,
-    loadDelay: 0,
+    loadDelay: 2500,
     points: {
         correct: 50,
         dailyBonus: 10,
@@ -117,8 +117,22 @@ const firstLoad = function firstLoad() {
         tinyTerms.storedName = "tinyTerms"+tinyTerms.pickedList;
         // Set new list to storage, add as default
         localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
-        // Fetch data for list
-        fetchData(tinyTerms.listChoices[tinyTerms.pickedList].sheetURL, firstTime);
+        // Add default lists to uploadedLists, same place as user upload
+        localforage.getItem('tinyTerms.uploadedLists', function(err, uploadedLists) {
+            
+            // Get uploaded lists
+            for (let val in uploadedLists) {
+                let listName = uploadedLists[val].name;
+                let listURL = uploadedLists[val].sheetURL;
+                
+                tinyTerms.listChoices[listName] = {
+                    name: listName,
+                    sheetURL: listURL
+                }
+            }
+            // Fetch data for list
+            fetchData(tinyTerms.listChoices[tinyTerms.pickedList].sheetURL, firstTime);
+        });
     });
 }
 
@@ -236,7 +250,7 @@ const appBuildHandler = function appBuildHandler() {
     let menuTrigger = document.getElementsByTagName('h1');
 
     menuTrigger[0].addEventListener('click', (e)=>{
-        e.preventDefault;
+        e.preventDefault();
         showHome();
     });
 

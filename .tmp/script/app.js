@@ -21,10 +21,12 @@ var app = function () {
 
     // Gets data from Google Sheets
     var buildData = function buildData(data) {
-        tinyTerms$1[tinyTerms$1.pickedList].speechLang = data.Sheet1.elements[0][tinyTerms$1.pickedList];
-        tinyTerms$1[tinyTerms$1.pickedList].dictFrom = data.Sheet1.elements[1][tinyTerms$1.pickedList];
-        tinyTerms$1[tinyTerms$1.pickedList].dictTo = data.Sheet1.elements[2][tinyTerms$1.pickedList];
-        tinyTerms$1[tinyTerms$1.pickedList].action = data.Sheet1.elements[3][tinyTerms$1.pickedList];
+        var columnName = data.Sheet1.columnNames[1];
+
+        tinyTerms$1[tinyTerms$1.pickedList].speechLang = columnName;
+        tinyTerms$1[tinyTerms$1.pickedList].dictFrom = data.Sheet1.elements[0][columnName];
+        tinyTerms$1[tinyTerms$1.pickedList].dictTo = data.Sheet1.elements[1][columnName];
+        tinyTerms$1[tinyTerms$1.pickedList].action = data.Sheet1.elements[2][columnName];
         tinyTerms$1[tinyTerms$1.pickedList].terms = tinyTerms$1[tinyTerms$1.pickedList].terms || {};
 
         for (var i = 1; i < data.Sheet1.elements.length; i++) {
@@ -75,6 +77,13 @@ var app = function () {
 
         return todayDate;
     }
+
+    // Validate URL
+    var checkURL = function checkURL(str) {
+        var a = document.createElement('a');
+        a.href = str;
+        return a.host && a.host != window.location.host;
+    };
 
     // Makes a safe class name
     var makeSafeClass = function makeSafeClass(name) {
@@ -545,7 +554,7 @@ var app = function () {
         // Create correct terms default
         tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms || {};
         var completed = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms).length;
-        var remaining = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].terms).length;
+        var remaining = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].terms).length + 1;
 
         // Add to DOM
         document.querySelector('.m-footer').querySelector('.completed').innerHTML = completed;
@@ -949,7 +958,7 @@ var app = function () {
             speech.lang = tinyTerms$1[tinyTerms$1.pickedList].speechLang;
             window.speechSynthesis.speak(speech);
         });
-        if (tinyTerms$1[tinyTerms$1.pickedList].speechLang === undefined || tinyTerms$1[tinyTerms$1.pickedList].speechLang === "") {
+        if (tinyTerms$1[tinyTerms$1.pickedList].speechLang === "none") {
             for (var k = 0; k < termHolder.length; k++) {
                 termHolder[k].classList.add('no-speak');
             }
@@ -1164,53 +1173,147 @@ var app = function () {
     // Show home screen
     var showHome = function showHome() {
 
-        // Once loaded
-        setTimeout(function () {
-            document.getElementsByTagName('body')[0].classList = "";
-            document.querySelector('.query-wrapper').classList.add('animated', 'slideInDown');
-        }, 1000);
+        tinyTerms$1.uploadedLists = tinyTerms$1.uploadedLists || {};
 
-        // Show home screen
-        var homeWrapper = document.querySelector('.m-menu');
-        homeWrapper.classList.remove('hidden');
-        document.getElementsByTagName('body')[0].classList.add('modal-active');
+        localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
 
-        // Show list of stored list
-        var lists = "";
+            tinyTerms$1.customListChoices = tinyTerms$1.customListChoices || {};
 
-        for (var val in tinyTerms$1.listChoices) {
-            lists += '<a href="#">' + tinyTerms$1.listChoices[val].name + '</a>';
-        }
+            // Get uploaded lists
+            for (var val in uploadedLists) {
+                var listName = uploadedLists[val].name;
+                var listURL = uploadedLists[val].sheetURL;
 
-        homeWrapper.querySelector('.choose-list').getElementsByTagName('nav')[0].innerHTML = lists;
+                tinyTerms$1.customListChoices[listName] = {
+                    name: listName,
+                    sheetURL: listURL
+                };
+            }
 
-        // Add listener to nav
-        var listItem = document.querySelector('.choose-list').querySelectorAll('a');
+            // Show home screen
+            var homeWrapper = document.querySelector('.m-menu');
+            homeWrapper.classList.remove('hidden');
+            document.getElementsByTagName('body')[0].classList.add('modal-active');
+            document.getElementsByTagName('body')[0].classList.add('home');
 
-        for (var i = 0; i < listItem.length; i++) {
-            listItem[i].addEventListener('click', function (e) {
-                e.preventDefault;
-                tinyTerms$1.pickedList = this.innerHTML;
-                localforage.setItem('tinyTermsDefault', tinyTerms$1.pickedList);
-                location.reload();
-            });
-        }
+            // Show list of stored list
+            var lists = "";
+
+            for (var _val in tinyTerms$1.listChoices) {
+                lists += '<a href="#">' + tinyTerms$1.listChoices[_val].name + '</a>';
+            }
+            for (var _val2 in tinyTerms$1.customListChoices) {
+                lists += '<div class="' + tinyTerms$1.customListChoices[_val2].name + '"><span class="custom-list"></span><a href="#">' + tinyTerms$1.customListChoices[_val2].name + '</a></div>';
+            }
+
+            homeWrapper.querySelector('.choose-list').getElementsByTagName('nav')[0].innerHTML = lists;
+
+            // Add listener to nav
+            var listItem = document.querySelector('.choose-list').querySelectorAll('a');
+
+            for (var i = 0; i < listItem.length; i++) {
+                listItem[i].addEventListener('click', function (e) {
+                    e.preventDefault();
+                    tinyTerms$1.pickedList = this.innerHTML;
+                    localforage.setItem('tinyTermsDefault', tinyTerms$1.pickedList);
+                    location.reload();
+                });
+            }
+
+            // Add listener to remove list
+            var removeList = document.querySelectorAll('.custom-list');
+
+            var _loop2 = function _loop2(_i) {
+
+                removeList[_i].addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var listName = removeList[_i].parentNode.childNodes[1].innerHTML;
+
+                    delete tinyTerms$1.uploadedLists[listName];
+
+                    localforage.setItem('tinyTerms.uploadedLists', tinyTerms$1.uploadedLists, function () {
+                        removeList[_i].parentNode.parentNode.removeChild(document.querySelector('.' + listName));
+                    });
+                });
+            };
+
+            for (var _i = 0; _i < removeList.length; _i++) {
+                _loop2(_i);
+            }
+        });
 
         // Upload list button
         document.querySelector('.upload-info').addEventListener('click', function (e) {
-            e.preventDefault;
+            e.preventDefault();
 
             var modal = document.querySelector('.m-modal');
 
             // Bring up modal
             modal.classList.remove('hidden');
             modal.style.zIndex = "101";
+            modal.querySelector('.close').addEventListener('click', function (e) {
+                e.preventDefault();
+                hideModal(true);
+            });
 
-            var view = '<header>\n                        <h2 class="">Upload a list</h2>\n                    </header>\n                    <p>Create your very own list of Tiny Terms! For more info please visit:</p>\n                    <a href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>\n                    <div class="list-uploader">\n                        <input type="text" placeholder="Paste list URL">\n                        <button class="upload-list">Upload</button>\n                    </div>';
+            var view = '<header>\n                        <h2 class="">Upload a list</h2>\n                    </header>\n                    <p>Create your very own list of Tiny Terms! For more info please visit:</p>\n                    <a target="_blank" href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>\n                    \n                    <div class="list-uploader">\n                        <label>List Name (max 25 characters)</label>\n                        <input class="upload-name" type="text" placeholder="Enter list name">\n                        <label>List URL</label>\n                        <input class="upload-sheet" type="text" placeholder="Paste list URL">\n                        <button class="upload-list">Upload</button>\n                    </div>';
 
             // Add view
             modal.querySelector('.content').innerHTML += view;
+
+            window.addEventListener("keypress", function (e) {
+                var inputName = document.querySelector('.upload-name').value;
+                var inputSheet = document.querySelector('.upload-sheet').value;
+
+                if (e.keyCode === 13) {
+                    uploadList(inputName, inputSheet);
+                }
+            });
+
+            document.querySelector('.upload-list').addEventListener('click', function (e) {
+                e.preventDefault();
+                var inputName = document.querySelector('.upload-name').value;
+                var inputSheet = document.querySelector('.upload-sheet').value;
+
+                uploadList(inputName, inputSheet);
+            });
         });
+        function uploadList(inputName, inputSheet) {
+            inputName = inputName.substring(0, 25);
+
+            if (inputName.length > 0 && inputSheet.length > 0) {
+
+                // Check valid URL
+                if (checkURL(inputSheet) === true) {
+                    localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
+                        // Get uploaded lists
+                        for (var val in uploadedLists) {
+                            var listName = uploadedLists[val].name;
+                            var listURL = uploadedLists[val].sheetURL;
+
+                            tinyTerms$1.listChoices[listName] = {
+                                name: listName,
+                                sheetURL: listURL
+                            };
+                        }
+                        tinyTerms$1.uploadedLists[inputName] = {
+                            name: inputName,
+                            sheetURL: inputSheet
+                        };
+                        localforage.setItem('tinyTerms.uploadedLists', tinyTerms$1.uploadedLists, function () {
+                            hideModal(true);
+                            var customlist = '<div class="' + inputName + '"><span class="custom-list"></span><a href="#">' + inputName + '</a></div>';
+                            var homeWrapper = document.querySelector('.m-menu');
+                            homeWrapper.querySelector('.choose-list').getElementsByTagName('nav')[0].innerHTML += customlist;
+                        });
+                    });
+                } else {
+                    cl('no valid url');
+                }
+            } else {
+                cl('no text');
+            }
+        }
     };
 
     // Imports
@@ -1239,7 +1342,7 @@ var app = function () {
         });
 
         document.querySelector('.onboard-1').addEventListener('click', function (e) {
-            e.preventDefault;
+            e.preventDefault();
             onboardStage2();
         });
         function onboardStage2() {
@@ -1256,7 +1359,7 @@ var app = function () {
             onBoardText.style.top = termOffset + "px";
 
             document.querySelector('.onboard-2').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage3();
             });
         }
@@ -1269,7 +1372,7 @@ var app = function () {
             onBoardText.classList.add('onboard-right');
 
             document.querySelector('.onboard-3').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage4();
             });
         }
@@ -1281,7 +1384,7 @@ var app = function () {
             onBoardText.innerHTML = view;
 
             topTerm.getElementsByTagName('button')[0].addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage5();
             });
         }
@@ -1298,7 +1401,7 @@ var app = function () {
             onBoardText.classList.remove('onboard-right');
 
             document.querySelector('.onboard-5').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage6();
             });
         }
@@ -1313,7 +1416,7 @@ var app = function () {
             onBoardText.classList.add('onboard-right');
 
             document.querySelector('.onboard-6').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage7();
             });
         }
@@ -1330,7 +1433,7 @@ var app = function () {
             onBoardText.innerHTML = view;
 
             document.querySelector('.onboard-7').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage8();
             });
         }
@@ -1355,7 +1458,7 @@ var app = function () {
             onBoardText.innerHTML = view;
 
             document.querySelector('.onboard-8').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 onboardStage9();
             });
         }
@@ -1375,7 +1478,7 @@ var app = function () {
             modal.querySelector('.content').innerHTML = view;
             modal.classList.add('onboard');
             document.querySelector('.close-tut').addEventListener("click", function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 hideModal(true);
                 tinyTerms$1.tutComplete = true;
                 localforage.setItem("tinyTerms.tutComplete", tinyTerms$1.tutComplete);
@@ -1402,7 +1505,7 @@ var app = function () {
             var resetApp = document.querySelector('.reset');
 
             document.querySelector('.show-tut').addEventListener('click', function (e) {
-                e.preventDefault;onboardShow();
+                e.preventDefault();onboardShow();
             });
 
             function resetMenu() {
@@ -1414,7 +1517,7 @@ var app = function () {
                 }
             }
             resetList.addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 resetMenu();
                 resetList.innerHTML = "Are you sure you want to delete progress for this list? (Can't undo)";
                 resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
@@ -1430,7 +1533,7 @@ var app = function () {
                 });
             });
             document.querySelector('.reset').addEventListener('click', function (e) {
-                e.preventDefault;
+                e.preventDefault();
                 resetMenu();
                 resetApp.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
                 resetApp.parentNode.insertBefore(document.createElement("div"), resetApp.nextSibling);
@@ -1457,7 +1560,7 @@ var app = function () {
         wordAccuracy: 0.7,
         addDay: false,
         debug: true,
-        loadDelay: 0,
+        loadDelay: 2500,
         points: {
             correct: 50,
             dailyBonus: 10,
@@ -1549,8 +1652,22 @@ var app = function () {
             tinyTerms$1.storedName = "tinyTerms" + tinyTerms$1.pickedList;
             // Set new list to storage, add as default
             localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
-            // Fetch data for list
-            fetchData(tinyTerms$1.listChoices[tinyTerms$1.pickedList].sheetURL, firstTime);
+            // Add default lists to uploadedLists, same place as user upload
+            localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
+
+                // Get uploaded lists
+                for (var val in uploadedLists) {
+                    var listName = uploadedLists[val].name;
+                    var listURL = uploadedLists[val].sheetURL;
+
+                    tinyTerms$1.listChoices[listName] = {
+                        name: listName,
+                        sheetURL: listURL
+                    };
+                }
+                // Fetch data for list
+                fetchData(tinyTerms$1.listChoices[tinyTerms$1.pickedList].sheetURL, firstTime);
+            });
         });
     };
 
@@ -1668,7 +1785,7 @@ var app = function () {
         var menuTrigger = document.getElementsByTagName('h1');
 
         menuTrigger[0].addEventListener('click', function (e) {
-            e.preventDefault;
+            e.preventDefault();
             showHome();
         });
 

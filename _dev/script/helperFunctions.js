@@ -12,6 +12,7 @@ export {
     arrayCheck,
     makeSafeClass,
     getTodaysDate,
+    checkURL,
     pickRandom,
     clickListener,
     getTimeComplete,
@@ -44,10 +45,12 @@ function clv(term, log) {
 
 // Gets data from Google Sheets
 const buildData = function buildData(data) {
-    tinyTerms[tinyTerms.pickedList].speechLang = data.Sheet1.elements[0][tinyTerms.pickedList];
-    tinyTerms[tinyTerms.pickedList].dictFrom = data.Sheet1.elements[1][tinyTerms.pickedList];
-    tinyTerms[tinyTerms.pickedList].dictTo = data.Sheet1.elements[2][tinyTerms.pickedList];
-    tinyTerms[tinyTerms.pickedList].action = data.Sheet1.elements[3][tinyTerms.pickedList];
+    let columnName = data.Sheet1.columnNames[1];
+
+    tinyTerms[tinyTerms.pickedList].speechLang = columnName;
+    tinyTerms[tinyTerms.pickedList].dictFrom = data.Sheet1.elements[0][columnName];
+    tinyTerms[tinyTerms.pickedList].dictTo = data.Sheet1.elements[1][columnName];
+    tinyTerms[tinyTerms.pickedList].action = data.Sheet1.elements[2][columnName];
     tinyTerms[tinyTerms.pickedList].terms = tinyTerms[tinyTerms.pickedList].terms || {};
 
     for (let i = 1; i < data.Sheet1.elements.length; i++) {
@@ -110,6 +113,13 @@ function getTimeComplete() {
     timeComplete.push([day, month, hour, minute, second]);
 
     return timeComplete;
+}
+
+// Validate URL
+const checkURL = function checkURL(str) {
+    let a  = document.createElement('a');
+    a.href = str;
+    return (a.host && a.host != window.location.host);
 }
 
 // Makes a safe class name

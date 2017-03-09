@@ -152,7 +152,7 @@ const progressBar = function progressBar() {
     // Create correct terms default
     tinyTerms[tinyTerms.pickedList].storedData.learnedTerms = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms || {};
     let completed = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms).length;
-    let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length;
+    let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length + 1;
 
     // Add to DOM
     document.querySelector('.m-footer').querySelector('.completed').innerHTML = completed;

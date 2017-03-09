@@ -4,12 +4,12 @@
 
 .m-menu {
     background: radial-gradient(ellipse at center, #a9245b 0%, #7d1e24 100%);
-    padding: $size-l $size-s;
+    padding: $size-m $size-s;
     @extend %cf;
     text-align: center;
 
     img {
-        max-width: 200px;
+        max-width: 280px;
     }
     h3 {
         @extend %small-caps;
@@ -20,7 +20,7 @@
     h2 {
         color: rgba(250,250,250,0.7);
         font-size: $font-xl;
-        margin: $size-l 0;
+        margin: $size-s 0 $size-m 0;
     }
     nav a, nav a span {
         color: #fff;
@@ -66,6 +66,21 @@
         background: rgba(250,250,250,0.09);
         padding: $size-s 0 $size-m 0;
         margin: -$size-m;
+
+        div {
+            text-align: center;
+
+            .custom-list {
+                @extend .icon;
+                @extend .icon-cancel-circled2;
+                color: #fff;
+                margin-right: $size-xs;
+                cursor: pointer;
+            }
+            a {
+                display: inline-block;
+            }
+        }
     }
     .create-list {
         border-top: 1px solid rgba(250,250,250,0.2); 
@@ -91,12 +106,11 @@
     }
 }
 .list-uploader {
+    margin-top: $size-m;
 
-    a {
-        display: block;
-        text-align: center;
+    label {
+        @extend %small-caps;
     }
-
     input[type="text"] {
         width: 100%;
     }

@@ -218,7 +218,7 @@ const textToSpeech = function textToSpeech() {
         speech.lang = tinyTerms[tinyTerms.pickedList].speechLang;
         window.speechSynthesis.speak(speech);
     });
-    if (tinyTerms[tinyTerms.pickedList].speechLang === undefined || tinyTerms[tinyTerms.pickedList].speechLang === "") {
+    if (tinyTerms[tinyTerms.pickedList].speechLang === "none") {
         for (let k = 0; k < termHolder.length; k++){
             termHolder[k].classList.add('no-speak');
         }

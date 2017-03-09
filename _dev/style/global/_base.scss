@@ -9,12 +9,20 @@ body {
     &.loading {
         overflow: hidden;
     }
+    &.home {
+        background: darken($clr-tertiary, 25%);
+    }
 }
 .container {
     background: $clr-dark;
     position: relative;
     padding: 0;
     overflow: hidden;
+    box-shadow: 0 0 30px 0 rgba(0,0,0,0.8);
+
+    .home & {
+        box-shadow: 0 0 30px 0 rgba(0,0,0,0.4);
+    }
 
     &:before {
         content: "";
