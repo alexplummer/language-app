@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Primary meta-->
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link rel="author" href="humans.txt">
+    <link rel="canonical" href="#">
+    <!-- DNS Prefetch-->
+    <link rel="dns-prefetch" href="http://fonts.googleapis.com/">
+    <!-- Meta, OG, Twitter, Apple-->
+    <meta name="description" content="A simple flashcard app">
+    <meta property="article:author" content="Site Author">
+    <meta name="robots" content="index, follow">
+    <meta property="fb:app_id" content="123456789">
+    <meta property="og:url" content="http://wwww.siteurl.com">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Language App">
+    <meta property="og:description" content="A simple flashcard app">
+    <meta property="og:site_name" content="Language App">
+    <meta property="og:locale" content="en_UK">
+    <meta name="twitter:image" content="http://wwww.siteurl.com/img/logo-main.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@site_account">
+    <meta name="twitter:creator" content="@individual_account">
+    <meta name="twitter:url" content="http://wwww.siteurl.com">
+    <meta name="twitter:title" content="Language App">
+    <meta name="twitter:description" content="A simple flashcard app">
+    <meta name="apple-mobile-web-app-title" content="Language App">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,800" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css"/>
+</head>
+
+<body class="loading">
+    <div class="m-loader">
+        <div class="splash-icon"></div>
+        <div class="loader">
+            <img src="img/brand/logo.svg" /><span class="loader-item">L</span><span class="loader-item">O</span><span class="loader-item">A</span><span class="loader-item">D</span><span class="loader-item">I</span><span class="loader-item">N</span><span class="loader-item">G</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="m-modal hidden">
+            <div class="inner">
+                <a class="close" href="#"></a>
+                <div class="content"></div>
+            </div>
+        </div>
+        <div class="onboard-wrap">
+            <div class="m-onboarding hidden"></div>
+        </div>
+        <div class="m-menu hidden">
+            <a class="close" href="#"></a>
+            <div class="animated-bg">
+                <div class="icon-lines-and-angles_assist infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_believe infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_brew infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_calibrate infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_explore infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_fly infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_glance infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_steam infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_swim infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_strum infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_transport infinite animated pulse"></div>
+            </div>
+            <img src="img/brand/logo_white.svg" />
+            <h2>Choose a list to learn:</h2>
+            <div class="choose-list">
+                <nav></nav>
+            </div>
+            <div class="create-list">
+                <h3>Or add your own:</h3>
+                <button class="upload-info">Create a list</button>
+                <p class="legal">© Copyright 2017 Alex Plummer</p>
+            </div>
+        </div>
+        <header class="m-header">
+            <h1> </h1>
+            <div class="right">
+                <a class="settings" href="#"></a>
+                <div class="score">
+                    <p>Score:<span class="score-holder">0</span>
+                    </p>
+                </div>
+            </div>
+        </header>
+        <div class="query-wrapper hidden">
+            <div class="m-query">
+                <header>
+                    <h2>Daily Test</h2>
+                    <div class="hearts"></div>
+                </header>
+                <p class="list-action">Translate: <span class="query-holder"></span>
+                </p>
+                <div class="query-form">
+                    <div class="input-wrap">
+                        <input class="query-input" type="text" placeholder="Enter definition" />
+                    </div>
+                    <button class="query-submit">Check</button>
+                </div>
+                <p class="result-holder hidden"></p>
+            </div>
+        </div>
+        <div class="terms-wrapper"></div>
+        <footer class="m-footer">
+            <div class="progress-bar"></div>
+            <h4>Progress: <span class="completed">0 </span><span class="remaining">/ 0</span></h4>
+        </footer>
+    </div>
+    <script src="script/script.js"></script>
+</body>
+
+</html>
