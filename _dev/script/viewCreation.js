@@ -25,12 +25,13 @@ const viewCreate = function viewCreate(termsToCreate) {
         let viewsCount;
 
         // Check storage for revealed count
-        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
-        if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] === undefined) {
+        tinyTerms[tinyTerms.pickedList].storedData.revealGoal = tinyTerms[tinyTerms.pickedList].storedData.revealGoal || {};
+
+        if (tinyTerms[tinyTerms.pickedList].storedData.revealGoal[termValue] === undefined) {
             viewsCount = 0;
         }
         else {
-            viewsCount = (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].viewCount + 1) || 0;
+            viewsCount = (tinyTerms[tinyTerms.pickedList].storedData.revealGoal[termValue]) || 0;
         }
 
         document.querySelector('h1').innerHTML = tinyTerms.pickedList;
@@ -42,7 +43,7 @@ const viewCreate = function viewCreate(termsToCreate) {
                 <p class="term-holder">${termValue}</p>
                 <div class="theme-holder"><p class="symbol-holder"></p></div>
                 <div class="right">
-                    <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${tinyTerms[tinyTerms.pickedList].ops.revealDailyBonusTarget}</p>
+                    <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${tinyTerms[tinyTerms.pickedList].ops.revealGoalTarget}</p>
                     <button class="reveal">Reveal</button>
                 </div>
                 <div class="definition-wrapper hidden">
@@ -76,7 +77,6 @@ const viewCreate = function viewCreate(termsToCreate) {
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
             termWrapper.querySelector('.theme-holder').classList.add('bg-active');
             termWrapper.querySelector('.term-holder').style.color = "#fff";
-            termWrapper.querySelector('.right').style.border = "0";
         }
         // Check storage for assigned symbol
         if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] !== undefined && tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].symbol !== undefined) {
@@ -152,7 +152,7 @@ const progressBar = function progressBar() {
     // Create correct terms default
     tinyTerms[tinyTerms.pickedList].storedData.learnedTerms = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms || {};
     let completed = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms).length;
-    let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length + 1;
+    let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length;
 
     // Add to DOM
     document.querySelector('.m-footer').querySelector('.completed').innerHTML = completed;

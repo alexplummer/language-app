@@ -48,3 +48,18 @@
     position: fixed;
     bottom: 0;
 }
+@media (max-width:340px) {
+
+    header.m-header {
+        padding-right: $size-xs;
+    }
+    .terms-wrapper {
+        padding-left: 0;
+    }
+    div.m-term-wrapper {
+        margin-left: 0;
+    }
+    .m-header .right div.score {
+        margin-right: 0;
+    }
+}

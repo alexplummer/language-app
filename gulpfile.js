@@ -231,7 +231,7 @@ gulp.task('usemin', () => {
 		.pipe(plugins.usemin({
 		js:  [  plugins.sourcemaps.init(),
 				// Uglify JS
-			    plugins.uglify(),
+			    plugins.uglify({output: {comments: /^!|@preserve|@license|@cc_on/i}}),
 				// Version if rev build
 			    plugins.if(argv.rev,  plugins.rev()),
 				// Write JS sourcemap
@@ -683,7 +683,7 @@ gulp.task('build:tmp', gulpsync.sync([
 gulp.task('build:prod', gulpsync.sync([
 	'usemin',
 	'copy:prod',
-	'images',
+	'images'
 	//'couch',
 	//'optimise'
 ]));

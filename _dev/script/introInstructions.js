@@ -14,6 +14,7 @@ const onboardShow = function onboardShow() {
     let onBoardText = document.querySelector('.m-onboarding');
     let topTerm = document.querySelectorAll('.m-term-wrapper')[0];
     let definitionHolder = topTerm.querySelector('.definition-holder');
+	let topBtn = topTerm.getElementsByTagName('button')[0];
 
     tinyTerms.tutComplete = false;
     localforage.setItem("tinyTerms.tutComplete", tinyTerms.tutComplete);
@@ -31,7 +32,8 @@ const onboardShow = function onboardShow() {
                 `;
     modal.querySelector('.content').innerHTML = view;
     modal.classList.add('onboard');
-    document.querySelector('.close-tut').addEventListener("click", () => {
+    document.querySelector('.close-tut').addEventListener('click', (e) => {
+        e.preventDefault();
         hideModal(true);
         modal.classList.remove('onboard');
         tinyTerms.tutComplete = true;
@@ -46,8 +48,10 @@ const onboardShow = function onboardShow() {
         hideModal(true);
         topTerm.style.zIndex = "100";
         topTerm.querySelector('.term-holder').classList.add('animated', 'pulse', 'infinite');
+        topTerm.querySelector('.definition-wrapper').classList.add('hidden');
         document.getElementsByTagName('body')[0].classList.add('modal-active');
-        topTerm.getElementsByTagName('button')[0].setAttribute('disabled', 'true');
+        topBtn.setAttribute('disabled', 'true');
+        document.querySelector('.m-modal').style.cssText = "display: none !important";
         onBoardText.classList.remove('hidden');
 
         let view = `<p>This is one of the terms you will be learning, you get 5 each day.</p>
@@ -77,21 +81,42 @@ const onboardShow = function onboardShow() {
     }
     function onboardStage4() {
         topTerm.querySelector('.term-views').classList.remove('animated', 'pulse', 'infinite');
-        topTerm.getElementsByTagName('button')[0].classList.add('animated', 'pulse', 'infinite');
-        topTerm.getElementsByTagName('button')[0].removeAttribute('disabled');
+        topBtn.classList.add('animated', 'pulse', 'infinite');
+        
+		let timerOveride = setInterval(()=>{
+			topBtn.classList.remove('disabled');
+        	topBtn.removeAttribute('disabled');
+		},100);
+
         let view = `<p style="border:0; margin: 10px 0; padding: 0">Press the reveal button to continue!</p>
                     `;
         onBoardText.innerHTML = view;
 
-        topTerm.getElementsByTagName('button')[0].addEventListener('click', (e) => {
+        topBtn.addEventListener('click', (e) => {
             e.preventDefault();
+			clearInterval(timerOveride);
             onboardStage5();
         });
     }
     function onboardStage5() {
-        topTerm.getElementsByTagName('button')[0].classList.remove('animated', 'pulse', 'infinite');
+        topBtn.classList.remove('animated', 'pulse', 'infinite');
         topTerm.querySelector('.definition-wrapper').classList.remove('hidden');
         topTerm.querySelector('.definition-holder').classList.add('animated', 'pulse', 'infinite');
+        topBtn.classList.add('disabled');
+
+		// Prevent cheating
+		let goal = topTerm.querySelector('.count');
+		let goalCount = parseInt(goal.innerHTML);
+
+		if (goalCount > 1) {
+			goalCount -= 1;
+			goal.innerHTML = goalCount;
+			let term = topTerm.querySelector('.term-holder').innerHTML;
+			tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount = goalCount;
+			tinyTerms[tinyTerms.pickedList].storedData.revealGoal[term] = goal.innerHTML = goalCount;
+			 // Save to storage
+        	localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+		}
 
         let termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
         onBoardText.style.top = termOffset + "px";
@@ -125,8 +150,7 @@ const onboardShow = function onboardShow() {
     function onboardStage7() {
         topTerm.querySelector('.colour').classList.add('animated', 'pulse', 'infinite');
         topTerm.querySelector('.symbol').classList.add('animated', 'pulse', 'infinite');
-        topTerm.querySelector('.colour').setAttribute('disabled', 'true');
-        topTerm.querySelector('.symbol').setAttribute('disabled', 'true');
+        document.querySelector('.query-holder').setAttribute('disabled', 'true');
 
         let termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
         onBoardText.style.top = termOffset + "px";
@@ -143,11 +167,11 @@ const onboardShow = function onboardShow() {
     function onboardStage8() {
         topTerm.querySelector('.colour').classList.remove('animated', 'pulse', 'infinite');
         topTerm.querySelector('.symbol').classList.remove('animated', 'pulse', 'infinite');
-        topTerm.querySelector('.colour').removeAttribute('disabled');
-        topTerm.querySelector('.symbol').removeAttribute('disabled');
         topTerm.style.zIndex = "50";
         let queryWrap = document.querySelector('.m-query');
         document.querySelector('.query-submit').setAttribute('disabled', 'true');
+        document.querySelector('.m-modal').style.cssText = "";
+        hideModal(true);
 
         createNewQuery(true);
         delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
@@ -172,7 +196,9 @@ const onboardShow = function onboardShow() {
         onBoardText.classList.add('hidden');
         document.getElementsByTagName('body')[0].classList.add('modal-active');
         let queryWrap = document.querySelector('.m-query');
+        document.querySelector('.query-holder').removeAttribute('disabled');
         document.querySelector('.query-submit').removeAttribute('disabled');
+        
 
         queryWrap.style.zIndex = "50";
         queryWrap.classList.add('hidden');
@@ -261,8 +287,12 @@ const optionsDisplay = function optionsDisplay() {
             resetApp.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
 
             document.querySelector('.delete-confirm').addEventListener('click', () => { 
-                localforage.clear();
-                location.reload();
+                localforage.clear().then(()=> {
+                    location.reload();
+                });
+            });
+            document.querySelector('.delete-cancel').addEventListener('click', () => { 
+                hideModal(true);
             });
         });
     });

@@ -3,7 +3,22 @@
 // Styling for the header module
 
 .m-menu {
-    background: radial-gradient(ellipse at center, #a9245b 0%, #7d1e24 100%);
+    background-color: $clr-primary;
+    background-image:
+        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px);
+    background-size: 
+        210px 210px, 230px 230px, 250px 250px, 180px 180px,
+        280px 280px, 190px 190px, 240px 240px, 320px 320px; 
+    background-position: 
+        10px 20px, 40px 60px, 130px 270px, 70px 100px,
+        5px 30px, 50px 70px, 110px 220px, 80px 90px;
     padding: $size-m $size-s;
     @extend %cf;
     text-align: center;
@@ -11,22 +26,45 @@
     img {
         max-width: 280px;
     }
-    h3 {
+    h2, h3 {
         @extend %small-caps;
         font-size: $font-m;
         color: rgba(250,250,250,0.8);
         margin-bottom: $size-s;
     }
     h2 {
-        color: rgba(250,250,250,0.7);
-        font-size: $font-xl;
         margin: $size-s 0 $size-m 0;
+        position: relative;
+        z-index: $z-m;
+    }
+    .home-bg {
+        position: relative;
+        padding-top: $size-m;
+
+        &:before {
+            content: "";
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #d72b2f 0%, #700016 100%);
+            box-shadow: 0 0 180px 0 rgba(250, 250, 250, 0.6);
+            padding: $size-m;
+            margin-top: $size-m;
+            height: 85vh;
+            position: absolute;    
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200%;
+            z-index: $z-s;
+        }
     }
     nav a, nav a span {
         color: #fff;
         font-size: $font-l;
     }
     nav {
+        @extend %row;
+        margin: 0 auto;
+        max-width: 400px;
 
         a {
             display: block;
@@ -36,6 +74,46 @@
 
             &:last-of-type {
                 margin: 0;
+            }
+        }
+        div {
+
+            a:last-of-type {
+                margin-top: $size-xs;
+            }
+        }
+        .category {
+            margin: 0;
+            padding: $size-l 0 0 0;
+            @extend %col-xs-3;
+            @extend .icon;
+            font-size: $font-m;
+            text-align: center;
+            position: relative;
+
+            &:before {
+                font-family: lines;
+                font-size: $font-xxl;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                margin: 0 auto;
+                display: inline-block;
+                width: 50px;    
+                color: $clr-link;
+            }
+            &.language { 
+                @extend .icon-lines-and-angles_collect;
+            }
+            &.science { 
+                @extend .icon-lines-and-angles_experiment;
+            }
+            &.technology { 
+                @extend .icon-lines-and-angles_develop;
+            }
+            &.culture { 
+                @extend .icon-lines-and-angles_explore;
             }
         }
     }
@@ -61,12 +139,16 @@
         100% {left: -2900px }
     }
     .choose-list {
-        border: 1px solid rgba(250,250,250,0.1);
-        //border-radius: 10px;
-        background: rgba(250,250,250,0.09);
-        padding: $size-s 0 $size-m 0;
-        margin: -$size-m;
+        padding: 0 $size-s;
+        margin: -$size-s;
+        max-height: 150px;
+        position: relative;
+        z-index: $z-m;
 
+        &.slideInRight nav {
+            text-align: center;
+            display: block;
+        }
         div {
             text-align: center;
 
@@ -80,22 +162,33 @@
             a {
                 display: inline-block;
             }
+            div {
+
+                p {
+                    color: #fff;
+                    border-top: 1px solid rgba(250,250,250,0.2);
+                    margin-top: $size-m;
+                }
+                button {
+                    padding: $size-xs;
+                    margin-right: $size-m;
+                    width: 100px;
+                }
+            }
         }
     }
     .create-list {
-        border-top: 1px solid rgba(250,250,250,0.2); 
-        border-radius: 50%;
-        background: rgba(250,250,250,0.05);
-        padding: $size-m 0 $size-xl 0;
-        margin-top: $size-m;
         position: absolute;
-        left: -50%;
-        bottom: -95px;
-        width: 200%;
+        bottom: 0;
+        width: 250px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: $z-m;
 
         button {
             background: $clr-hlight;
             margin-bottom: $size-m;
+            width: 130px;
         }
         .legal {
             color: #fff;

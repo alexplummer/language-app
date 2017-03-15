@@ -2,6 +2,29 @@
 // ============
 // Global typographic styles go in here
 
+// Font imports
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 300;
+  src: url(../font/Nunito-Light.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../font/Nunito-Regular.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 800;
+  src: url(../font/Nunito-ExtraBold.ttf);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+
 h2 {
     padding: 0;
     font-size: $font-l;
@@ -18,6 +41,10 @@ h2 {
 %text-light {
     font-size: $font-m;
     font-weight: 400;
+
+    @media (max-width:340px) {
+        font-size: $font-s;
+    }
 }
 %small-caps {
     font-size: $font-xs;

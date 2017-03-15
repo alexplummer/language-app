@@ -39,43 +39,82 @@ const revealedBtnHandler = function revealedBtnHandler() {
         // Set storedData
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term] = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term] || {};
-        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount || -1;
+        tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount || 0;
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount += 1;
-
+        
         // Daily reveal bonus
-        let revealBonusCount;
+        let revealGoalCount;
 
         // If no existing term bonus
-        if (tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[term] === undefined) {
-            revealBonusCount = 1;
+        if (tinyTerms[tinyTerms.pickedList].storedData.revealGoal[term] === undefined) {
+            revealGoalCount = 1;
         }
+
         // Add one to daily bonus
         else {
-            revealBonusCount = tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[term];
-            revealBonusCount += 1;
+            revealGoalCount = tinyTerms[tinyTerms.pickedList].storedData.revealGoal[term];
+            revealGoalCount += 1;
         }
+
         // Update DOM
-        countHolder.innerHTML = revealBonusCount;
+        countHolder.innerHTML = revealGoalCount;
+
         // If bonus is met
-        if (revealBonusCount === tinyTerms[tinyTerms.pickedList].ops.revealDailyBonusTarget) {
+        if (revealGoalCount === tinyTerms[tinyTerms.pickedList].ops.revealGoalTarget) {
+
             // Add term to learned terms list
             tinyTerms[tinyTerms.pickedList].storedData.learnedTerms = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms || {};
             tinyTerms[tinyTerms.pickedList].storedData.learnedTerms[term] = true;
+
+            // Check if whole term list answered correctly
+            if (Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms).length === Object.keys(tinyTerms[tinyTerms.pickedList].terms).length) {
+                tinyTerms[tinyTerms.pickedList].storedData.gameWon = true;
+                gameWon();
+            }
+
+            // If game won
+            function gameWon() {
+                let modal = document.querySelector('.m-modal');
+
+                // Bring up modal
+                modal.classList.remove('hidden');
+                document.getElementsByTagName('body')[0].classList.add('modal-active');
+
+                let view = `<header>
+                                <h2 class="">Whoop whoop!!</h2>
+                            </header>
+                            <p>Well done you completed the whole list! You get a bonus 10 points for each term learned.</p>
+                            <p>You can keep learning this list, reset it in the options to start from scratch or move on to
+                            learn something new entirely.</p>
+                            <p><strong>Great job!</strong></p>`;
+
+                // Add view
+                modal.querySelector('.content').innerHTML += view;
+
+                // Award bonus points
+                let completeBonus = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length * 10;
+                tinyTerms[tinyTerms.pickedList].storedData.score += completeBonus;
+                setScore();
+            }
+
             // Update progress bar
             progressBar();
+
             // If daily bonus not already triggered
-            if (tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus.complete === false) {
+            if (tinyTerms[tinyTerms.pickedList].storedData.revealGoal.complete === false) {
+
                 // Keep query active 
                 tinyTerms[tinyTerms.pickedList].storedData.queryComplete = false;
+                
                 // Create a new query
                 createNewQuery(true);
             }
             // Set only once a day
-            tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus.complete = true;
+            tinyTerms[tinyTerms.pickedList].storedData.revealGoal.complete = true;
             tinyTerms[tinyTerms.pickedList].storedData.score += tinyTerms[tinyTerms.pickedList].ops.points.dailyBonus;
             setScore();
         }
-        tinyTerms[tinyTerms.pickedList].storedData.revealDailyBonus[term] = revealBonusCount;
+        tinyTerms[tinyTerms.pickedList].storedData.revealGoal[term] = revealGoalCount;
 
         // Save to storage
         localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
@@ -214,9 +253,24 @@ const textToSpeech = function textToSpeech() {
     let termHolder = document.querySelectorAll('.term-holder');
 
     clickListener(termHolder, (i) => {
-        let speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
-        speech.lang = tinyTerms[tinyTerms.pickedList].speechLang;
-        window.speechSynthesis.speak(speech);
+
+        if (TTS === undefined) {
+            let speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
+            speech.lang = tinyTerms[tinyTerms.pickedList].speechLang;
+            window.speechSynthesis.speak(speech);
+        }
+        else {
+            TTS
+            .speak({
+                text: 'hello, world!',
+                locale: 'en-GB',
+                rate: 0.75
+            }, function () {
+                alert('success');
+            }, function (reason) {
+                alert(reason);
+            });
+        }
     });
     if (tinyTerms[tinyTerms.pickedList].speechLang === "none") {
         for (let k = 0; k < termHolder.length; k++){
@@ -246,14 +300,16 @@ const dictionaryLookup = function dictionaryLookup() {
                     </ul>`;
 
         modal.querySelector('.content').innerHTML += view;
+
+        // Make JSONP call to Glosbe API
         let definitionHolder = modal.querySelector('.definitions');
+        let dictionaryLookup = encodeURI('https://glosbe.com/gapi/translate?from='+tinyTerms[tinyTerms.pickedList]
+        .dictFrom+'&dest='+tinyTerms[tinyTerms.pickedList]
+        .dictTo+'&format=json&pretty=true&phrase=' + term.toLowerCase() + '');
 
         // Make request to Glosbe
-        jsonp('https://glosbe.com/gapi/translate?from='+tinyTerms[tinyTerms.pickedList]
-        .dictFrom+'a&dest='+tinyTerms[tinyTerms.pickedList]
-        .dictTo+'g&format=json&pretty=true&phrase=' + term.toLowerCase() + '')
+        jsonp(dictionaryLookup)
         .then(function (data) {
-            
             let dictionaryResponses = "";
 
             try {
@@ -277,11 +333,14 @@ const dictionaryLookup = function dictionaryLookup() {
                     }
                     return out;
                 }
+                if (data.tuc === undefined || data.tuc.length === 0) {
+                    dictionaryResponses = "(Sorry, no dictionary results found)"
+                }
                 // Add to DOM
                 definitionHolder.innerHTML = dictionaryResponses;
             }
             catch (err) {
-                console.log('error');
+                console.log(err);
             }
         });
     });
@@ -338,7 +397,6 @@ const addColour = function addColour() {
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
             termWrapper.querySelector('.theme-holder').classList.add('bg-active');
             termWrapper.querySelector('.term-holder').style.color = "#fff";
-            termWrapper.querySelector('.right').style.border = "0";
             // Set storage
             tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].colour = pickedColour;
             localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);

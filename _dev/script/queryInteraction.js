@@ -109,7 +109,8 @@ const createNewQuery = function createNewQuery(bonus) {
         });
 
         // Query outcomes
-        querySubmit.addEventListener("click", () => {
+        querySubmit.addEventListener("click", (e) => {
+            e.preventDefault();
             let queryInput = document.querySelector('.query-input').value;
 
             if (checkQuery(queryInput, definition) === true) {
@@ -152,11 +153,6 @@ const createNewQuery = function createNewQuery(bonus) {
             tinyTerms[tinyTerms.pickedList].storedData.correctTerms[randomTerm] = definition;
             tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;
             delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
-            // Check if whole term list answered correctly
-            if (Object.keys(tinyTerms[tinyTerms.pickedList].storedData.correctTerms).length === Object.keys(tinyTerms[tinyTerms.pickedList].terms).length) {
-                tinyTerms[tinyTerms.pickedList].storedData.gameWon = true;
-                gameWon();
-            }
             // Save to storage
             localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
         }
@@ -191,10 +187,6 @@ const createNewQuery = function createNewQuery(bonus) {
             }
             // Save to storage
             localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
-        }
-        // If game won
-        function gameWon() {
-            cl('game won');
         }
     }
 }

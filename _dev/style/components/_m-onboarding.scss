@@ -58,6 +58,8 @@
         display: none;
     }
     p {
+        word-wrap: break-word;
+        
         &:last-of-type {
             border-bottom: 1px solid fade-out($clr-tertiary, 0.5);
             padding-bottom: $size-m;

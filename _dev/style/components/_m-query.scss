@@ -16,6 +16,7 @@
         h2 {
             @extend .icon-graduation-cap;
             @extend .icon;
+            line-height: 32px;
         }
     }  
     .hearts {
@@ -53,13 +54,13 @@
         
         .input-wrap {
             width: 100%;
-            padding-right: 140px;
+            padding-right: 122px;
         }
         button {
             position: absolute;
             top: 0;
             right: 0;
-            width: 130px;
+            width: 110px;
             position: absolute;
         }
     }

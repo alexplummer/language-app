@@ -4,9 +4,9 @@
 // Define paths used within this gulp file
 
 var paths = {
-	tmp:       '.tmp',
-	dev:       '_dev',
-	prod:      '_prod'
+	tmp: '.tmp',
+	dev: '_dev',
+	prod: '_prod'
 };
 
 
@@ -14,17 +14,18 @@ var paths = {
 // ============
 // Load plugins in packages.json automatically
 
-var gulp     = require('gulp'),
-	fs       = require('fs'),
-	wiredep  = require('wiredep').stream,
-	argv     = require('yargs').argv,
+var gulp = require('gulp'),
+	fs = require('fs'),
+	wiredep = require('wiredep').stream,
+	argv = require('yargs').argv,
 	gulpsync = require('gulp-sync')(gulp),
-	spawn    = require('child_process').spawn,
-	plugins  = require('gulp-load-plugins')({
-				pattern: ['*'],
-				replaceString: /\bgulp[\-.]/,
-				lazy: true,
-				camelize: true});
+	spawn = require('child_process').spawn,
+	plugins = require('gulp-load-plugins')({
+		pattern: ['*'],
+		replaceString: /\bgulp[\-.]/,
+		lazy: true,
+		camelize: true
+	});
 
 
 // Linting
@@ -40,17 +41,17 @@ var browserReports = false;
 
 gulp.task('inject-JSdeps', () => {
 	// Auto inject JS
-	return gulp.src(paths.dev+'/html/includes/_under.pug')
-	.pipe(plugins.inject(gulp.src('**/*.js', {read: false, cwd:paths.tmp+'/script/'}), {
-		relative: true,
-		ignorePath: '../../../.tmp/',
-		starttag: '<!-- inject:imports -->',
-		endtag: '<!-- endinject -->',
-		transform: filepath => {
-			return '<script src="' + filepath + '"></script>';
-		}
-	}))
-	.pipe(gulp.dest(paths.dev+'/html/includes/'));
+	return gulp.src(paths.dev + '/html/includes/_under.pug')
+		.pipe(plugins.inject(gulp.src('**/*.js', { read: false, cwd: paths.tmp + '/script/' }), {
+			relative: true,
+			ignorePath: '../../../.tmp/',
+			starttag: '<!-- inject:imports -->',
+			endtag: '<!-- endinject -->',
+			transform: filepath => {
+				return '<script src="' + filepath + '"></script>';
+			}
+		}))
+		.pipe(gulp.dest(paths.dev + '/html/includes/'));
 });
 
 
@@ -61,24 +62,24 @@ gulp.task('inject-JSdeps', () => {
 gulp.task('js', () => {
 	// Package up ES6 modules
 	return plugins.rollupStream({
-		entry: paths.dev+'/script/app.js',
+		entry: paths.dev + '/script/app.js',
 		sourceMap: true,
 		format: 'iife',
-		moduleName: 'app',
+		moduleName: 'tinyTermsApp',
 		plugins: [
-			plugins.rollupPluginIncludepaths({paths:[paths.dev+'/script/']})
+			plugins.rollupPluginIncludepaths({ paths: [paths.dev + '/script/'] })
 		]
 	})
-	//.on('error', plugins.util.log)
-	// Prepare files for sourcemap
-	.pipe(plugins.vinylSourceStream('app.js', paths.dev+'/script/'))
-	.pipe(plugins.vinylBuffer())
-	.pipe(plugins.sourcemaps.init({loadMaps: true}))
-	// Convert ES6
-	.pipe(plugins.babel({presets: ['es2015']}))
-	// Write sourcemap
-	.pipe(plugins.sourcemaps.write('.'))
-	.pipe(gulp.dest(paths.tmp+'/script/'));
+		//.on('error', plugins.util.log)
+		// Prepare files for sourcemap
+		.pipe(plugins.vinylSourceStream('app.js', paths.dev + '/script/'))
+		.pipe(plugins.vinylBuffer())
+		.pipe(plugins.sourcemaps.init({ loadMaps: true }))
+		// Convert ES6
+		.pipe(plugins.babel({ presets: ['es2015'] }))
+		// Write sourcemap
+		.pipe(plugins.sourcemaps.write('.'))
+		.pipe(gulp.dest(paths.tmp + '/script/'));
 });
 
 
@@ -88,14 +89,30 @@ gulp.task('js', () => {
 
 gulp.task('copy:scripts', cb => {
 	// JS hint
-	gulp.src(paths.tmp+'/script/script/**/*.js')
-	.pipe(plugins.jshint())
-	.pipe(plugins.if(browserReports, plugins.jshint.reporter('gulp-jshint-file-reporter', {
-    	filename: 'reports/js/js.html'
-	})))
-	.pipe(plugins.jshint.reporter('default'))
-	.pipe(plugins.jshintNotifyReporter())
-	// Update browser
-	.pipe(plugins.browserSync.stream());
+	gulp.src(paths.tmp + '/script/**/*.js')
+		/*.pipe(plugins.jshint())
+		.pipe(plugins.if(browserReports, plugins.jshint.reporter('gulp-jshint-file-reporter', {
+			filename: 'reports/js/js.html'
+		})))
+		.pipe(plugins.jshint.reporter('default'))
+		.pipe(plugins.jshintNotifyReporter())*/
+		// Update browser
+		.pipe(plugins.browserSync.stream());
 	cb();
 })
+
+
+// Prod JS
+// ============
+// In this framework version takes out Cordova comments
+
+gulp.task('cordova', function () {
+
+	gulp.src([paths.prod + '/script/**/*.js'])
+		.pipe(plugins.replace('/*!CordovaStart', ''))
+		.pipe(gulp.dest(paths.prod + '/script'));
+
+	gulp.src([paths.prod + '/script/**/*.js'])
+		.pipe(plugins.replace('CordovaEnd*/', ''))
+		.pipe(gulp.dest(paths.prod + '/script'));
+});
