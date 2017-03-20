@@ -14,10 +14,11 @@ export {
 	makeSafeClass,
 	getTodaysDate,
 	checkURL,
-    errorAlert,
+	errorAlert,
 	alertMsg,
 	pickRandom,
 	clickListener,
+	countLines,
 	getTimeComplete,
 	checkQuery,
 	sortArrayByKey,
@@ -51,12 +52,12 @@ function clv(term, log) {
 // Alert errors
 const errorAlert = function errorAlert(message, cb) {
 
-    window.onerror = (errorMsg, url, lineNumber, column, errorObj) => {
-        let modal = document.querySelector('.m-modal');
-        modal.classList.remove("hidden");
-        document.getElementsByTagName("body")[0].classList.add("modal-active");
+	window.onerror = (errorMsg, url, lineNumber, column, errorObj) => {
+		let modal = document.querySelector('.m-modal');
+		modal.classList.remove("hidden");
+		document.getElementsByTagName("body")[0].classList.add("modal-active");
 
-        let view = `<header>
+		let view = `<header>
                         <h2 class="">Uh oh!</h2>
                     </header>
                     <br>
@@ -71,21 +72,21 @@ const errorAlert = function errorAlert(message, cb) {
                     <button class="home-btn">Close</button>
                     `;
 
-        // Add view
-        modal.querySelector(".content").innerHTML += view;
-        modal.classList.add('onboard');
-        cb();
-        document.querySelector(".home-btn").addEventListener("click", (e) => {
-            e.preventDefault();
-            showHome()
-        });
-        return false;
-    };
+		// Add view
+		modal.querySelector(".content").innerHTML += view;
+		modal.classList.add('onboard');
+		cb();
+		document.querySelector(".home-btn").addEventListener("click", (e) => {
+			e.preventDefault();
+			showHome()
+		});
+		return false;
+	};
 }
 
 // Alert errors
 const alertMsg = function alertMsg(message, cb) {
-	
+
 	let modal = document.querySelector('.m-modal');
 	modal.classList.remove("hidden");
 	document.getElementsByTagName("body")[0].classList.add("modal-active");
@@ -134,16 +135,37 @@ const checkConnection = function checkConnection() {
 	let networkState = navigator.connection.type;
 	let states = {};
 
-	states[Connection.UNKNOWN]  = 'Unknown';
+	states[Connection.UNKNOWN] = 'Unknown';
 	states[Connection.ETHERNET] = 'Ethernet';
-	states[Connection.WIFI]     = 'WiFi';
-	states[Connection.CELL_2G]  = '2G';
-	states[Connection.CELL_3G]  = '3G';
-	states[Connection.CELL_4G]  = '4G';
-	states[Connection.CELL]     = 'Cell';
-	states[Connection.NONE]     = 'None';
+	states[Connection.WIFI] = 'WiFi';
+	states[Connection.CELL_2G] = '2G';
+	states[Connection.CELL_3G] = '3G';
+	states[Connection.CELL_4G] = '4G';
+	states[Connection.CELL] = 'Cell';
+	states[Connection.NONE] = 'None';
 
 	return states[networkState];
+}
+
+// Count number of lines of text
+const countLines = function countLines(target) {
+	let style = window.getComputedStyle(target, null);
+	let height = parseInt(style.getPropertyValue("height"));
+	let font_size = parseInt(style.getPropertyValue("font-size"));
+	let line_height = parseInt(style.getPropertyValue("line-height"));
+	let box_sizing = style.getPropertyValue("box-sizing");
+
+	if (isNaN(line_height)) line_height = font_size * 1.2;
+
+	if (box_sizing == 'border-box') {
+		let padding_top = parseInt(style.getPropertyValue("padding-top"));
+		let padding_bottom = parseInt(style.getPropertyValue("padding-bottom"));
+		let border_top = parseInt(style.getPropertyValue("border-top-width"));
+		let border_bottom = parseInt(style.getPropertyValue("border-bottom-width"));
+		height = height - padding_top - padding_bottom - border_top - border_bottom
+	}
+	let lines = Math.ceil(height / line_height);
+	return lines;
 }
 
 // Checks if the same or new day
@@ -207,7 +229,7 @@ const checkURL = function checkURL(str) {
 
 // Makes a safe class name
 const makeSafeClass = function makeSafeClass(name) {
-	return name.replace(/[^a-z0-9]/g, function(s) {
+	return name.replace(/[^a-z0-9]/g, function (s) {
 		let c = s.charCodeAt(0);
 		if (c == 32) return "-";
 		if (c >= 65 && c <= 90) return "_" + s.toLowerCase();
@@ -248,7 +270,7 @@ function checkQuery(item1, item2) {
 	if (item1.toUpperCase() === item2.toUpperCase()) return true;
 
 	// Perform fuzzy comparison
-	let getBigrams = function(string) {
+	let getBigrams = function (string) {
 		let i, j, ref, s, v;
 		s = string.toLowerCase();
 		v = new Array(s.length - 1);
@@ -257,7 +279,7 @@ function checkQuery(item1, item2) {
 		}
 		return v;
 	};
-	let stringSimilarity = function(str1, str2) {
+	let stringSimilarity = function (str1, str2) {
 		let hit_count, j, k, len, len1, pairs1, pairs2, union, x, y;
 		if (str1.length > 0 && str2.length > 0) {
 			pairs1 = getBigrams(str1);
@@ -301,10 +323,10 @@ const appBlur = function appBlur() {
 	else if ((hidden = "msHidden") in document)
 		document.addEventListener("msvisibilitychange", onchange);
 	else if ("onfocusin" in document)
-	// IE 9 and lower:
+		// IE 9 and lower:
 		document.onfocusin = (document.onfocusout = onchange);
 	else
-	// All others:
+		// All others:
 		window.onpageshow = (window.onpagehide = (window.onfocus = (window.onblur = onchange)));
 
 	function onchange(evt) {
@@ -341,7 +363,7 @@ const sortArrayByKey = function sortArrayByKey(arr, key, reverse) {
 	if (reverse) {
 		sortOrder = -1;
 	}
-	return arr.sort(function(a, b) {
+	return arr.sort(function (a, b) {
 		let x = a[1][key];
 		let y = b[1][key];
 		return sortOrder * (x < y ? -1 : x > y ? 1 : 0);
@@ -350,10 +372,10 @@ const sortArrayByKey = function sortArrayByKey(arr, key, reverse) {
 
 // Creates JSONP requests
 const jsonp = function jsonp(uri) {
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		let id = "_" + Math.round(10000 * Math.random());
 		let callbackName = "jsonp_callback_" + id;
-		window[callbackName] = function(data) {
+		window[callbackName] = function (data) {
 			delete window[callbackName];
 			let ele = document.getElementById(id);
 			ele.parentNode.removeChild(ele);
@@ -368,7 +390,7 @@ const jsonp = function jsonp(uri) {
 		(document.getElementsByTagName("head")[0] ||
 			document.body ||
 			document.documentElement)
-		.appendChild(script);
+			.appendChild(script);
 	});
 };
 

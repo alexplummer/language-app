@@ -3,7 +3,7 @@
 // Major layout rules to go here
 
 .container {
-    padding-bottom: $size-m;
+    padding-bottom: $size-l;
 }
 .container, .m-modal, .m-footer {
     @extend %container;
@@ -19,6 +19,20 @@
     width: 100%;
     left: 50%;
     transform: translateX(-50%);
+
+    .inner {
+        left: 0;
+    }
+}
+.m-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 64%;
+    max-width: 300px;
+    min-width: 200px;
+    z-index: $z-max;
 }
 .m-onboarding {
     min-height: 0;

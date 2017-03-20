@@ -43,36 +43,100 @@ const showHome = function showHome() {
 		document.getElementsByTagName('body')[0].classList.add('modal-active');
 		document.getElementsByTagName('body')[0].classList.add('home');
 
-		let categoryBtn = document.querySelectorAll('.category');
+		let homeHeader = document.querySelector('.home-bg').getElementsByTagName('h2')[0];
+		let chooseList = homeWrapper.querySelector('.choose-list');
+		let categories = chooseList.getElementsByTagName('nav')[0].innerHTML;
+		let navBack = document.querySelector('.nav-back');
+		let scrollArrow = document.querySelector('.scroll-arrow');
+		let scrollCheck;
+		let lists;
 
-		for (let i = 0; i < categoryBtn.length; i++) {
-			categoryBtn[i].addEventListener('click', (e) => {
-				e.preventDefault();
-				homeWrapper.querySelector('.choose-list').classList.add('animated', 'slideOutLeft');
-				let categoryType = categoryBtn[i].innerHTML;
-				let lists = "";
-				for (let val in tinyTerms.listChoices) {
+		categoryHandler();
 
-					if (tinyTerms.listChoices[val].category === categoryType) {
-						lists += '<a href="#">' + tinyTerms.listChoices[val].name + '</a>';
-					}
+		// Sets initial listeners on categories
+		function categoryHandler() {
+			let categoryBtn = document.querySelectorAll('.category');
+
+			for (let i = 0; i < categoryBtn.length; i++) {
+				categoryBtn[i].addEventListener('click', (e) => {
+					e.preventDefault();
+					
+					// Build coresponding list
+					buildList(categoryBtn[i]);
+
+					setTimeout(() => {
+						// Show the list
+						showList();
+						// Listener to go back to categories
+						navBack.addEventListener('click', (e) => {
+							e.preventDefault();
+							showCategoriesAgain();
+						});
+						// Set listeners for nav
+						navListeners();
+					}, 500);
+				});
+			}
+		};
+
+		function buildList(thisBtn) {
+			chooseList.classList.add('animated', 'slideOutLeft');
+			homeHeader.classList.add('animated', 'fadeOutUp');
+			let categoryType = thisBtn.innerHTML;
+			lists = "";
+			for (let val in tinyTerms.listChoices) {
+
+				if (tinyTerms.listChoices[val].category === categoryType) {
+					lists += '<a href="#">' + tinyTerms.listChoices[val].name + '</a>';
 				}
-				for (let val in tinyTerms.customListChoices) {
+			}
+			for (let val in tinyTerms.customListChoices) {
 
-					if (tinyTerms.listChoices[val].category === categoryType) {
-						lists += '<div class="' + makeSafeClass(tinyTerms.customListChoices[val].name) + '"><span class="custom-list"></span><a href="#">' + tinyTerms.customListChoices[val].name + '</a></div>';
-					}
+				if (tinyTerms.listChoices[val].category === categoryType) {
+					lists += '<div class="' + makeSafeClass(tinyTerms.customListChoices[val].name) + '"><span class="custom-list"></span><a href="#">' + tinyTerms.customListChoices[val].name + '</a></div>';
 				}
-				
-				setTimeout(() => {
-					homeWrapper.querySelector('.choose-list').getElementsByTagName('nav')[0].innerHTML = lists;
-					homeWrapper.querySelector('.choose-list').classList.remove('slideOutLeft');
-					homeWrapper.querySelector('.choose-list').classList.add('slideInRight');
+			}
+		}
+
+		function showList() {
+			homeHeader.innerHTML = "Choose a list:";
+			homeHeader.classList.remove('fadeOutUp');
+			homeHeader.classList.add('fadeInDown');
+			navBack.classList.remove('hidden');
+			chooseList.getElementsByTagName('nav')[0].innerHTML = lists;
+			chooseList.classList.remove('slideOutLeft');
+			chooseList.classList.add('slideInRight');
+
+			if (chooseList.getElementsByTagName('a').length > 3) {
+				chooseList.classList.add('slideInRight', 'scroll');
+
+				scrollCheck = setInterval(() => {
+					if (chooseList.clientHeight === (chooseList.scrollHeight - chooseList.scrollTop)) {
+						scrollArrow.classList.add('hidden');
+					}
+					else {
+						scrollArrow.classList.remove('hidden');
+					}
 				}, 500);
+			}
+		}
 
-				// Set listeners for nav
-				navListeners();
-			});
+		function showCategoriesAgain() {
+			homeHeader.classList.add('fadeOutUp');
+			homeHeader.classList.remove('fadeInDown');
+			chooseList.classList.remove('slideInRight');
+			chooseList.classList.add('slideOutRight');
+
+			setTimeout(() => {
+				homeHeader.innerHTML = "Choose a category:";
+				homeHeader.classList.remove('fadeOutUp');
+				homeHeader.classList.add('fadeInDown');
+				navBack.classList.add('hidden');
+				chooseList.getElementsByTagName('nav')[0].innerHTML = categories;
+				chooseList.classList.add('slideInLeft');
+				chooseList.classList.remove('slideOutRight', 'scroll');
+				categoryHandler();
+			}, 500);
 		}
 	});
 
@@ -84,8 +148,17 @@ const showHome = function showHome() {
 			listItem[i].addEventListener('click', function (e) {
 				e.preventDefault();
 				tinyTerms.pickedList = this.innerHTML;
-				localforage.setItem('tinyTermsDefault', tinyTerms.pickedList, () => {
-					location.reload();
+				localforage.getItem('tinyTermsAllPicked', function (err, value) {
+					tinyTerms.AllPicked = value || [];
+
+					if (tinyTerms.AllPicked.includes(tinyTerms.pickedList) === false) {
+						tinyTerms.AllPicked.push(tinyTerms.pickedList);
+					}
+					localforage.setItem('tinyTermsAllPicked', tinyTerms.AllPicked, () => {
+						localforage.setItem('tinyTermsDefault', tinyTerms.pickedList, () => {
+							location.reload();
+						});
+					});
 				});
 			});
 		}
@@ -181,6 +254,10 @@ const showHome = function showHome() {
 	function uploadList(inputName, inputSheet) {
 		inputName = inputName.substring(0, 25);
 
+		if (inputName.length === 0) {
+			document.querySelector('.upload-name').style.border = "1px solid #ff0000";
+			document.querySelector('.upload-name').placeholder = "Please enter a name";
+		}
 		if (inputName.length > 0 && inputSheet.length > 0) {
 
 			// Check valid URL
@@ -201,11 +278,10 @@ const showHome = function showHome() {
 				});
 			}
 			else {
-				cl('no valid url');
+				document.querySelector('.upload-sheet').style.border = "1px solid #ff0000";
+				document.querySelector('.upload-sheet').value = "";
+				document.querySelector('.upload-sheet').placeholder = "Please enter a valid Sheets URL";
 			}
-		}
-		else {
-			cl('no text');
 		}
 	}
 }

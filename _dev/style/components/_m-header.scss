@@ -5,6 +5,8 @@
 .m-header {
     background: $clr-tertiary;
     padding: $size-s;
+    padding-bottom: 0;
+    margin-bottom: $size-m + $size-s;
     @extend %cf;
 
     h1 {
@@ -31,6 +33,7 @@
     }
     .right {
         float: right;
+        margin-bottom: $size-s - (2 * $size-1px);
 
         .score {
             float: right;
@@ -51,6 +54,8 @@
             .score-holder {
                 font-size: $font-m;
                 font-weight: 100;
+                position: relative;
+                top: 2px;
             }
         }
         .settings {
@@ -68,5 +73,9 @@
                 line-height: $font-m;
             }
         }
+    }
+    .m-progress-bar {
+        clear: both;
+        margin: 0 -$size-s;
     }
 }

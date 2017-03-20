@@ -5,7 +5,8 @@ import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModa
 import { viewCreate, addHearts, setScore, progressBar } from "viewCreation";
 import { createNewQuery } from "queryInteraction";
 import { showHome } from "homeScreen";
-import { onboardShow, optionsDisplay } from "introInstructions";
+import { onboardShow } from "introInstructions";
+import { navMenu, footerMenu, optionsDisplay } from "menuInteraction";
 import appData from "appData";
 
 // Exports
@@ -19,7 +20,7 @@ let ops = {
 	displayedTerms: 5,
 	counterMins: 60,
 	counterSecs: 0,
-	revealGoalTarget: 5,
+	revealGoalTarget: 3,
 	wordAccuracy: 0.7,
 	addDay: false,
 	debug: true,
@@ -99,7 +100,7 @@ setTimeout(() => {
 			showHome()
 		});
 	}
-}, 20000);
+}, 10000);
 
 // Initialise modules on load
 ready(function () {
@@ -135,7 +136,7 @@ function getLists(skipDefaultCheck) {
 				normalLoad(tinyTerms.pickedList);
 			} 
 			else {
-				if (navigator.connection !== undefined) {
+				if (typeof Connection !== "undefined") {
 					let connection = checkConnection();
 					notLoaded = false;
 
@@ -236,7 +237,10 @@ const fetchData = function fetchData(sheetURL, postBuildCallback) {
 // Runs if first time app has run
 const firstTime = function firstTime() {
 
-	window.onerror = "";
+	if (tinyTerms[tinyTerms.pickedList].ops.debug !== true) {
+		window.onerror = "";
+	}
+	
 	// Create terms
 	appBuildHandler();
 
@@ -336,9 +340,13 @@ const appBuildHandler = function appBuildHandler() {
 	addColour();
 	pickSymbol();
 	hideModal();
+
+	// Builds UI elements
 	progressBar();
 
 	// Shows options menu
+	navMenu();
+	footerMenu();
 	optionsDisplay();
 
 	// Refresh window on blur
@@ -357,14 +365,6 @@ const appBuildHandler = function appBuildHandler() {
 		},
 		tinyTerms[tinyTerms.pickedList].ops.loadDelay
 	);
-
-	// Set menu button listener
-	let menuTrigger = document.getElementsByTagName("h1");
-
-	menuTrigger[0].addEventListener("click", e => {
-		e.preventDefault();
-		showHome();
-	});
 
 	// Show onboard if incomplete
 	if (tinyTerms.tutComplete === false) {

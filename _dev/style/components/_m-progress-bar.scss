@@ -1,0 +1,40 @@
+// Progress bar
+// ============
+// Tracks progress of completed terms
+
+.m-progress-bar {
+    padding: 0;
+    text-align: center;
+    background: darken($clr-tertiary,15%);
+    height: 15px;
+    position: relative;
+
+    h4 {
+        font-size: $font-xs;
+        font-weight: 100;
+        text-transform: uppercase;
+        line-height: $font-xs;
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        z-index: $z-m;
+        position: relative;
+        top: -4px;
+
+        span {
+            font-size: $font-xs;
+            color: rgba(250,250,250,.8);
+            font-weight: 400;
+        }
+    }
+    .progress-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: $z-m - 1;
+        width: 0;
+        height: 15px;
+        background: darken($clr-tertiary,8%);
+    }
+}

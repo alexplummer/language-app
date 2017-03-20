@@ -1,0 +1,48 @@
+// Navigation
+// ============
+// Slide out navigation
+
+.m-nav {
+    background: $clr-tertiary;
+    box-shadow: 5px 0 20px 0 rgba(0,0,0,.4);
+
+    .close {
+        @extend .icon;
+        @extend .icon-cancel-circled2;
+        position: absolute;
+        top: $size-s;
+        right: $size-s;
+        color: #fff;
+        font-size: $font-l;
+
+        &:before {
+            font-family: 'fontello';
+        }
+    }
+    a {
+        @extend %text-light;
+        color: #fff;
+        text-decoration: none;
+        display: block;
+        padding-left: $size-s;
+        margin-bottom: 0;
+
+        &:before {
+            font-family: 'fontello';
+            position: relative;
+            left: -3px;
+        }
+        &:first-of-type {
+            border-bottom: 1px solid rgba(250,250,250,0.3);
+            padding-bottom: $size-s;
+        }
+    }
+}
+.home .m-nav {
+    display: none;
+}
+
+
+
+
+

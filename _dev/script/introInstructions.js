@@ -6,7 +6,7 @@ import { hideModal } from 'termInteraction';
 import { createNewQuery } from 'queryInteraction';
 
 // Exports
-export { onboardShow, optionsDisplay };
+export { onboardShow };
 
 // Show home screen
 const onboardShow = function onboardShow() {
@@ -220,80 +220,4 @@ const onboardShow = function onboardShow() {
             modal.classList.remove('onboard');
         });
     }
-}
-
-// Help screen
-const optionsDisplay = function optionsDisplay() {
-    let modal = document.querySelector('.m-modal');
-    let settingsBtn = document.querySelector('.settings');
-
-    settingsBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        modal.classList.remove('hidden');
-        document.getElementsByTagName('body')[0].classList.add('modal-active');
-
-        let view = `<header>
-                        <h2 class="icon-cog-outline">Options</h2>
-                    </header>
-                    <div class="options">
-                        <p>Spend points: (coming soon)</p>
-                        <a href="#" class="icon-award-empty points-neon-colours">1000: Unlock neon colours</a>
-                        <a href="#" class="icon-award points-life-glyphs">5000: Unlock solid symbols</a>
-                        <a href="#" class="icon-award-1 points-metal-colours">10000: Unlock metal colours</a>
-                        <p>Help</p>
-                        <a href="#" class="icon-right-open-big show-tut">Show the tutorial again</a>
-                        <p>More Options</p>
-                        <a href="#" class="icon-right-open-big reset-list">Reset list progress</a>
-                        <a href="#" class="icon-right-open-big reset">Reset the app</a>
-                    </div>
-                    `;
-
-        // Add view
-        modal.querySelector('.content').innerHTML += view;
-        let resetList = document.querySelector('.reset-list');
-        let resetApp = document.querySelector('.reset');
-
-        document.querySelector('.show-tut').addEventListener('click', (e) => {e.preventDefault(); onboardShow()});
-
-        function resetMenu() {
-            if (document.querySelector('.delete-confirm') !== null) {
-                resetList.innerHTML = "Reset list progress";
-                resetApp.innerHTML = "Reset the app";
-                document.querySelector('.delete-confirm').parentNode.removeChild(document.querySelector('.delete-cancel'));
-                document.querySelector('.delete-confirm').parentNode.removeChild(document.querySelector('.delete-confirm'));
-            }
-        }
-        resetList.addEventListener('click', (e) => {
-            e.preventDefault();
-            resetMenu();
-            resetList.innerHTML = "Are you sure you want to delete progress for this list? (Can't undo)";
-            resetList.parentNode.insertBefore(document.createElement("div"), resetList.nextSibling);
-            resetList.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
-
-            document.querySelector('.delete-confirm').addEventListener('click', () => { 
-                delete tinyTerms[tinyTerms.pickedList];
-                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
-                location.reload();
-            });
-            document.querySelector('.delete-cancel').addEventListener('click', () => { 
-                hideModal(true);
-            });
-        });
-        document.querySelector('.reset').addEventListener('click', (e) => {
-            e.preventDefault();
-            resetMenu();
-            resetApp.innerHTML = "Are you sure you want to delete all progress for the app? (Can't undo)";
-            resetApp.parentNode.insertBefore(document.createElement("div"), resetApp.nextSibling);
-            resetApp.nextSibling.innerHTML = '<button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
-
-            document.querySelector('.delete-confirm').addEventListener('click', () => { 
-                localforage.clear().then(()=> {
-                    location.reload();
-                });
-            });
-            document.querySelector('.delete-cancel').addEventListener('click', () => { 
-                hideModal(true);
-            });
-        });
-    });
 }

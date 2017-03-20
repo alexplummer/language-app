@@ -3,28 +3,44 @@
 // Styling for the header module
 
 .m-menu {
-    background-color: $clr-primary;
-    background-image:
-        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
-        radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px);
-    background-size: 
-        210px 210px, 230px 230px, 250px 250px, 180px 180px,
-        280px 280px, 190px 190px, 240px 240px, 320px 320px; 
-    background-position: 
-        10px 20px, 40px 60px, 130px 270px, 70px 100px,
-        5px 30px, 50px 70px, 110px 220px, 80px 90px;
     padding: $size-m $size-s;
     @extend %cf;
     text-align: center;
 
+    &:before {
+        content: "";
+        position: absolute;
+        width: 3700px;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        z-index: $z-min;
+        animation: scrollBgRight 130s linear infinite;
+        background-color: $clr-primary;
+        background-image:
+            radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,0.05) 1px, transparent 30px);
+        background-size: 
+            210px 210px, 230px 230px, 250px 250px, 180px 180px,
+            280px 280px, 190px 190px, 240px 240px, 320px 320px; 
+        background-position: 
+            10px 20px, 40px 60px, 130px 270px, 70px 100px,
+            5px 30px, 50px 70px, 110px 220px, 80px 90px;
+    }
+    @keyframes scrollBgRight {
+        0% {left: 0 }
+        100% {left: -2700px;}
+    }
     img {
         max-width: 280px;
+        position: relative;
+        z-index: $z-m;
     }
     h2, h3 {
         @extend %small-caps;
@@ -44,7 +60,7 @@
         &:before {
             content: "";
             border-radius: 50%;
-            background: linear-gradient(to bottom, #d72b2f 0%, #700016 100%);
+            background: linear-gradient(to bottom, #ba2550 0%, #570015 100%);
             box-shadow: 0 0 180px 0 rgba(250, 250, 250, 0.6);
             padding: $size-m;
             margin-top: $size-m;
@@ -55,6 +71,23 @@
             transform: translateX(-50%);
             width: 200%;
             z-index: $z-s;
+        }
+        .nav-back {
+            font-size: $font-xs;
+            color: $clr-hlight;
+            position: absolute;
+            top: 36px;
+            left: 40px;
+            z-index: $z-m + 1;
+            @extend .icon;
+            @extend .icon-right-open;
+
+            &:before {
+                font-size: $font-l;
+                transform: rotate(180deg);
+                position: relative;
+                top: 3px;
+            }
         }
     }
     nav a, nav a span {
@@ -92,7 +125,6 @@
             position: relative;
 
             &:before {
-                font-family: lines;
                 font-size: $font-xxl;
                 position: absolute;
                 top: 0;
@@ -104,16 +136,16 @@
                 color: $clr-link;
             }
             &.language { 
-                @extend .icon-lines-and-angles_collect;
+                @extend .icon-2-lines-and-angles_collect;
             }
             &.science { 
-                @extend .icon-lines-and-angles_experiment;
+                @extend .icon-2-lines-and-angles_experiment;
             }
             &.technology { 
-                @extend .icon-lines-and-angles_develop;
+                @extend .icon-2-lines-and-angles_develop;
             }
             &.culture { 
-                @extend .icon-lines-and-angles_explore;
+                @extend .icon-2-lines-and-angles_explore;
             }
         }
     }
@@ -122,7 +154,7 @@
         top: -20px;
         left: 100px;
         white-space: nowrap;
-        animation: scrollLeft 30s linear infinite;
+        animation: scrollLeft 40s linear infinite;
 
         div {
             font-size: 200px;
@@ -136,18 +168,46 @@
     }
     @keyframes scrollLeft {
         0% {left: 100% }
-        100% {left: -2900px }
+        90% {opacity: 1}
+        100% {left: -2700px; opacity: 0 }
+    }
+    .scroll-arrow {
+        @extend .icon;
+        @extend .icon-down-open;
+        display: none;
+        color: #fff;
+        font-size: $font-xl;
+        position: absolute;
+        text-align: center;
+        bottom: -30px;
+        z-index: $z-m;
+        left: 50%;
+        transform: translateX(-50%);
     }
     .choose-list {
         padding: 0 $size-s;
         margin: -$size-s;
-        max-height: 150px;
         position: relative;
         z-index: $z-m;
+        animation-duration: 0.5s;
 
         &.slideInRight nav {
             text-align: center;
             display: block;
+        }
+        &.scroll {
+            max-height: 150px;
+            overflow-y: scroll;
+
+            a {
+                margin: 0;
+            }
+            &+.scroll-arrow {
+                display: block;
+            }
+            &+.scroll-arrow.hidden {
+                display: none;
+            }
         }
         div {
             text-align: center;
@@ -215,6 +275,21 @@
     }
     p {
         border-bottom: 0;
+
+        small {
+            line-height: $font-s;
+
+            a {
+                display: inline;
+            }
+        }
+        &.low-header {
+            margin-bottom: 0;
+
+            &+p {
+                margin-top: 0;
+            }
+        }
     }
     a {
         display: block;
@@ -231,6 +306,7 @@
         background: $clr-tertiary;
         margin-right: $size-m;
         margin-top: $size-m;
+        color: #fff;
     }
     .delete-confirm {
         background: darken($clr-tertiary, 10%);

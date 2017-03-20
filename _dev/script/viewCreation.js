@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv, makeSafeClass } from 'helperFunctions';
+import { cl, clv, makeSafeClass, countLines } from 'helperFunctions';
 import appData from 'appData';
 import tinyTerms from 'app';
 import { createRevealTimer } from 'termInteraction';
@@ -61,6 +61,15 @@ const viewCreate = function viewCreate(termsToCreate) {
     }
     // Add to view
     document.querySelector('.terms-wrapper').innerHTML = viewHTML;
+
+    // Style terms based on number of lines
+    let termHolders = document.querySelectorAll('.term-holder');
+
+    for (let i = 0; i < termHolders.length; i++) {
+        termHolders[i].style.minHeight = '0px';
+        termHolders[i].classList.add('lines-'+countLines(termHolders[i]));
+        termHolders[i].style.minHeight = '86px';
+    }
 
     // Add theme to previously created terms
     for (let value of termsToCreate) {
@@ -155,7 +164,7 @@ const progressBar = function progressBar() {
     let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length;
 
     // Add to DOM
-    document.querySelector('.m-footer').querySelector('.completed').innerHTML = completed;
-    document.querySelector('.m-footer').querySelector('.remaining').innerHTML = ' / ' + remaining;
-    document.querySelector('.m-footer').querySelector('.progress-bar').style.width = ((completed / remaining) * 100) + "%";
+    document.querySelector('.m-progress-bar').querySelector('.completed').innerHTML = completed;
+    document.querySelector('.m-progress-bar').querySelector('.remaining').innerHTML = ' / ' + remaining;
+    document.querySelector('.m-progress-bar').querySelector('.progress-bg').style.width = ((completed / remaining) * 100) + "%";
 }

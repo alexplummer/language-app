@@ -21,6 +21,27 @@
         @extend .icon;
         @extend .icon-volume;
 
+        &.lines-2 {
+            top: 18px;
+
+            &:before {
+                top: 22px;
+            }
+        }
+        &.lines-3, &.lines-4, &.lines-5 {
+            top: 12px;
+
+            &:before {
+                top: 30px;
+            }
+        }
+        &.lines-4, &.lines-5 {
+            top: 0;
+
+            &:before {
+                top: 20px;
+            }
+        }
         &:before {
             cursor: pointer;
             margin-right: $size-s;
@@ -69,15 +90,26 @@
         border-left: 1px solid rgba(0,0,0,0.1);
         padding: 0 $size-s;
         margin-right: -$size-s;
+
+        button {
+            margin-bottom: $size-s - ($size-1px * 2);
+        }
     }
     .term-views {
         text-align: center;
         font-size: $font-s;
         padding-top: $size-xs;
         margin-bottom: $size-xs;
+        position: relative;
+        top: 3px;
 
         span {
             @extend %small-caps;
+
+            &:first-of-type {
+                position: relative;
+                top: -2px;
+            }
         }
         .count {
             @extend %text-light;
@@ -114,7 +146,7 @@
             .lookup, .colour, .symbol {
                 @extend .icon;
                 font-size: $font-m;
-                background: fade-out($clr-primary,0.2);
+                background: lighten($clr-dark, 15%);
                 color: #f5f5f5;
                 border-radius: 50%;
                 width: 30px;
@@ -157,6 +189,15 @@
             }
             p {
                 margin-bottom: $size-m;
+                text-align: left;
+                text-transform: capitalize;
+            }
+            p.credit, p.credit * {
+                font-size: 10px;
+                margin-top: -26px;
+                line-height: 12px;
+            }
+            h3 {
                 text-align: left;
             }
         }

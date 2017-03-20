@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv, clickListener, jsonp, findKeys, makeSafeClass } from 'helperFunctions';
+import { cl, clv, clickListener, alertMsg, jsonp, findKeys, makeSafeClass } from 'helperFunctions';
 import appData from 'appData';
 import tinyTerms from 'app';
 import { createNewQuery } from 'queryInteraction';
@@ -249,30 +249,38 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
 
 // Allows for text to speech
 const textToSpeech = function textToSpeech() {
-
     let termHolder = document.querySelectorAll('.term-holder');
 
     clickListener(termHolder, (i) => {
 
-        if (TTS === undefined) {
+        let languages = {
+            'German':'de-DE',
+            'English':'en-GB',
+            'Spanish':'es-ES',
+            'French':'fr-FR',
+            'Italian':'it-IT',
+            'Portuguese':'pt-BR'
+        }
+
+        if (typeof TTS === "undefined") {
             let speech = new SpeechSynthesisUtterance(termHolder[i].innerHTML);
-            speech.lang = tinyTerms[tinyTerms.pickedList].speechLang;
+            speech.lang = languages[tinyTerms[tinyTerms.pickedList].speechLang];
+
             window.speechSynthesis.speak(speech);
         }
         else {
             TTS
             .speak({
-                text: 'hello, world!',
-                locale: 'en-GB',
-                rate: 0.75
+                text: termHolder[i].innerHTML,
+                locale: languages[tinyTerms[tinyTerms.pickedList].speechLang],
+                rate: 1
             }, function () {
-                alert('success');
             }, function (reason) {
-                alert(reason);
+                alertMsg(reason);
             });
         }
     });
-    if (tinyTerms[tinyTerms.pickedList].speechLang === "none") {
+    if (tinyTerms[tinyTerms.pickedList].speechLang === "None") {
         for (let k = 0; k < termHolder.length; k++){
             termHolder[k].classList.add('no-speak');
         }
@@ -367,12 +375,19 @@ const addColour = function addColour() {
                     </header>
                     <p>Click below to add a colour for <br>"<span class="colour-term">${term}</span>":</p>
                     <ul class="colour-wrap">
-                        <li><a href="#" data-colour="#1abc9c"></a></li>
-						<li><a href="#" data-colour="#3498db"></a></li>
-						<li><a href="#" data-colour="#9b59b6"></a></li>
-						<li><a href="#" data-colour="#f1c40f"></a></li>
-						<li><a href="#" data-colour="#e67e22"></a></li>
-						<li><a href="#" data-colour="#e74c3c"></a></li>
+                        <li><a href="#" data-colour="#F44336"></a></li>
+						<li><a href="#" data-colour="#E91E63"></a></li>
+						<li><a href="#" data-colour="#9C27B0"></a></li>
+						<li><a href="#" data-colour="#3F51B5"></a></li>
+						<li><a href="#" data-colour="#2196F3"></a></li>
+						<li><a href="#" data-colour="#009688"></a></li>
+                        <br>
+                        <li><a href="#" data-colour="#4CAF50"></a></li>
+                        <li><a href="#" data-colour="#CDDC39"></a></li>
+                        <li><a href="#" data-colour="#FFC107"></a></li>
+                        <li><a href="#" data-colour="#FF5722"></a></li>
+                        <li><a href="#" data-colour="#212121"></a></li>
+                        <li><a href="#" class="no-colour" data-colour="#fff"></a></li>
                     </ul>`;
 
         // Add view
@@ -381,6 +396,10 @@ const addColour = function addColour() {
         let coloursHolder = modal.querySelector('.colour-wrap');
         // Add colour vars
         colours = coloursHolder.getElementsByTagName('a');
+
+        for (let j = 0; j < colours.length; j++) {
+            colours[j].style.backgroundColor = colours[j].getAttribute('data-colour');
+        }
         colourListener();
     });
 
@@ -402,6 +421,12 @@ const addColour = function addColour() {
             localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
             // Hide modal
             hideModal(true);
+        });
+        document.querySelector('.no-colour').addEventListener('click',(e)=> {
+            termWrapper.querySelector('.term-holder').style.color = "#3F4747";
+            // Set storage
+            delete tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].colour;
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
         });
     }
 }
@@ -461,6 +486,7 @@ const pickSymbol = function pickSymbol() {
                     </header>
                     <p>Click below to add a glyph for <br>"<span class="symbol-term">${term}</span>":</p>
                     <div class="symbol-wrap">
+                        <a href="#" class="symbol-clear icon-right-open">Reset</a>
                         <table>${symbolHTML}</table>
                     </div>`;
 
@@ -489,6 +515,14 @@ const pickSymbol = function pickSymbol() {
             // Hide modal
             hideModal(true);
         }, false);
+
+        document.querySelector('.symbol-clear').addEventListener('click',(e)=>{
+            // Set storage
+            termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
+            delete tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].symbol;
+            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+            hideModal(true);
+        });
     }
 }
 

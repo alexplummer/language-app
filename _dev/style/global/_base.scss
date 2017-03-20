@@ -3,7 +3,9 @@
 // Major base rules to go here
 
 * {
-    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+    -webkit-tap-highlight-color: rgba(0,0,0,0); 
+    -webkit-backface-visibility: hidden; /* Chrome, Safari, Opera */
+    backface-visibility: hidden;/* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 body {
     background: darken($clr-dark, 5%);
@@ -15,7 +17,12 @@ body {
         overflow: hidden;
     }
     &.home {
+        overflow: hidden;
         background: darken($clr-tertiary, 25%);
+
+        .container {
+            overflow: hidden;
+        }
     }
 }
 .container {
@@ -56,14 +63,18 @@ button {
     background: $clr-hlight;
     cursor: pointer;
     width: 100px;
-    color: #fff;
+    color: darken($clr-hlight, 40%);
     border: 0;
     padding: $size-s;
     border-radius: 5px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.2);
 
     &.disabled {
         cursor: default;
         background: desaturate(lighten($clr-hlight,20%),10%);
+        border: 1px solid rgba(0,0,0,0.1);
+        color: darken($clr-hlight, 10%);
+        box-shadow: none;
     }
 }
 input {

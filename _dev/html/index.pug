@@ -17,6 +17,11 @@ block content
 			span.loader-item N
 			span.loader-item G
 
+	.m-nav.hidden 
+		nav
+			.close
+			a(href="#").view-all.icon-home View all categories
+
 	.container
 		.m-modal.hidden
 			.inner
@@ -29,20 +34,21 @@ block content
 		.m-menu.hidden
 			a(href="#").close
 			.animated-bg
-				.icon-lines-and-angles_assist.infinite.animated.pulse
-				.icon-lines-and-angles_believe.infinite.animated.pulse
-				.icon-lines-and-angles_brew.infinite.animated.pulse
-				.icon-lines-and-angles_calibrate.infinite.animated.pulse
-				.icon-lines-and-angles_explore.infinite.animated.pulse
-				.icon-lines-and-angles_fly.infinite.animated.pulse
-				.icon-lines-and-angles_glance.infinite.animated.pulse
-				.icon-lines-and-angles_steam.infinite.animated.pulse
-				.icon-lines-and-angles_swim.infinite.animated.pulse
-				.icon-lines-and-angles_strum.infinite.animated.pulse
-				.icon-lines-and-angles_transport.infinite.animated.pulse
+				.icon-lines-and-angles_assist
+				.icon-lines-and-angles_believe
+				.icon-lines-and-angles_brew
+				.icon-lines-and-angles_calibrate
+				.icon-lines-and-angles_explore
+				.icon-lines-and-angles_fly
+				.icon-lines-and-angles_glance
+				.icon-lines-and-angles_steam
+				.icon-lines-and-angles_swim
+				.icon-lines-and-angles_strum
+				.icon-lines-and-angles_transport
 
 			img(src="img/brand/logo_white.svg")
 			.home-bg
+				a.nav-back.hidden(href="#") Back
 				h2 Choose a category:
 				.choose-list
 					nav
@@ -50,12 +56,13 @@ block content
 						a(href="#").category.science Science
 						a(href="#").category.technology Technology
 						a(href="#").category.culture Culture
+				.scroll-arrow
 
 			.create-list
 				h3 Or add your own list:
 				button.upload-info Create a list
 				p.legal © Copyright 2017 Alex Plummer
-
+		
 		header.m-header
 			h1 
 			.right
@@ -64,6 +71,11 @@ block content
 					p
 						| Score:
 						span.score-holder 0
+			.m-progress-bar
+				.progress-bg
+				h4 
+					span.completed 0 
+					span.remaining / 0
 
 		.query-wrapper.hidden
 			.m-query
@@ -81,10 +93,13 @@ block content
 		.terms-wrapper
 
 		footer.m-footer
-			.progress-bar
-			h4 Progress: 
-				span.completed 0 
-				span.remaining / 0
+			.footer-menu 
+				div
+					a(href="#").refresh.icon-cw Refresh
+				div
+					a(href="#").store.icon-gift Store
+				div
+					a(href="#").stats.icon-chart-bar Stats
 
 	include includes/_under
 

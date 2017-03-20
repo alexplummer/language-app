@@ -47,6 +47,11 @@
             <img src="img/brand/logo.svg" /><span class="loader-item">L</span><span class="loader-item">O</span><span class="loader-item">A</span><span class="loader-item">D</span><span class="loader-item">I</span><span class="loader-item">N</span><span class="loader-item">G</span>
         </div>
     </div>
+    <div class="m-nav hidden">
+        <nav>
+            <div class="close"></div><a class="view-all icon-home" href="#">View all categories</a>
+        </nav>
+    </div>
     <div class="container">
         <div class="m-modal hidden">
             <div class="inner">
@@ -60,25 +65,26 @@
         <div class="m-menu hidden">
             <a class="close" href="#"></a>
             <div class="animated-bg">
-                <div class="icon-lines-and-angles_assist infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_believe infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_brew infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_calibrate infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_explore infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_fly infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_glance infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_steam infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_swim infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_strum infinite animated pulse"></div>
-                <div class="icon-lines-and-angles_transport infinite animated pulse"></div>
+                <div class="icon-lines-and-angles_assist"></div>
+                <div class="icon-lines-and-angles_believe"></div>
+                <div class="icon-lines-and-angles_brew"></div>
+                <div class="icon-lines-and-angles_calibrate"></div>
+                <div class="icon-lines-and-angles_explore"></div>
+                <div class="icon-lines-and-angles_fly"></div>
+                <div class="icon-lines-and-angles_glance"></div>
+                <div class="icon-lines-and-angles_steam"></div>
+                <div class="icon-lines-and-angles_swim"></div>
+                <div class="icon-lines-and-angles_strum"></div>
+                <div class="icon-lines-and-angles_transport"></div>
             </div>
             <img src="img/brand/logo_white.svg" />
-            <div class="home-bg">
+            <div class="home-bg"><a class="nav-back hidden" href="#">Back</a>
                 <h2>Choose a category:</h2>
                 <div class="choose-list">
                     <nav><a class="category language" href="#">Language</a><a class="category science" href="#">Science</a><a class="category technology" href="#">Technology</a><a class="category culture" href="#">Culture</a>
                     </nav>
                 </div>
+                <div class="scroll-arrow"></div>
             </div>
             <div class="create-list">
                 <h3>Or add your own list:</h3>
@@ -94,6 +100,10 @@
                     <p>Score:<span class="score-holder">0</span>
                     </p>
                 </div>
+            </div>
+            <div class="m-progress-bar">
+                <div class="progress-bg"></div>
+                <h4> <span class="completed">0 </span><span class="remaining">/ 0</span></h4>
             </div>
         </header>
         <div class="query-wrapper hidden">
@@ -115,8 +125,14 @@
         </div>
         <div class="terms-wrapper"></div>
         <footer class="m-footer">
-            <div class="progress-bar"></div>
-            <h4>Progress: <span class="completed">0 </span><span class="remaining">/ 0</span></h4>
+            <div class="footer-menu">
+                <div><a class="refresh icon-cw" href="#">Refresh</a>
+                </div>
+                <div><a class="store icon-gift" href="#">Store</a>
+                </div>
+                <div><a class="stats icon-chart-bar" href="#">Stats</a>
+                </div>
+            </div>
         </footer>
     </div>
     <!-- build:js script/script.js -->
