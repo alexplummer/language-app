@@ -6,14 +6,16 @@
     background: $clr-tertiary;
     box-shadow: 5px 0 20px 0 rgba(0,0,0,.4);
 
-    .close {
+    .nav-close {
         @extend .icon;
         @extend .icon-cancel-circled2;
         position: absolute;
+        z-index: $z-l + 1;
         top: $size-s;
         right: $size-s;
         color: #fff;
         font-size: $font-l;
+        cursor: pointer;
 
         &:before {
             font-family: 'fontello';

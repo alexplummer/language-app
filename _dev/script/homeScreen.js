@@ -23,122 +23,126 @@ const showHome = function showHome() {
 	tinyTerms.uploadedLists = tinyTerms.uploadedLists || {};
 
 	localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
-
 		tinyTerms.customListChoices = tinyTerms.customListChoices || {};
 
 		// Get uploaded lists
 		for (let val in uploadedLists) {
 			let listName = uploadedLists[val].name;
+			let listCategory = uploadedLists[val].category;
 			let listURL = uploadedLists[val].sheetURL;
 
 			tinyTerms.customListChoices[listName] = {
 				name: listName,
+				category: listCategory,
 				sheetURL: listURL
 			}
 		}
-
-		// Show home screen
-		let homeWrapper = document.querySelector('.m-menu');
-		homeWrapper.classList.remove('hidden');
-		document.getElementsByTagName('body')[0].classList.add('modal-active');
-		document.getElementsByTagName('body')[0].classList.add('home');
-
-		let homeHeader = document.querySelector('.home-bg').getElementsByTagName('h2')[0];
-		let chooseList = homeWrapper.querySelector('.choose-list');
-		let categories = chooseList.getElementsByTagName('nav')[0].innerHTML;
-		let navBack = document.querySelector('.nav-back');
-		let scrollArrow = document.querySelector('.scroll-arrow');
-		let scrollCheck;
-		let lists;
-
 		categoryHandler();
+	});
 
-		// Sets initial listeners on categories
-		function categoryHandler() {
-			let categoryBtn = document.querySelectorAll('.category');
+	// Show home screen
+	let homeWrapper = document.querySelector('.m-menu');
+	homeWrapper.classList.remove('hidden');
+	document.getElementsByTagName('body')[0].classList.add('modal-active');
+	document.getElementsByTagName('body')[0].classList.add('home');
 
-			for (let i = 0; i < categoryBtn.length; i++) {
-				categoryBtn[i].addEventListener('click', (e) => {
-					e.preventDefault();
-					
-					// Build coresponding list
-					buildList(categoryBtn[i]);
+	let homeHeader = document.querySelector('.home-bg').getElementsByTagName('h2')[0];
+	let chooseList = homeWrapper.querySelector('.choose-list');
+	let categories = chooseList.getElementsByTagName('nav')[0].innerHTML;
+	let navBack = document.querySelector('.nav-back');
+	let scrollArrow = document.querySelector('.scroll-arrow');
+	let scrollCheck;
+	let lists;
 
-					setTimeout(() => {
-						// Show the list
-						showList();
-						// Listener to go back to categories
-						navBack.addEventListener('click', (e) => {
-							e.preventDefault();
-							showCategoriesAgain();
-						});
-						// Set listeners for nav
-						navListeners();
-					}, 500);
-				});
-			}
-		};
+	// Sets initial listeners on categories
+	function categoryHandler() {
+		let categoryBtn = document.querySelectorAll('.category');
 
-		function buildList(thisBtn) {
-			chooseList.classList.add('animated', 'slideOutLeft');
-			homeHeader.classList.add('animated', 'fadeOutUp');
-			let categoryType = thisBtn.innerHTML;
-			lists = "";
-			for (let val in tinyTerms.listChoices) {
-
-				if (tinyTerms.listChoices[val].category === categoryType) {
-					lists += '<a href="#">' + tinyTerms.listChoices[val].name + '</a>';
-				}
-			}
-			for (let val in tinyTerms.customListChoices) {
-
-				if (tinyTerms.listChoices[val].category === categoryType) {
-					lists += '<div class="' + makeSafeClass(tinyTerms.customListChoices[val].name) + '"><span class="custom-list"></span><a href="#">' + tinyTerms.customListChoices[val].name + '</a></div>';
-				}
-			}
+		// Show custom list category if user uploaded
+		if (Object.keys(tinyTerms.customListChoices).length > 0) {
+			document.querySelector('.custom').style.display = "inline-block";
 		}
 
-		function showList() {
-			homeHeader.innerHTML = "Choose a list:";
-			homeHeader.classList.remove('fadeOutUp');
-			homeHeader.classList.add('fadeInDown');
-			navBack.classList.remove('hidden');
-			chooseList.getElementsByTagName('nav')[0].innerHTML = lists;
-			chooseList.classList.remove('slideOutLeft');
-			chooseList.classList.add('slideInRight');
+		for (let i = 0; i < categoryBtn.length; i++) {
+			categoryBtn[i].addEventListener('click', (e) => {
+				e.preventDefault();
 
-			if (chooseList.getElementsByTagName('a').length > 3) {
-				chooseList.classList.add('slideInRight', 'scroll');
+				// Build coresponding list
+				buildList(categoryBtn[i].innerHTML);
 
-				scrollCheck = setInterval(() => {
-					if (chooseList.clientHeight === (chooseList.scrollHeight - chooseList.scrollTop)) {
-						scrollArrow.classList.add('hidden');
-					}
-					else {
-						scrollArrow.classList.remove('hidden');
-					}
+				setTimeout(() => {
+					// Show the list
+					showList();
+					// Listener to go back to categories
+					navBack.addEventListener('click', (e) => {
+						e.preventDefault();
+						showCategoriesAgain();
+					});
+					// Set listeners for nav
+					navListeners();
 				}, 500);
+			});
+		}
+	};
+
+	function buildList(category) {
+		chooseList.classList.add('animated', 'slideOutLeft');
+		homeHeader.classList.add('animated', 'fadeOutUp');
+		lists = "";
+		for (let val in tinyTerms.listChoices) {
+
+			if (tinyTerms.listChoices[val].category === category) {
+				lists += '<a href="#">' + tinyTerms.listChoices[val].name + '</a>';
 			}
 		}
+		for (let val in tinyTerms.customListChoices) {
+			
+			if (tinyTerms.customListChoices[val].category === category) {
+				lists += '<div class="' + makeSafeClass(tinyTerms.customListChoices[val].name) + '"><span class="custom-list"></span><a href="#">' + tinyTerms.customListChoices[val].name + '</a></div>';
+			}
+		}
+	}
 
-		function showCategoriesAgain() {
-			homeHeader.classList.add('fadeOutUp');
-			homeHeader.classList.remove('fadeInDown');
-			chooseList.classList.remove('slideInRight');
-			chooseList.classList.add('slideOutRight');
+	function showList() {
+		homeHeader.innerHTML = "Choose a list:";
+		homeHeader.classList.remove('fadeOutUp');
+		homeHeader.classList.add('fadeInDown');
+		navBack.classList.remove('hidden');
+		chooseList.getElementsByTagName('nav')[0].innerHTML = lists;
+		chooseList.classList.remove('slideOutLeft');
+		chooseList.classList.add('slideInRight');
 
-			setTimeout(() => {
-				homeHeader.innerHTML = "Choose a category:";
-				homeHeader.classList.remove('fadeOutUp');
-				homeHeader.classList.add('fadeInDown');
-				navBack.classList.add('hidden');
-				chooseList.getElementsByTagName('nav')[0].innerHTML = categories;
-				chooseList.classList.add('slideInLeft');
-				chooseList.classList.remove('slideOutRight', 'scroll');
-				categoryHandler();
+		if (chooseList.getElementsByTagName('a').length > 3) {
+			chooseList.classList.add('slideInRight', 'scroll');
+
+			scrollCheck = setInterval(() => {
+				if (chooseList.clientHeight === (chooseList.scrollHeight - chooseList.scrollTop)) {
+					scrollArrow.classList.add('hidden');
+				}
+				else {
+					scrollArrow.classList.remove('hidden');
+				}
 			}, 500);
 		}
-	});
+	}
+
+	function showCategoriesAgain() {
+		homeHeader.classList.add('fadeOutUp');
+		homeHeader.classList.remove('fadeInDown');
+		chooseList.classList.remove('slideInRight');
+		chooseList.classList.add('slideOutRight');
+
+		setTimeout(() => {
+			homeHeader.innerHTML = "Choose a category:";
+			homeHeader.classList.remove('fadeOutUp');
+			homeHeader.classList.add('fadeInDown');
+			navBack.classList.add('hidden');
+			chooseList.getElementsByTagName('nav')[0].innerHTML = categories;
+			chooseList.classList.add('slideInLeft');
+			chooseList.classList.remove('slideOutRight', 'scroll');
+			categoryHandler();
+		}, 500);
+	}
 
 	function navListeners() {
 		// Add listener to nav
@@ -178,7 +182,13 @@ const showHome = function showHome() {
 				document.querySelector('.delete-confirm').addEventListener('click', () => {
 					let listName = removeList[i].parentNode.childNodes[1].innerHTML;
 
-					delete tinyTerms.uploadedLists[listName];
+					localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
+						tinyTerms.uploadedLists = uploadedLists || {};
+						delete tinyTerms.uploadedLists[listName];
+						localforage.setItem('tinyTerms.uploadedLists', tinyTerms.uploadedLists, () => {
+							location.reload();
+						});
+					});
 
 					// Delete list from nav
 					localforage.setItem('tinyTerms.uploadedLists', tinyTerms.uploadedLists, () => {
@@ -263,17 +273,33 @@ const showHome = function showHome() {
 			// Check valid URL
 			if (checkURL(inputSheet) === true) {
 				localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
+					tinyTerms.uploadedLists = uploadedLists || {};
 					tinyTerms.uploadedLists[inputName] = {
 						name: inputName,
-						category: 'custom',
+						category: 'Your lists',
 						sheetURL: inputSheet
 					};
 					localforage.setItem('tinyTerms.uploadedLists', tinyTerms.uploadedLists, () => {
+						tinyTerms.customListChoices = tinyTerms.customListChoices || {};
+						tinyTerms.customListChoices[inputName] = {
+							name: inputName,
+							category: 'Your lists',
+							sheetURL: inputSheet
+						};
+						document.querySelector('.custom').style.display = "inline-block";
+						buildList('Your lists');
+						setTimeout(() => {
+							// Show the list
+							showList();
+							// Listener to go back to categories
+							navBack.addEventListener('click', (e) => {
+								e.preventDefault();
+								showCategoriesAgain();
+							});
+							// Set listeners for nav
+							navListeners();
+						}, 500);
 						hideModal(true);
-						let customlist = '<div class="' + makeSafeClass(inputName) + '"><span class="custom-list"></span><a href="#">' + inputName + '</a></div>';
-						let homeWrapper = document.querySelector('.m-menu');
-						homeWrapper.querySelector('.choose-list').getElementsByTagName('nav')[0].innerHTML += customlist;
-						navListeners();
 					});
 				});
 			}

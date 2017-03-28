@@ -65,7 +65,6 @@ const createNewQuery = function createNewQuery(bonus) {
     // Build the query
     function queryHandler() {
         let queryWrapper = document.querySelector('.query-wrapper');
-        let queryHolder = document.querySelector('.query-holder');
         let querySubmit = document.querySelector('.query-submit');
         let resultHolder = document.querySelector('.result-holder');
         let scoreHolder = document.querySelector('.score-holder');
@@ -99,9 +98,6 @@ const createNewQuery = function createNewQuery(bonus) {
             queryWrapper.getElementsByTagName('h2')[0].innerHTML = "Bonus Test";
         }
 
-        // Set value of query
-        queryHolder.innerHTML = randomTerm;
-
         window.addEventListener("keypress", function (e) {
             if (e.keyCode === 13) {
                 querySubmit.click();
@@ -120,7 +116,8 @@ const createNewQuery = function createNewQuery(bonus) {
                 winCase("mispelled", queryInput);
             }
             else if (queryInput === "") {
-                resultHolder.innerHTML = "Enter a definition.";
+                document.querySelector('.query-input').style.border = "1px solid #ff0000";
+                resultHolder.innerHTML = "Please enter a definition.";
                 resultHolder.classList.remove('hidden');
             }
             else {
@@ -159,13 +156,15 @@ const createNewQuery = function createNewQuery(bonus) {
         // If definition is wrong
         function loseCase() {
             let queryInput = document.querySelector('.query-input');
-            // Update view
-            resultHolder.innerHTML = "Try again.";
-            resultHolder.classList.remove('hidden');
+            queryInput.style.border = "1px solid #ccc";
+            
             // Add placeholder
             queryInput.placeholder = queryInput.value;
             // Remove guess
             queryInput.value = "";
+            // Update view
+            resultHolder.innerHTML = "Try again.";
+            resultHolder.classList.remove('hidden');
             // Lose a heart
             heartHolder.removeChild(heartHolder.getElementsByTagName('p')[0]);
             tinyTerms[tinyTerms.pickedList].storedData.hearts -= 1;

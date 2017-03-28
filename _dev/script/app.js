@@ -1,5 +1,5 @@
 // Imports
-import { ready, cl, clv, buildData, errorAlert, alertMsg, checkSameDay, checkConnection, arrayCheck, getTodaysDate, appBlur } from "helperFunctions";
+import { ready, cl, clv, buildData, errorReport, errorAlert, alertMsg, checkSameDay, checkConnection, arrayCheck, getTodaysDate, appBlur } from "helperFunctions";
 import { getListOfTerms } from "termCreation";
 import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol } from "termInteraction";
 import { viewCreate, addHearts, setScore, progressBar } from "viewCreation";
@@ -86,18 +86,30 @@ setTimeout(() => {
 						<h2 class="">Uh oh!</h2>
 					</header>
 					<br>
-					<h3>Sorry something went wrong :(</h3>
+					<h3>Sorry something went wrong</h3>
 					<br>
-					<button class="home-btn">Close</button>
+					<button class="crash-report">Report issue</button><button class="home-btn">Close</button>
 					`;
 
 		// Add view
 		modal.querySelector(".content").innerHTML += view;
 		modal.classList.add('onboard');
 
+		document.querySelector('.errorReport').addEventListener("click", (e) => {
+			e.preventDefault();
+			errorReport();
+		});
+
 		document.querySelector(".home-btn").addEventListener("click", (e) => {
 			e.preventDefault();
-			showHome()
+			showHome();
+		});
+
+		
+
+		document.querySelector(".home-btn").addEventListener("click", (e) => {
+			e.preventDefault();
+			showHome();
 		});
 	}
 }, 10000);
@@ -105,6 +117,15 @@ setTimeout(() => {
 // Initialise modules on load
 ready(function () {
 	"use strict";
+	// Error handling for Tabletop
+	errorAlert('Sorry there was a problem.', () => {
+
+		// Clear list references callback
+		localforage.removeItem(tinyTerms.storedName).then(function () {
+			localforage.removeItem(tinyTerms.pickedList);
+		});
+		notLoaded = false;
+	});
 	getLists();
 });
 
@@ -258,15 +279,7 @@ const firstTime = function firstTime() {
 
 // Initialises data and app
 const initialise = function initialise() {
-	// Error handling for Tabletop
-	errorAlert('Couldn\'t load the list, please try again.', () => {
-
-		// Clear list references callback
-		localforage.removeItem(tinyTerms.storedName).then(function () {
-			localforage.removeItem(tinyTerms.pickedList);
-		});
-		notLoaded = false;
-	});
+	
 	// Check if a new day
 	checkSameDay();
 
@@ -282,6 +295,14 @@ const appBuildHandler = function appBuildHandler() {
 	// If same day, used daily terms
 	if (tinyTerms[tinyTerms.pickedList].storedData.newDay === false) {
 		pickedTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
+
+		// Load query if it exists already
+		if (
+			tinyTerms[tinyTerms.pickedList].storedData.dailyQuery !== undefined &&
+			tinyTerms[tinyTerms.pickedList].storedData.queryComplete !== true
+		) {
+			createNewQuery();
+		}
 	} else {
 		// Else get new
 		pickedTerms = getListOfTerms();
@@ -293,9 +314,7 @@ const appBuildHandler = function appBuildHandler() {
 		delete tinyTerms[tinyTerms.pickedList].storedData.dailyReminder;
 
 		// Reset daily reveal bonus
-		tinyTerms[tinyTerms.pickedList].storedData.revealGoal = tinyTerms[
-			tinyTerms.pickedList
-		].storedData.revealGoal || {};
+		tinyTerms[tinyTerms.pickedList].storedData.revealGoal = tinyTerms[tinyTerms.pickedList].storedData.revealGoal || {};
 		tinyTerms[tinyTerms.pickedList].storedData.revealGoal.complete = false;
 
 		// Create query if revealed terms
@@ -304,9 +323,7 @@ const appBuildHandler = function appBuildHandler() {
 		}
 
 		// Create reminded terms default
-		tinyTerms[tinyTerms.pickedList].storedData.remindedTerms = tinyTerms[
-			tinyTerms.pickedList
-		].storedData.remindedTerms || {};
+		tinyTerms[tinyTerms.pickedList].storedData.remindedTerms = tinyTerms[tinyTerms.pickedList].storedData.remindedTerms || {};
 	}
 
 	// Create initial view
@@ -321,17 +338,7 @@ const appBuildHandler = function appBuildHandler() {
 	localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
 
 	// Keep query active each day
-	tinyTerms[tinyTerms.pickedList].storedData.queryComplete = tinyTerms[
-		tinyTerms.pickedList
-	].storedData.queryComplete || {};
-
-	// Load query if it exists already
-	if (
-		tinyTerms[tinyTerms.pickedList].storedData.dailyQuery !== undefined &&
-		tinyTerms[tinyTerms.pickedList].storedData.queryComplete !== true
-	) {
-		createNewQuery();
-	}
+	tinyTerms[tinyTerms.pickedList].storedData.queryComplete = tinyTerms[tinyTerms.pickedList].storedData.queryComplete || {};
 
 	// Handles events for revealed terms
 	revealedBtnHandler();
@@ -373,6 +380,6 @@ const appBuildHandler = function appBuildHandler() {
 
 	// Debug code
 	if (tinyTerms[tinyTerms.pickedList].ops.debug === true) {
-		cl(tinyTerms);
+		console.log(tinyTerms);
 	}
 };

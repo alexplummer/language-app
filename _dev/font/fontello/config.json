@@ -171,6 +171,20 @@
       "css": "home",
       "code": 59402,
       "src": "iconic"
+    },
+    {
+      "uid": "e4da0a96218bd9e253c86061ebcf8537",
+      "css": "2-lines-and-angles_copy",
+      "code": 59408,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M468.8 406.3H531.3V468.8H468.8V531.3H406.3V468.8H343.8V406.3H406.3V343.8H468.8V406.3ZM843.8 218.8V281.3 906.3H281.3V781.3H156.3V93.8H718.8V218.8H843.8ZM656.3 718.8V156.3H218.8V718.8H656.3ZM781.3 281.3H718.8V781.3H343.8V843.8H781.3V281.3Z",
+        "width": 1000
+      },
+      "search": [
+        "lines-and-angles_copy"
+      ]
     }
   ]
 }

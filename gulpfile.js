@@ -562,9 +562,11 @@ gulp.task('htmlmin', () => {
 // Scans HTML and removes unused CSS
 
 gulp.task('uncss', () => {
-	return gulp.src('site.css')
-	.pipe(plugins.if(argv.optim,  plugins.uncss({html: [paths.prod+'/*.html']})))
-	.pipe(gulp.dest(paths.prod));
+	return gulp.src(paths.prod+'/style/style.css')
+	.pipe(plugins.uncss({
+		html: [paths.prod+'/index.html']
+	}))
+	.pipe(gulp.dest(paths.prod+'/style'));
 });
 
 
@@ -683,17 +685,17 @@ gulp.task('build:tmp', gulpsync.sync([
 gulp.task('build:prod', gulpsync.sync([
 	'usemin',
 	'copy:prod',
-	'images'
+	'images',
 	//'couch',
-	//'optimise'
+	'optimise'
 ]));
 
 // OPTIMISING TASKS
 gulp.task('optimise', gulpsync.sync([
-	'uncss',
-	'critical',
+	//'uncss',
+	//'critical',
 	'htmlmin',
-	'gzip'
+	//'gzip'
 ]));
 
 // TASKS

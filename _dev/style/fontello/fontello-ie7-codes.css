@@ -15,6 +15,7 @@
 .icon-2-lines-and-angles_experiment { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80d;&nbsp;'); }
 .icon-2-lines-and-angles_explore { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80e;&nbsp;'); }
 .icon-2-lines-and-angles_collect { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe80f;&nbsp;'); }
+.icon-2-lines-and-angles_copy { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe810;&nbsp;'); }
 .icon-garden { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe81a;&nbsp;'); }
 .icon-down-open { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf004;&nbsp;'); }
 .icon-right-open { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf006;&nbsp;'); }

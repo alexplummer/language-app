@@ -5,7 +5,7 @@
 .container {
     padding-bottom: $size-l;
 }
-.container, .m-modal, .m-footer {
+.container, .m-modal, .m-footer, .m-menu {
     @extend %container;
     width: 768px;   
     max-width: 100%;
@@ -38,8 +38,7 @@
     min-height: 0;
 }
 .m-menu {
-    position: absolute;
-    width: 100%;
+    position: fixed;
     height: 100vh;
     overflow: hidden;
     z-index: $z-l;

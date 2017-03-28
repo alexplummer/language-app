@@ -44,8 +44,11 @@
 
         .query-holder {
             @extend %text-light;
+            display: inline-block;
             font-size: $font-l;
             text-transform: capitalize;
+            margin: 0;
+            padding: 0;
             padding-left: $size-xs;
         }
     }
@@ -66,7 +69,9 @@
     }
     .result-holder {
         border-top: 1px solid #ddd;
+        font-size: $font-m;
         margin-top: $size-s;
+        padding-top: $size-s;
         padding-bottom: $size-s;
         text-transform: none;
         font-weight: 400;

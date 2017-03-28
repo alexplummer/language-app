@@ -1,8 +1,9 @@
 
 // Imports
-import { cl, clv } from 'helperFunctions';
+import { cl, clv, errorReport } from 'helperFunctions';
 import tinyTerms from 'app';
 import { showHome } from "homeScreen";
+import { onboardShow } from "introInstructions";
 import { hideModal } from 'termInteraction';
 
 // Exports
@@ -20,23 +21,28 @@ const navMenu = function navMenu() {
             document.querySelector('.m-nav').classList.toggle('hidden');
             document.getElementsByTagName('body')[0].classList.toggle('nav-on');
 
-            setTimeout(()=>{hideNav()},100);
+            setTimeout(() => { hideNav() }, 100);
         });
     }
 
     function hideNav() {
-        nav.querySelector('.close').addEventListener('click',(e)=>{
-            e.preventDefault();
-            hideNav();
-        });
         document.querySelector('.nav-on').querySelector('.container').addEventListener('click', (e) => {
             e.preventDefault();
             document.querySelector('.m-nav').classList.toggle('hidden');
             document.getElementsByTagName('body')[0].classList.toggle('nav-on');
 
-            setTimeout(()=>{showNav()},100);
+            setTimeout(() => { showNav() }, 100);
         });
     }
+
+    document.querySelector('.nav-close').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector('.m-nav').classList.toggle('hidden');
+        document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+
+        setTimeout(() => { showNav() }, 100);
+    });
+
 
     localforage.getItem("tinyTermsAllPicked", function (err, tinyTermsAllPicked) {
         tinyTerms.AllPicked = tinyTermsAllPicked || [];
@@ -135,7 +141,8 @@ const optionsDisplay = function optionsDisplay() {
                     <div class="options">
                         <p>Help</p>
                         <a href="#" class="icon-right-open show-tut">Show the tutorial again</a>
-                        <a href="#" class="icon-right-open">Email a question</a>
+                        <a href="mailto:info@tiny-terms.com" class="icon-right-open">Email a question</a>
+                        <a href="#" class="icon-right-open feedback">Report a bug/leave feedback</a>
                         <p>More Options</p>
                         <a href="#" class="icon-right-open reset-list">Reset list progress</a>
                         <a href="#" class="icon-right-open reset">Reset the app</a>
@@ -152,6 +159,8 @@ const optionsDisplay = function optionsDisplay() {
         let resetApp = document.querySelector('.reset');
 
         document.querySelector('.show-tut').addEventListener('click', (e) => { e.preventDefault(); onboardShow() });
+
+        document.querySelector('.feedback').addEventListener('click', (e) => { e.preventDefault(); errorReport() });
 
         function resetMenu() {
             if (document.querySelector('.delete-confirm') !== null) {
@@ -170,8 +179,11 @@ const optionsDisplay = function optionsDisplay() {
 
             document.querySelector('.delete-confirm').addEventListener('click', () => {
                 delete tinyTerms[tinyTerms.pickedList];
-                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
-                location.reload();
+                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {;
+                    localforage.removeItem('tinyTermsDefault').then(function() {
+                        location.reload();
+                    }); 
+                });
             });
             document.querySelector('.delete-cancel').addEventListener('click', () => {
                 hideModal(true);

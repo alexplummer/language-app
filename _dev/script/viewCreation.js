@@ -35,7 +35,7 @@ const viewCreate = function viewCreate(termsToCreate) {
         }
 
         document.querySelector('h1').innerHTML = tinyTerms.pickedList;
-        document.querySelector('.list-action').innerHTML = tinyTerms[tinyTerms.pickedList].action + '<span class="query-holder"></span>';
+        document.querySelector('.list-action').innerHTML = tinyTerms[tinyTerms.pickedList].action + '<span class="query-holder">'+tinyTerms[tinyTerms.pickedList].storedData.dailyQuery+'</span>';
 
         // Create terms HTML
         let newHolder =

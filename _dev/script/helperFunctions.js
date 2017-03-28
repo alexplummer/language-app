@@ -7,6 +7,7 @@ export {
 	ready,
 	cl,
 	clv,
+	errorReport,
 	buildData,
 	checkSameDay,
 	arrayCheck,
@@ -49,6 +50,14 @@ function clv(term, log) {
 	console.log(term + "= " + log);
 }
 
+// Send crash report
+const errorReport = function errorReport() {
+
+	if (typeof cordova !== "undefined") {
+		cordova.plugins.instabug.invoke();
+	}
+}
+
 // Alert errors
 const errorAlert = function errorAlert(message, cb) {
 
@@ -69,13 +78,19 @@ const errorAlert = function errorAlert(message, cb) {
                     <p>Column: ${column}</p> 
                     <p>StackTrace: ${errorObj}</p>
 
-                    <button class="home-btn">Close</button>
+                    <button class="crash-report">Report issue</button><button class="home-btn">Close</button>
                     `;
 
 		// Add view
 		modal.querySelector(".content").innerHTML += view;
 		modal.classList.add('onboard');
 		cb();
+
+		document.querySelector('.errorReport').addEventListener("click", (e) => {
+			e.preventDefault();
+			errorReport();
+		});
+
 		document.querySelector(".home-btn").addEventListener("click", (e) => {
 			e.preventDefault();
 			showHome()

@@ -10,12 +10,13 @@
     &:before {
         content: "";
         position: absolute;
-        width: 3700px;
+        width: 1300px;
         height: 100vh;
         top: 0;
         left: 0;
         z-index: $z-min;
-        animation: scrollBgRight 130s linear infinite;
+        animation: scrollBgRight 30s linear infinite;
+        @extend %gpu;
         background-color: $clr-primary;
         background-image:
             radial-gradient(white, rgba(255,255,255,0.05) 2px, transparent 30px),
@@ -35,7 +36,7 @@
     }
     @keyframes scrollBgRight {
         0% {left: 0 }
-        100% {left: -2700px;}
+        100% {left: -532px;}
     }
     img {
         max-width: 280px;
@@ -116,7 +117,7 @@
             }
         }
         .category {
-            margin: 0;
+            margin: 0 0 $size-m 0;
             padding: $size-l 0 0 0;
             @extend %col-xs-3;
             @extend .icon;
@@ -147,6 +148,10 @@
             &.culture { 
                 @extend .icon-2-lines-and-angles_explore;
             }
+            &.custom { 
+                @extend .icon-2-lines-and-angles_copy;
+                display: none;
+            }
         }
     }
     .animated-bg {
@@ -155,10 +160,11 @@
         left: 100px;
         white-space: nowrap;
         animation: scrollLeft 40s linear infinite;
+        @extend %gpu;
 
         div {
             font-size: 200px;
-            color: rgba(250,250,250,0.05);
+            color: #223773;
             display: inline-block;
 
             &:before {
@@ -190,6 +196,7 @@
         position: relative;
         z-index: $z-m;
         animation-duration: 0.5s;
+        @extend %gpu;
 
         &.slideInRight nav {
             text-align: center;
