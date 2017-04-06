@@ -32,45 +32,6 @@ let ops = {
 	}
 };
 
-// Default list choices
-tinyTerms.listChoices = {
-	"Italian Verbs ITA-ENG": {
-		name: "Italian Verbs ITA-ENG",
-		category: "Language",
-		sheetURL: "https://docs.google.com/spreadsheets/d/1Q1pmDXybg_GDB6bSXknuBET2Nm8L-Roi2Kj01SHm_WI/pubhtml"
-	},
-	"Computer Components": {
-		name: "Computer Components",
-		category: "Technology",
-		sheetURL: "https://docs.google.com/spreadsheets/d/1Ho5Viqg71mIBlbyAIjLIqHEWRr4znDCLZSBtwVTtZk0/edit"
-	},
-	"Periodic Elements": {
-		name: "Periodic Elements",
-		category: "Science",
-		sheetURL: "https://docs.google.com/spreadsheets/d/1sL3kTrZq3Hdb_iBo7hC8x9oGXXownlxmmdmmvALAPlU/edit#gid=0"
-	},
-	"Global Capital Cities": {
-		name: "Global Capital Cities",
-		category: "Culture",
-		sheetURL: "https://docs.google.com/spreadsheets/d/1hU1pJSR2sp4g7C91prXqijBzNVZTJ4Qkip0rY4IuWaQ/pubhtml"
-	},
-	"Top 100 words ITA-ENG": {
-		name: "Top 100 words ITA-ENG",
-		category: "Language",
-		sheetURL: "https://docs.google.com/spreadsheets/d/1gBNQk9jH7X2iRIbcZg3F5kbOTGgl9EvlJ65UkYHV6Mo/pubhtml"
-	},
-	"Italian Anatomy ITA-ENG": {
-		name: "Italian Anatomy ITA-ENG",
-		category: "Language",
-		sheetURL: "https://docs.google.com/spreadsheets/d/1lDCYm0E9y8IBHoS2JrEu6iPe4UJEkfU3dEywURhhqb0/pubhtml"
-	},
-	"Bee Anatomy": {
-		name: "Bee Anatomy",
-		category: "Science",
-		sheetURL: "https://docs.google.com/spreadsheets/d/12-g6CDVGXIPTn5Va7rY6OC22ZS12p6av46p2LMht61I/pubhtml"
-	}
-};
-
 // Crash protection
 let notLoaded = true;
 
@@ -92,10 +53,10 @@ setTimeout(() => {
 					`;
 
 		// Add view
-		modal.querySelector(".content").innerHTML += view;
+		modal.querySelector(".content").innerHTML = view;
 		modal.classList.add('onboard');
 
-		document.querySelector('.errorReport').addEventListener("click", (e) => {
+		document.querySelector('.crash-report').addEventListener("click", (e) => {
 			e.preventDefault();
 			errorReport();
 		});
@@ -104,20 +65,14 @@ setTimeout(() => {
 			e.preventDefault();
 			showHome();
 		});
-
-		
-
-		document.querySelector(".home-btn").addEventListener("click", (e) => {
-			e.preventDefault();
-			showHome();
-		});
 	}
-}, 10000);
+}, 20000);
 
 // Initialise modules on load
 ready(function () {
 	"use strict";
-	// Error handling for Tabletop
+
+	// Error handling
 	errorAlert('Sorry there was a problem.', () => {
 
 		// Clear list references callback
@@ -126,7 +81,64 @@ ready(function () {
 		});
 		notLoaded = false;
 	});
-	getLists();
+
+	localforage.getItem("tinyTerms.lists", function (err, lists) {
+
+		// Check for internet, pull list references if connection
+		if (typeof Connection !== "undefined") {
+			let connection = checkConnection();
+			notLoaded = false;
+
+			if (connection === 'Unknown' || connection === '2G' || connection === 'Cell' || connection === 'None') {
+				
+				if (lists === null) {
+					alertMsg("Please connect to the internet to download lists, after they will be available offline.", () => {
+						document.querySelector(".home-btn").addEventListener("click", (e) => {
+							e.preventDefault();
+							showHome();
+						});
+					});
+				}
+				else {
+					tinyTerms.listChoices = lists;
+					getLists();
+				}
+			}
+			else {
+				buildLists();
+			}
+		}
+		else {
+			buildLists();
+		}
+	});
+
+	function buildLists() {
+
+		Tabletop.init({
+			key: 'https://docs.google.com/spreadsheets/d/1T8sb0SJRxJQdwgWywAQQnq6rxHt0JRo-81q5Hz_jvXQ/pubhtml',
+			callback: fetchListData,
+			simpleSheet: false
+		});
+
+		function fetchListData(data) {
+			// Reset default
+			tinyTerms.listChoices = {};
+
+			for (let i = 0; i < data.Sheet1.elements.length; i++) {
+
+				tinyTerms.listChoices[data.Sheet1.elements[i].Name] = {
+					name: data.Sheet1.elements[i].Name,
+					category: data.Sheet1.elements[i].Category,
+					sheetURL: data.Sheet1.elements[i].sheetURL,
+					version: data.Sheet1.elements[i].Version
+				}
+			}
+			localforage.setItem("tinyTerms.lists", tinyTerms.listChoices, () => {
+				getLists();
+			});
+		}
+	}
 });
 
 // Pick a list
@@ -155,7 +167,7 @@ function getLists(skipDefaultCheck) {
 			if (value !== null) {
 				tinyTerms.pickedList = tinyTermsDefault;
 				normalLoad(tinyTerms.pickedList);
-			} 
+			}
 			else {
 				if (typeof Connection !== "undefined") {
 					let connection = checkConnection();
@@ -261,7 +273,7 @@ const firstTime = function firstTime() {
 	if (tinyTerms[tinyTerms.pickedList].ops.debug !== true) {
 		window.onerror = "";
 	}
-	
+
 	// Create terms
 	appBuildHandler();
 
@@ -279,7 +291,7 @@ const firstTime = function firstTime() {
 
 // Initialises data and app
 const initialise = function initialise() {
-	
+
 	// Check if a new day
 	checkSameDay();
 

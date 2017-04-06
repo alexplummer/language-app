@@ -57,6 +57,9 @@
                 position: relative;
                 top: 2px;
             }
+            @media (max-width: 345px) {
+                display: none;
+            }
         }
         .settings {
             @extend .icon-dot-3;

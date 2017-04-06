@@ -69,7 +69,6 @@ const createNewQuery = function createNewQuery(bonus) {
         let resultHolder = document.querySelector('.result-holder');
         let scoreHolder = document.querySelector('.score-holder');
         let heartHolder = document.querySelector('.hearts');
-        let score = parseInt(scoreHolder.innerHTML);
         let definition = tinyTerms[tinyTerms.pickedList].terms[randomTerm].definition;
         let count = 0;
 
@@ -85,6 +84,9 @@ const createNewQuery = function createNewQuery(bonus) {
         if (document.querySelector('.' + termEncode + '') !== null) {
             document.querySelector('.' + termEncode + '').querySelector('.definition-wrapper').classList.add('hidden');
         }
+
+        // Add to view
+        document.querySelector('.query-holder').innerHTML = randomTerm;
 
         // Add hearts
         delete tinyTerms[tinyTerms.pickedList].storedData.hearts;
@@ -141,7 +143,9 @@ const createNewQuery = function createNewQuery(bonus) {
                 resultHolder.innerHTML = "Well done, the definition is <strong>\"" + definition + "\"</strong>";
                 resultHolder.classList.remove('hidden');
             }
+            
             // Add to score
+            let score = parseInt(scoreHolder.innerHTML);
             score += tinyTerms[tinyTerms.pickedList].ops.points.correct;
             // Update view
             scoreHolder.innerHTML = score;

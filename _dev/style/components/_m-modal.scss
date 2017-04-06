@@ -13,6 +13,9 @@
         position: relative;
         top: 50%;
         width: 100%;
+        min-width: 300px;
+        max-height: 90vh;
+        overflow-y: scroll;
         padding-bottom: 20px;
         transform: translateY(-50%);
 
@@ -55,6 +58,30 @@
         }
         &::first-letter {
             text-transform: capitalize;
+        }
+    }
+    .stats {
+        padding-top: $size-m;
+
+        h3 {
+            margin: $size-m 0 $size-s 0;
+        }
+        p {
+            margin: $size-xs 0;
+            padding: 0;
+            position: relative;
+
+            strong {
+                padding: 0;
+                margin: 0;
+            }
+            .right {
+                position: absolute;
+                right: $size-m;
+                top: 0;
+                padding: 0;
+                margin: 0;
+            }
         }
     }
     .definitions {

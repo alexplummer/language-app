@@ -1,6 +1,7 @@
 // Imports
 import tinyTerms from "app";
 import { showHome } from "homeScreen";
+import { hideModal } from 'termInteraction';
 
 // Exports
 export {
@@ -56,6 +57,34 @@ const errorReport = function errorReport() {
 	if (typeof cordova !== "undefined") {
 		cordova.plugins.instabug.invoke();
 	}
+	else {
+		let modal = document.querySelector('.m-modal');
+		modal.classList.remove("hidden");
+		document.getElementsByTagName("body")[0].classList.add("modal-active");
+
+		let view = `<header>
+						<h2 class="">Get in touch</h2>
+					</header>
+					<p>We always welcome feedback especially if something isn't working as expected.
+					<br><br>
+					Please email us at <a href="mailto:info@tiny-terms.com">info@tiny-terms.com</a> with your thoughts.</p>
+
+					<button class="close-feedback">Close</button>
+					`;
+
+		// Add view
+		modal.querySelector(".content").innerHTML = view;
+		modal.classList.add('onboard');
+		
+		document.querySelector('.close-feedback').addEventListener("click", (e) => {
+            e.preventDefault();
+            hideModal(true);
+            tinyTerms.tutComplete = true;
+            localforage.setItem("tinyTerms.tutComplete", tinyTerms.tutComplete);
+            modal.classList.remove('onboard');
+        });
+		return false;
+	}
 }
 
 // Alert errors
@@ -82,11 +111,11 @@ const errorAlert = function errorAlert(message, cb) {
                     `;
 
 		// Add view
-		modal.querySelector(".content").innerHTML += view;
+		modal.querySelector(".content").innerHTML = view;
 		modal.classList.add('onboard');
 		cb();
 
-		document.querySelector('.errorReport').addEventListener("click", (e) => {
+		document.querySelector('.crash-report').addEventListener("click", (e) => {
 			e.preventDefault();
 			errorReport();
 		});
@@ -115,8 +144,12 @@ const alertMsg = function alertMsg(message, cb) {
 				`;
 
 	// Add view
-	modal.querySelector(".content").innerHTML += view;
+	modal.querySelector(".content").innerHTML = view;
 	modal.classList.add('onboard');
+	document.querySelector(".home-btn").addEventListener("click", (e) => {
+			e.preventDefault();
+			showHome()
+		});
 	cb();
 	return false;
 }

@@ -64,7 +64,7 @@ const revealedBtnHandler = function revealedBtnHandler() {
 
             // Add term to learned terms list
             tinyTerms[tinyTerms.pickedList].storedData.learnedTerms = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms || {};
-            tinyTerms[tinyTerms.pickedList].storedData.learnedTerms[term] = true;
+            tinyTerms[tinyTerms.pickedList].storedData.learnedTerms[term] = tinyTerms[tinyTerms.pickedList].terms[term].definition;
 
             // Check if whole term list answered correctly
             if (Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms).length === Object.keys(tinyTerms[tinyTerms.pickedList].terms).length) {

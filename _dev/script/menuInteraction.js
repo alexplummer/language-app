@@ -18,18 +18,18 @@ const navMenu = function navMenu() {
     function showNav() {
         document.getElementsByTagName('h1')[0].addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelector('.m-nav').classList.toggle('hidden');
-            document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+            document.querySelector('.m-nav').classList.remove('hidden');
+            document.getElementsByTagName('body')[0].classList.add('nav-on');
 
             setTimeout(() => { hideNav() }, 100);
         });
     }
 
     function hideNav() {
-        document.querySelector('.nav-on').querySelector('.container').addEventListener('click', (e) => {
+        document.querySelector('.nav-bg').addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelector('.m-nav').classList.toggle('hidden');
-            document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+            document.querySelector('.m-nav').classList.add('hidden');
+            document.getElementsByTagName('body')[0].classList.remove('nav-on');
 
             setTimeout(() => { showNav() }, 100);
         });
@@ -37,8 +37,8 @@ const navMenu = function navMenu() {
 
     document.querySelector('.nav-close').addEventListener('click', (e) => {
         e.preventDefault();
-        document.querySelector('.m-nav').classList.toggle('hidden');
-        document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+        document.querySelector('.m-nav').classList.add('hidden');
+        document.getElementsByTagName('body')[0].classList.remove('nav-on');
 
         setTimeout(() => { showNav() }, 100);
     });
@@ -71,7 +71,10 @@ const navMenu = function navMenu() {
         while (i < navItems.length);
 
         document.querySelector('.view-all').addEventListener('click', (e) => {
-            e.preventDefault();
+            e.preventDefault();    
+            document.querySelector('.m-nav').classList.add('hidden');
+            document.getElementsByTagName('body')[0].classList.remove('nav-on');
+            document.getElementsByTagName("body")[0].classList.add("loading");
             showHome();
         });
     });
@@ -110,14 +113,43 @@ const footerMenu = function footerMenu() {
         modal.classList.remove('hidden');
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
+        let name = tinyTerms.pickedList;
+        let completed = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms).length;
+        let remaining = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length;
+        let viewed = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms).length;
+        let correct = 0;
+        let incorrect = 0;
+
+        if (tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms !== undefined) {
+            correct = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms);
+        }
+        if (tinyTerms[tinyTerms.pickedList].storedData.correctTerms !== undefined) {
+            incorrect = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.correctTerms);
+        }
+
+        let learned = [];
+
+        for (let i = 0; i < completed; i++) {
+            let learnedTerm = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms)[i];
+            let learnedDefinition = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms[learnedTerm];
+            learned += '<p class="small">'+learnedTerm+' - '+learnedDefinition+'</p>';
+        }
+        if (completed === 0) {
+            learned = '<p class="small">No completed terms, fill some goals!</p>'
+        }
+
         let view = `<header>
                         <h2 class="icon-chart-bar">Progress</h2>
                     </header>
-                    <div class="options">
-                        <p>Unlocks: (coming soon)</p>
-                        <a href="#" class="icon-right-open points-neon-colours">1000: Unlock neon colours</a>
-                        <a href="#" class="icon-right-open points-life-glyphs">5000: Unlock solid symbols</a>
-                        <a href="#" class="icon-right-open points-metal-colours">10000: Unlock metal colours</a>
+                    <div class="options stats">
+                        <p><strong>${name}</strong></p>
+                        <p><strong>Total completed terms:</strong> <span class="right">${completed} <span class="small">/ ${remaining}</span></span></p>
+                        <br>
+                        <p><strong>Total viewed terms:</strong> <span class="right">${viewed} <span class="small">/ ${remaining}</span></span></p>
+                        <p><strong>Total correct tests:</strong> <span class="right">${correct}</span></p>
+                        <p><strong>Total incorrect tests:</strong> <span class="right">${incorrect}</span></p>
+                        <h3>Completed terms:</h3>
+                        ${learned}
                     </div>
                     `;
         // Add view

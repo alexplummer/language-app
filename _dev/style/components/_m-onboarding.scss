@@ -74,6 +74,10 @@
         float: right;
         width: 150px;
         color: #fff;
+
+        &.crash-report {
+            margin-left: $size-s;
+        }
     }
     a {
         color: $clr-tertiary;

@@ -3,7 +3,7 @@
 // Slide out navigation
 
 .m-nav {
-    background: $clr-tertiary;
+    background: $clr-primary;
     box-shadow: 5px 0 20px 0 rgba(0,0,0,.4);
 
     .nav-close {
@@ -43,8 +43,12 @@
 .home .m-nav {
     display: none;
 }
-
-
-
-
+.nav-bg {
+    display: none;
+    background: $clr-primary;
+    opacity: 0.5;
+}
+.nav-on .nav-bg {
+    display: block;
+}
 

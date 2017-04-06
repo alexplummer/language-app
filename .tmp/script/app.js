@@ -1,5 +1,7 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var tinyTermsApp = function () {
   'use strict';
 
@@ -281,7 +283,6 @@ var tinyTermsApp = function () {
       var resultHolder = document.querySelector('.result-holder');
       var scoreHolder = document.querySelector('.score-holder');
       var heartHolder = document.querySelector('.hearts');
-      var score = parseInt(scoreHolder.innerHTML);
       var definition = tinyTerms$1[tinyTerms$1.pickedList].terms[randomTerm].definition;
       var count = 0;
 
@@ -297,6 +298,9 @@ var tinyTermsApp = function () {
       if (document.querySelector('.' + termEncode + '') !== null) {
         document.querySelector('.' + termEncode + '').querySelector('.definition-wrapper').classList.add('hidden');
       }
+
+      // Add to view
+      document.querySelector('.query-holder').innerHTML = randomTerm;
 
       // Add hearts
       delete tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts;
@@ -349,7 +353,9 @@ var tinyTermsApp = function () {
           resultHolder.innerHTML = "Well done, the definition is <strong>\"" + definition + "\"</strong>";
           resultHolder.classList.remove('hidden');
         }
+
         // Add to score
+        var score = parseInt(scoreHolder.innerHTML);
         score += tinyTerms$1[tinyTerms$1.pickedList].ops.points.correct;
         // Update view
         scoreHolder.innerHTML = score;
@@ -476,7 +482,7 @@ var tinyTermsApp = function () {
 
         // Add term to learned terms list
         tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms || {};
-        tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms[term] = true;
+        tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms[term] = tinyTerms$1[tinyTerms$1.pickedList].terms[term].definition;
 
         // Check if whole term list answered correctly
         if (Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms).length === Object.keys(tinyTerms$1[tinyTerms$1.pickedList].terms).length) {
@@ -1204,6 +1210,31 @@ var tinyTermsApp = function () {
 
     if (typeof cordova !== "undefined") {
       cordova.plugins.instabug.invoke();
+    } else {
+      var _ret4 = function () {
+        var modal = document.querySelector('.m-modal');
+        modal.classList.remove("hidden");
+        document.getElementsByTagName("body")[0].classList.add("modal-active");
+
+        var view = "<header>\n\t\t\t\t\t\t<h2 class=\"\">Get in touch</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<p>We always welcome feedback especially if something isn't working as expected.\n\t\t\t\t\t<br><br>\n\t\t\t\t\tPlease email us at <a href=\"mailto:info@tiny-terms.com\">info@tiny-terms.com</a> with your thoughts.</p>\n\n\t\t\t\t\t<button class=\"close-feedback\">Close</button>\n\t\t\t\t\t";
+
+        // Add view
+        modal.querySelector(".content").innerHTML = view;
+        modal.classList.add('onboard');
+
+        document.querySelector('.close-feedback').addEventListener("click", function (e) {
+          e.preventDefault();
+          hideModal(true);
+          tinyTerms$1.tutComplete = true;
+          localforage.setItem("tinyTerms.tutComplete", tinyTerms$1.tutComplete);
+          modal.classList.remove('onboard');
+        });
+        return {
+          v: false
+        };
+      }();
+
+      if ((typeof _ret4 === "undefined" ? "undefined" : _typeof(_ret4)) === "object") return _ret4.v;
     }
   };
 
@@ -1218,11 +1249,11 @@ var tinyTermsApp = function () {
       var view = "<header>\n                        <h2 class=\"\">Uh oh!</h2>\n                    </header>\n                    <br>\n                    <h3>" + message + "</h3>\n                    <p><strong>Here's the exact problem:</strong></p>\n                    <p>'Error: " + errorMsg + "</p> \n                    <p>Script: " + url + "</p> \n                    <p>Line: " + lineNumber + "</p>\n                    <p>Column: " + column + "</p> \n                    <p>StackTrace: " + errorObj + "</p>\n\n                    <button class=\"crash-report\">Report issue</button><button class=\"home-btn\">Close</button>\n                    ";
 
       // Add view
-      modal.querySelector(".content").innerHTML += view;
+      modal.querySelector(".content").innerHTML = view;
       modal.classList.add('onboard');
       cb();
 
-      document.querySelector('.errorReport').addEventListener("click", function (e) {
+      document.querySelector('.crash-report').addEventListener("click", function (e) {
         e.preventDefault();
         errorReport();
       });
@@ -1245,8 +1276,12 @@ var tinyTermsApp = function () {
     var view = "<header>\n\t\t\t\t\t<h2 class=\"\">Something's not right</h2>\n\t\t\t\t</header>\n\t\t\t\t<p>" + message + "</p>\n\n\t\t\t\t<button class=\"home-btn\">Close</button>\n\t\t\t\t";
 
     // Add view
-    modal.querySelector(".content").innerHTML += view;
+    modal.querySelector(".content").innerHTML = view;
     modal.classList.add('onboard');
+    document.querySelector(".home-btn").addEventListener("click", function (e) {
+      e.preventDefault();
+      showHome();
+    });
     cb();
     return false;
   };
@@ -1852,8 +1887,8 @@ var tinyTermsApp = function () {
     function showNav() {
       document.getElementsByTagName('h1')[0].addEventListener('click', function (e) {
         e.preventDefault();
-        document.querySelector('.m-nav').classList.toggle('hidden');
-        document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+        document.querySelector('.m-nav').classList.remove('hidden');
+        document.getElementsByTagName('body')[0].classList.add('nav-on');
 
         setTimeout(function () {
           hideNav();
@@ -1862,10 +1897,10 @@ var tinyTermsApp = function () {
     }
 
     function hideNav() {
-      document.querySelector('.nav-on').querySelector('.container').addEventListener('click', function (e) {
+      document.querySelector('.nav-bg').addEventListener('click', function (e) {
         e.preventDefault();
-        document.querySelector('.m-nav').classList.toggle('hidden');
-        document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+        document.querySelector('.m-nav').classList.add('hidden');
+        document.getElementsByTagName('body')[0].classList.remove('nav-on');
 
         setTimeout(function () {
           showNav();
@@ -1875,8 +1910,8 @@ var tinyTermsApp = function () {
 
     document.querySelector('.nav-close').addEventListener('click', function (e) {
       e.preventDefault();
-      document.querySelector('.m-nav').classList.toggle('hidden');
-      document.getElementsByTagName('body')[0].classList.toggle('nav-on');
+      document.querySelector('.m-nav').classList.add('hidden');
+      document.getElementsByTagName('body')[0].classList.remove('nav-on');
 
       setTimeout(function () {
         showNav();
@@ -1910,6 +1945,9 @@ var tinyTermsApp = function () {
 
       document.querySelector('.view-all').addEventListener('click', function (e) {
         e.preventDefault();
+        document.querySelector('.m-nav').classList.add('hidden');
+        document.getElementsByTagName('body')[0].classList.remove('nav-on');
+        document.getElementsByTagName("body")[0].classList.add("loading");
         showHome();
       });
     });
@@ -1939,7 +1977,32 @@ var tinyTermsApp = function () {
       modal.classList.remove('hidden');
       document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-      var view = "<header>\n                        <h2 class=\"icon-chart-bar\">Progress</h2>\n                    </header>\n                    <div class=\"options\">\n                        <p>Unlocks: (coming soon)</p>\n                        <a href=\"#\" class=\"icon-right-open points-neon-colours\">1000: Unlock neon colours</a>\n                        <a href=\"#\" class=\"icon-right-open points-life-glyphs\">5000: Unlock solid symbols</a>\n                        <a href=\"#\" class=\"icon-right-open points-metal-colours\">10000: Unlock metal colours</a>\n                    </div>\n                    ";
+      var name = tinyTerms$1.pickedList;
+      var completed = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms).length;
+      var remaining = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].terms).length;
+      var viewed = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms).length;
+      var correct = 0;
+      var incorrect = 0;
+
+      if (tinyTerms$1[tinyTerms$1.pickedList].storedData.incorrectTerms !== undefined) {
+        correct = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.incorrectTerms);
+      }
+      if (tinyTerms$1[tinyTerms$1.pickedList].storedData.correctTerms !== undefined) {
+        incorrect = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.correctTerms);
+      }
+
+      var learned = [];
+
+      for (var i = 0; i < completed; i++) {
+        var learnedTerm = Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms)[i];
+        var learnedDefinition = tinyTerms$1[tinyTerms$1.pickedList].storedData.learnedTerms[learnedTerm];
+        learned += '<p class="small">' + learnedTerm + ' - ' + learnedDefinition + '</p>';
+      }
+      if (completed === 0) {
+        learned = '<p class="small">No completed terms, fill some goals!</p>';
+      }
+
+      var view = "<header>\n                        <h2 class=\"icon-chart-bar\">Progress</h2>\n                    </header>\n                    <div class=\"options stats\">\n                        <p><strong>" + name + "</strong></p>\n                        <p><strong>Total completed terms:</strong> <span class=\"right\">" + completed + " <span class=\"small\">/ " + remaining + "</span></span></p>\n                        <br>\n                        <p><strong>Total viewed terms:</strong> <span class=\"right\">" + viewed + " <span class=\"small\">/ " + remaining + "</span></span></p>\n                        <p><strong>Total correct tests:</strong> <span class=\"right\">" + correct + "</span></p>\n                        <p><strong>Total incorrect tests:</strong> <span class=\"right\">" + incorrect + "</span></p>\n                        <h3>Completed terms:</h3>\n                        " + learned + "\n                    </div>\n                    ";
       // Add view
       modal.querySelector('.content').innerHTML += view;
     });
@@ -2038,45 +2101,6 @@ var tinyTermsApp = function () {
     }
   };
 
-  // Default list choices
-  tinyTerms$1.listChoices = {
-    "Italian Verbs ITA-ENG": {
-      name: "Italian Verbs ITA-ENG",
-      category: "Language",
-      sheetURL: "https://docs.google.com/spreadsheets/d/1Q1pmDXybg_GDB6bSXknuBET2Nm8L-Roi2Kj01SHm_WI/pubhtml"
-    },
-    "Computer Components": {
-      name: "Computer Components",
-      category: "Technology",
-      sheetURL: "https://docs.google.com/spreadsheets/d/1Ho5Viqg71mIBlbyAIjLIqHEWRr4znDCLZSBtwVTtZk0/edit"
-    },
-    "Periodic Elements": {
-      name: "Periodic Elements",
-      category: "Science",
-      sheetURL: "https://docs.google.com/spreadsheets/d/1sL3kTrZq3Hdb_iBo7hC8x9oGXXownlxmmdmmvALAPlU/edit#gid=0"
-    },
-    "Global Capital Cities": {
-      name: "Global Capital Cities",
-      category: "Culture",
-      sheetURL: "https://docs.google.com/spreadsheets/d/1hU1pJSR2sp4g7C91prXqijBzNVZTJ4Qkip0rY4IuWaQ/pubhtml"
-    },
-    "Top 100 words ITA-ENG": {
-      name: "Top 100 words ITA-ENG",
-      category: "Language",
-      sheetURL: "https://docs.google.com/spreadsheets/d/1gBNQk9jH7X2iRIbcZg3F5kbOTGgl9EvlJ65UkYHV6Mo/pubhtml"
-    },
-    "Italian Anatomy ITA-ENG": {
-      name: "Italian Anatomy ITA-ENG",
-      category: "Language",
-      sheetURL: "https://docs.google.com/spreadsheets/d/1lDCYm0E9y8IBHoS2JrEu6iPe4UJEkfU3dEywURhhqb0/pubhtml"
-    },
-    "Bee Anatomy": {
-      name: "Bee Anatomy",
-      category: "Science",
-      sheetURL: "https://docs.google.com/spreadsheets/d/12-g6CDVGXIPTn5Va7rY6OC22ZS12p6av46p2LMht61I/pubhtml"
-    }
-  };
-
   // Crash protection
   var notLoaded = true;
 
@@ -2091,10 +2115,10 @@ var tinyTermsApp = function () {
       var view = "<header>\n\t\t\t\t\t\t<h2 class=\"\">Uh oh!</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<br>\n\t\t\t\t\t<h3>Sorry something went wrong</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t<button class=\"crash-report\">Report issue</button><button class=\"home-btn\">Close</button>\n\t\t\t\t\t";
 
       // Add view
-      modal.querySelector(".content").innerHTML += view;
+      modal.querySelector(".content").innerHTML = view;
       modal.classList.add('onboard');
 
-      document.querySelector('.errorReport').addEventListener("click", function (e) {
+      document.querySelector('.crash-report').addEventListener("click", function (e) {
         e.preventDefault();
         errorReport();
       });
@@ -2103,18 +2127,14 @@ var tinyTermsApp = function () {
         e.preventDefault();
         showHome();
       });
-
-      document.querySelector(".home-btn").addEventListener("click", function (e) {
-        e.preventDefault();
-        showHome();
-      });
     }
-  }, 10000);
+  }, 20000);
 
   // Initialise modules on load
   ready(function () {
     "use strict";
-    // Error handling for Tabletop
+
+    // Error handling
 
     errorAlert('Sorry there was a problem.', function () {
 
@@ -2124,7 +2144,61 @@ var tinyTermsApp = function () {
       });
       notLoaded = false;
     });
-    getLists();
+
+    localforage.getItem("tinyTerms.lists", function (err, lists) {
+
+      // Check for internet, pull list references if connection
+      if (typeof Connection !== "undefined") {
+        var connection = checkConnection();
+        notLoaded = false;
+
+        if (connection === 'Unknown' || connection === '2G' || connection === 'Cell' || connection === 'None') {
+
+          if (lists === null) {
+            alertMsg("Please connect to the internet to download lists, after they will be available offline.", function () {
+              document.querySelector(".home-btn").addEventListener("click", function (e) {
+                e.preventDefault();
+                showHome();
+              });
+            });
+          } else {
+            tinyTerms$1.listChoices = lists;
+            getLists();
+          }
+        } else {
+          buildLists();
+        }
+      } else {
+        buildLists();
+      }
+    });
+
+    function buildLists() {
+
+      Tabletop.init({
+        key: 'https://docs.google.com/spreadsheets/d/1T8sb0SJRxJQdwgWywAQQnq6rxHt0JRo-81q5Hz_jvXQ/pubhtml',
+        callback: fetchListData,
+        simpleSheet: false
+      });
+
+      function fetchListData(data) {
+        // Reset default
+        tinyTerms$1.listChoices = {};
+
+        for (var i = 0; i < data.Sheet1.elements.length; i++) {
+
+          tinyTerms$1.listChoices[data.Sheet1.elements[i].Name] = {
+            name: data.Sheet1.elements[i].Name,
+            category: data.Sheet1.elements[i].Category,
+            sheetURL: data.Sheet1.elements[i].sheetURL,
+            version: data.Sheet1.elements[i].Version
+          };
+        }
+        localforage.setItem("tinyTerms.lists", tinyTerms$1.listChoices, function () {
+          getLists();
+        });
+      }
+    }
   });
 
   // Pick a list
