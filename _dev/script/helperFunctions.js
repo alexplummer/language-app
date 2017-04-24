@@ -75,14 +75,14 @@ const errorReport = function errorReport() {
 		// Add view
 		modal.querySelector(".content").innerHTML = view;
 		modal.classList.add('onboard');
-		
+
 		document.querySelector('.close-feedback').addEventListener("click", (e) => {
-            e.preventDefault();
-            hideModal(true);
-            tinyTerms.tutComplete = true;
-            localforage.setItem("tinyTerms.tutComplete", tinyTerms.tutComplete);
-            modal.classList.remove('onboard');
-        });
+			e.preventDefault();
+			hideModal(true);
+			tinyTerms.tutComplete = true;
+			localforage.setItem("tinyTerms.tutComplete", tinyTerms.tutComplete);
+			modal.classList.remove('onboard');
+		});
 		return false;
 	}
 }
@@ -147,39 +147,71 @@ const alertMsg = function alertMsg(message, cb) {
 	modal.querySelector(".content").innerHTML = view;
 	modal.classList.add('onboard');
 	document.querySelector(".home-btn").addEventListener("click", (e) => {
-			e.preventDefault();
-			showHome()
-		});
+		e.preventDefault();
+		showHome()
+	});
 	cb();
 	return false;
 }
 
 // Gets data from Google Sheets
 const buildData = function buildData(data) {
-	let columnName = data.Sheet1.columnNames[1];
 
-	tinyTerms[tinyTerms.pickedList].speechLang = columnName;
-	tinyTerms[tinyTerms.pickedList].dictFrom = data.Sheet1.elements[0][columnName];
-	tinyTerms[tinyTerms.pickedList].dictTo = data.Sheet1.elements[1][columnName];
-	tinyTerms[tinyTerms.pickedList].action = data.Sheet1.elements[2][columnName];
-	tinyTerms[tinyTerms.pickedList].terms = tinyTerms[tinyTerms.pickedList].terms || {};
+	if (data === undefined) {
+		let modal = document.querySelector('.m-modal');
+		modal.classList.remove("hidden");
+		document.getElementsByTagName("body")[0].classList.add("modal-active");
 
-	for (let i = 0; i < data.Sheet1.elements.length; i++) {
-		let termContent = data.Sheet1.elements[i].Term;
-		let definitionContent = data.Sheet1.elements[i].Definition;
-		let supportContent = data.Sheet1.elements[i].Support;
+		let view = `<header>
+						<h2 class="">The list didn't load</h2>
+					</header>
+					<p>Please check you have internet connection.</p>
 
-		tinyTerms[tinyTerms.pickedList].terms[termContent] = {};
-		tinyTerms[tinyTerms.pickedList].terms[termContent].term = termContent;
-		tinyTerms[tinyTerms.pickedList].terms[termContent].definition = definitionContent;
-		tinyTerms[tinyTerms.pickedList].terms[termContent].support = supportContent;
+					<button class="home-btn">Close</button>
+					`;
+
+		// Add view
+		modal.querySelector(".content").innerHTML = view;
+		modal.classList.add('onboard');
+		document.querySelector(".home-btn").addEventListener("click", (e) => {
+			e.preventDefault();
+			showHome()
+		});
 	}
-	tinyTerms.postBuildCallback();
+	else {
+		let columnName = data.Sheet1.columnNames[1];
+
+		tinyTerms[tinyTerms.pickedList].speechLang = columnName;
+		tinyTerms[tinyTerms.pickedList].dictFrom = data.Sheet1.elements[0][columnName];
+		tinyTerms[tinyTerms.pickedList].dictTo = data.Sheet1.elements[1][columnName];
+		tinyTerms[tinyTerms.pickedList].action = data.Sheet1.elements[2][columnName];
+		tinyTerms[tinyTerms.pickedList].terms = tinyTerms[tinyTerms.pickedList].terms || {};
+
+		for (let i = 0; i < data.Sheet1.elements.length; i++) {
+			let termContent = data.Sheet1.elements[i].Term;
+			let definitionContent = data.Sheet1.elements[i].Definition;
+			let supportContent = data.Sheet1.elements[i].Support;
+
+			tinyTerms[tinyTerms.pickedList].terms[termContent] = {};
+			tinyTerms[tinyTerms.pickedList].terms[termContent].term = termContent;
+			tinyTerms[tinyTerms.pickedList].terms[termContent].definition = definitionContent;
+			tinyTerms[tinyTerms.pickedList].terms[termContent].support = supportContent;
+		}
+
+		tinyTerms.postBuildCallback();
+	}
 };
 
 // Check for network connection
-const checkConnection = function checkConnection() {
+const checkConnection = function checkConnection(offline, online) {
+	let image = new Image();
 
+	image.src = 'http://www.tiny-terms.com/img/brand/logo_white.svg?d=' + escape(Date());
+	
+	image.onload = ()=>online();
+	image.onerror = ()=>offline();
+
+	/*
 	let networkState = navigator.connection.type;
 	let states = {};
 
@@ -193,6 +225,7 @@ const checkConnection = function checkConnection() {
 	states[Connection.NONE] = 'None';
 
 	return states[networkState];
+	*/
 }
 
 // Count number of lines of text
@@ -297,6 +330,7 @@ function arrayCheck(arr1, arr2) {
 
 // Adds click functionality to selectors
 function clickListener(elements, clickFunction) {
+	
 	for (let i = 0; i < elements.length; i++) {
 		elements[i].addEventListener("click", e => {
 			e.preventDefault();

@@ -2,6 +2,46 @@
 
 export default {
     fonts: {
+        solid: [
+            'icon-puchi-puchi_adapt',
+            'icon-puchi-puchi_affect',
+            'icon-puchi-puchi_alarm',
+            'icon-puchi-puchi_blaze',
+            'icon-puchi-puchi_call',
+            'icon-puchi-puchi_cry',
+            'icon-puchi-puchi_drink',
+            'icon-puchi-puchi_eat',
+            'icon-puchi-puchi_game',
+            'icon-puchi-puchi_judge',
+            'icon-puchi-puchi_like',
+            'icon-puchi-puchi_listen',
+            'icon-puchi-puchi_lock',
+            'icon-puchi-puchi_ring',
+            'icon-puchi-puchi_select',
+            'icon-puchi-puchi_speak',
+            'icon-puchi-puchi_think',
+            'icon-puchi-puchi_treat'
+        ],
+        light: [
+            'icon-feather_add',
+            'icon-feather_analyze',
+            'icon-feather_bloom',
+            'icon-feather_brew',
+            'icon-feather_climb',
+            'icon-feather_copy',
+            'icon-feather_crave',
+            'icon-feather_encourage',
+            'icon-feather_fall',
+            'icon-feather_fly',
+            'icon-feather_glow',
+            'icon-feather_grow',
+            'icon-feather_heat',
+            'icon-feather_laugh',
+            'icon-feather_manufacture',
+            'icon-feather_mine',
+            'icon-feather_plot',
+            'icon-feather_prick'
+        ],
         feather: [
             "icon-lines-and-angles_accommodate",
             "icon-lines-and-angles_adapt",

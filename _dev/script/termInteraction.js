@@ -21,6 +21,13 @@ const revealedBtnHandler = function revealedBtnHandler() {
             return false;
         }
 
+        // Explode!!
+        let explode = revealBtn[i].parentNode.parentNode.querySelector('.explosion');
+        
+        explode.classList.add('explode');
+
+        setTimeout(() => explode.classList.remove('explode'), 1000);
+
         let term = [revealBtn[i].parentNode.parentNode.querySelector('.term-holder').innerHTML];
 
         // Updates the revealed view counter
@@ -33,15 +40,15 @@ const revealedBtnHandler = function revealedBtnHandler() {
         definitionWrapper.classList.remove('hidden');
 
         // Animations
-        definitionWrapper.classList.add('slideInUp','animated');
-        revealBtn[i].parentNode.classList.add('rubberBand','animated');
+        definitionWrapper.classList.add('slideInUp', 'animated');
+        revealBtn[i].parentNode.classList.add('rubberBand', 'animated');
 
         // Set storedData
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms || {};
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term] = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term] || {};
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount || 0;
         tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].viewCount += 1;
-        
+
         // Daily reveal bonus
         let revealGoalCount;
 
@@ -92,9 +99,17 @@ const revealedBtnHandler = function revealedBtnHandler() {
                 modal.querySelector('.content').innerHTML += view;
 
                 // Award bonus points
-                let completeBonus = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length * 10;
-                tinyTerms[tinyTerms.pickedList].storedData.score += completeBonus;
-                setScore();
+                let completeBonus = Object.keys(tinyTerms[tinyTerms.pickedList].terms).length * tinyTerms[tinyTerms.pickedList].ops.points.winBonus;
+
+                // Add to score
+                let score = tinyTerms.score;
+                score += completeBonus;
+                // Update view
+                scoreHolder.innerHTML = score;
+                // Add to stored data
+                tinyTerms.score = score;
+                // Save to storage
+                localforage.setItem('tinyTerms.score', score);   
             }
 
             // Update progress bar
@@ -105,14 +120,22 @@ const revealedBtnHandler = function revealedBtnHandler() {
 
                 // Keep query active 
                 tinyTerms[tinyTerms.pickedList].storedData.queryComplete = false;
-                
+
                 // Create a new query
                 createNewQuery(true);
             }
             // Set only once a day
             tinyTerms[tinyTerms.pickedList].storedData.revealGoal.complete = true;
-            tinyTerms[tinyTerms.pickedList].storedData.score += tinyTerms[tinyTerms.pickedList].ops.points.dailyBonus;
-            setScore();
+            
+            // Add to score
+            let score = tinyTerms.score;
+            score += tinyTerms[tinyTerms.pickedList].ops.points.dailyBonus;
+            // Update view
+            document.querySelector('.score-holder').innerHTML = score;
+            // Add to stored data
+            tinyTerms.score = score;
+            // Save to storage
+            localforage.setItem('tinyTerms.score', score);   
         }
         tinyTerms[tinyTerms.pickedList].storedData.revealGoal[term] = revealGoalCount;
 
@@ -161,7 +184,7 @@ const createRevealTimer = function createRevealTimer(revealBtn) {
 
     function startTimer() {
         let nowTime = new Date().getTime();
-        
+
         // Disable button
         revealBtn.classList.add('disabled');
         revealBtn.setAttribute("disabled", true);
@@ -254,12 +277,12 @@ const textToSpeech = function textToSpeech() {
     clickListener(termHolder, (i) => {
 
         let languages = {
-            'German':'de-DE',
-            'English':'en-GB',
-            'Spanish':'es-ES',
-            'French':'fr-FR',
-            'Italian':'it-IT',
-            'Portuguese':'pt-BR'
+            'German': 'de-DE',
+            'English': 'en-GB',
+            'Spanish': 'es-ES',
+            'French': 'fr-FR',
+            'Italian': 'it-IT',
+            'Portuguese': 'pt-BR'
         }
 
         if (typeof TTS === "undefined") {
@@ -270,18 +293,18 @@ const textToSpeech = function textToSpeech() {
         }
         else {
             TTS
-            .speak({
-                text: termHolder[i].innerHTML,
-                locale: languages[tinyTerms[tinyTerms.pickedList].speechLang],
-                rate: 1
-            }, function () {
-            }, function (reason) {
-                alertMsg(reason);
-            });
+                .speak({
+                    text: termHolder[i].innerHTML,
+                    locale: languages[tinyTerms[tinyTerms.pickedList].speechLang],
+                    rate: 1
+                }, function () {
+                }, function (reason) {
+                    alertMsg(reason);
+                });
         }
     });
     if (tinyTerms[tinyTerms.pickedList].speechLang === "None") {
-        for (let k = 0; k < termHolder.length; k++){
+        for (let k = 0; k < termHolder.length; k++) {
             termHolder[k].classList.add('no-speak');
         }
     }
@@ -311,46 +334,46 @@ const dictionaryLookup = function dictionaryLookup() {
 
         // Make JSONP call to Glosbe API
         let definitionHolder = modal.querySelector('.definitions');
-        let dictionaryLookup = encodeURI('https://glosbe.com/gapi/translate?from='+tinyTerms[tinyTerms.pickedList]
-        .dictFrom+'&dest='+tinyTerms[tinyTerms.pickedList]
-        .dictTo+'&format=json&pretty=true&phrase=' + term.toLowerCase() + '');
+        let dictionaryLookup = encodeURI('https://glosbe.com/gapi/translate?from=' + tinyTerms[tinyTerms.pickedList]
+            .dictFrom + '&dest=' + tinyTerms[tinyTerms.pickedList]
+                .dictTo + '&format=json&pretty=true&phrase=' + term.toLowerCase() + '');
 
         // Make request to Glosbe
         jsonp(dictionaryLookup)
-        .then(function (data) {
-            let dictionaryResponses = "";
+            .then(function (data) {
+                let dictionaryResponses = "";
 
-            try {
-                // Search through data for "meanings"
-                findProp(data, "text");
+                try {
+                    // Search through data for "meanings"
+                    findProp(data, "text");
 
-                function findProp(obj, key, out) {
-                    let i;
-                    let proto = Object.prototype;
-                    let ts = proto.toString;
-                    let hasOwn = proto.hasOwnProperty.bind(obj);
+                    function findProp(obj, key, out) {
+                        let i;
+                        let proto = Object.prototype;
+                        let ts = proto.toString;
+                        let hasOwn = proto.hasOwnProperty.bind(obj);
 
-                    for (i in obj) {
-                        if (hasOwn(i)) {
-                            if (i === key) {
-                                dictionaryResponses += '<li>' + obj[i] + '</li>';
-                            } else if ('[object Array]' === ts.call(obj[i]) || '[object Object]' === ts.call(obj[i])) {
-                                findProp(obj[i], key, out);
+                        for (i in obj) {
+                            if (hasOwn(i)) {
+                                if (i === key) {
+                                    dictionaryResponses += '<li>' + obj[i] + '</li>';
+                                } else if ('[object Array]' === ts.call(obj[i]) || '[object Object]' === ts.call(obj[i])) {
+                                    findProp(obj[i], key, out);
+                                }
                             }
                         }
+                        return out;
                     }
-                    return out;
+                    if (data.tuc === undefined || data.tuc.length === 0) {
+                        dictionaryResponses = "(Sorry, no dictionary results found)"
+                    }
+                    // Add to DOM
+                    definitionHolder.innerHTML = dictionaryResponses;
                 }
-                if (data.tuc === undefined || data.tuc.length === 0) {
-                    dictionaryResponses = "(Sorry, no dictionary results found)"
+                catch (err) {
+                    console.log(err);
                 }
-                // Add to DOM
-                definitionHolder.innerHTML = dictionaryResponses;
-            }
-            catch (err) {
-                console.log(err);
-            }
-        });
+            });
     });
 }
 
@@ -389,9 +412,37 @@ const addColour = function addColour() {
                         <li><a href="#" data-colour="#212121"></a></li>
                         <li><a href="#" class="no-colour" data-colour="#fff"></a></li>
                     </ul>`;
+        
+        let neonColours = `
+                           <li><a href="#" data-colour="#FF0099"></a></li>
+                           <li><a href="#" data-colour="#83F52C"></a></li>
+                           <li><a href="#" data-colour="#FD1C03"></a></li>
+                           <li><a href="#" data-colour="#00FFFF"></a></li>
+                           <li><a href="#" data-colour="#9D00FF"></a></li>
+                           <li><a href="#" data-colour="#E6FB04"></a></li>
+                            `;
+        
+        let metalColours = `
+                           <li><a href="#" data-colour="#CC9900"></a></li>
+                           <li><a href="#" data-colour="#C0C0C0"></a></li>
+                           <li><a href="#" data-colour="#CD7f32"></a></li>
+                            `;
 
         // Add view
         modal.querySelector('.content').innerHTML += view;
+
+        // Unlocks
+        if (tinyTerms.globalUnlocks !== undefined) {
+            
+            // Neon colours
+            if (tinyTerms.globalUnlocks.coloursNeon.active === 'unlocked') {
+                modal.querySelector('.colour-wrap').innerHTML += neonColours;
+            }
+            // Metal colours
+            if (tinyTerms.globalUnlocks.coloursMetal.active === 'unlocked') {
+                modal.querySelector('.colour-wrap').innerHTML += metalColours;
+            }
+        }
 
         let coloursHolder = modal.querySelector('.colour-wrap');
         // Add colour vars
@@ -422,7 +473,7 @@ const addColour = function addColour() {
             // Hide modal
             hideModal(true);
         });
-        document.querySelector('.no-colour').addEventListener('click',(e)=> {
+        document.querySelector('.no-colour').addEventListener('click', (e) => {
             termWrapper.querySelector('.term-holder').style.color = "#3F4747";
             // Set storage
             delete tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].colour;
@@ -437,20 +488,70 @@ const pickSymbol = function pickSymbol() {
     let symbolBtn = document.querySelectorAll('.symbol');
     let symbolHTML = "<tr>";
     let symbols = appData.fonts;
+
+    // Solid symbols
+    if (tinyTerms.globalUnlocks.symbolsSolid.active === 'unlocked') {
+
+        symbolHTML += '<table>';
+        let k = 0;
+
+        for (let i = 0; i < appData.fonts.solid.length; i++) {
+
+            if (k % 5 === 0 && k != 0) {
+                symbolHTML += '</tr><tr>';
+            }
+            symbolHTML += '<td><p class=' + appData.fonts.solid[i] + '></p></td>';
+            k++;
+
+            if (i === (appData.fonts.solid.length - 1)) {
+                symbolHTML += "</tr>"
+            }
+        }
+        symbolHTML += '</table>';
+    }
+
+    // Feather symbols
+    if (tinyTerms.globalUnlocks.symbolsFeather.active === 'unlocked') {
+
+        symbolHTML += '<table>';
+        let k = 0;
+
+        for (let i = 0; i < appData.fonts.light.length; i++) {
+
+            if (k % 5 === 0 && k != 0) {
+                symbolHTML += '</tr><tr>';
+            }
+            symbolHTML += '<td><p class=' + appData.fonts.light[i] + '></p></td>';
+            k++;
+
+            if (i === (appData.fonts.light.length - 1)) {
+                symbolHTML += "</tr>"
+            }
+        }
+
+        symbolHTML += '</table>';
+    }
+
+    symbolHTML += '<table>';
     let k = 0;
 
+    // Default symbols
     for (let i = 0; i < appData.fonts.feather.length; i++) {
+
+        
 
         if (k % 5 === 0 && k != 0) {
             symbolHTML += '</tr><tr>';
         }
-        symbolHTML += '<td><p class='+appData.fonts.feather[i]+'></p></td>';
+        symbolHTML += '<td><p class=' + appData.fonts.feather[i] + '></p></td>';
         k++;
 
         if (i === (appData.fonts.feather.length - 1)) {
             symbolHTML += "</tr>"
         }
     }
+
+    symbolHTML += '</table>';
 
     /* OLD UNICODE SYMOBLS
     let symbolRanges = [[0x2600,0x26FF]]; //,[0x1200, 0x135A],[0xA000, 0xA48C]
@@ -486,8 +587,8 @@ const pickSymbol = function pickSymbol() {
                     </header>
                     <p>Click below to add a glyph for <br>"<span class="symbol-term">${term}</span>":</p>
                     <div class="symbol-wrap">
-                        <a href="#" class="symbol-clear icon-right-open">Reset</a>
-                        <table>${symbolHTML}</table>
+                        <a href="#" class="symbol-clear icon-right-open">Clear selected symbol</a>
+                        ${symbolHTML}
                     </div>`;
 
         // Add view
@@ -502,21 +603,28 @@ const pickSymbol = function pickSymbol() {
         let termWrapper = document.querySelector('.' + termEncode + '');
         let pickedSymbol = "";
 
-        modal.getElementsByTagName('table')[0].addEventListener('click', function(e) {
-            e = e || window.event;
-            let target = e.target || e.srcElement;
-            pickedSymbol = target.getAttribute("class");   
-            // Add symbol to object
-            termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
-            termWrapper.querySelector('.symbol-holder').classList.add(pickedSymbol);
-            // Set storage
-            tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].symbol = pickedSymbol;
-            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
-            // Hide modal
-            hideModal(true);
-        }, false);
+        for (let i = 0; i < modal.getElementsByTagName('table').length; i++) {
+            symbolClickListener(modal.getElementsByTagName('table')[i]);
+        }
+        
+        function symbolClickListener(eachTable) {
 
-        document.querySelector('.symbol-clear').addEventListener('click',(e)=>{
+            eachTable.addEventListener('click', function (e) {
+                e = e || window.event;
+                let target = e.target || e.srcElement;
+                pickedSymbol = target.getAttribute("class");
+                // Add symbol to object
+                termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
+                termWrapper.querySelector('.symbol-holder').classList.add(pickedSymbol);
+                // Set storage
+                tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].symbol = pickedSymbol;
+                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+                // Hide modal
+                hideModal(true);
+            }, false);
+        }
+        
+        document.querySelector('.symbol-clear').addEventListener('click', (e) => {
             // Set storage
             termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');
             delete tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].symbol;

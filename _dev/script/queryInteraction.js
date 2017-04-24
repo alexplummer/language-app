@@ -145,17 +145,20 @@ const createNewQuery = function createNewQuery(bonus) {
             }
             
             // Add to score
-            let score = parseInt(scoreHolder.innerHTML);
+            let score = tinyTerms.score;
             score += tinyTerms[tinyTerms.pickedList].ops.points.correct;
             // Update view
             scoreHolder.innerHTML = score;
             // Add to stored data
-            tinyTerms[tinyTerms.pickedList].storedData.score = score;
-            tinyTerms[tinyTerms.pickedList].storedData.correctTerms[randomTerm] = definition;
-            tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;
-            delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
-            // Save to storage
-            localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+            tinyTerms.score = score;
+             // Save to storage
+            localforage.setItem('tinyTerms.score', score, () => {
+                tinyTerms[tinyTerms.pickedList].storedData.correctTerms[randomTerm] = definition;
+                tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;
+                delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
+                // Save to storage
+                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+            });    
         }
         // If definition is wrong
         function loseCase() {

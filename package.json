@@ -81,5 +81,8 @@
   "bugs": {
     "url": "https://github.com/alexplummer/framework/issues"
   },
-  "homepage": "https://github.com/alexplummer/framework#readme"
+  "homepage": "https://github.com/alexplummer/framework#readme",
+  "dependencies": {
+    "gulp-phonegap-build": "^0.1.5"
+  }
 }

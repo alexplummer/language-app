@@ -33,13 +33,26 @@ body {
     box-shadow: 0 0 30px 0 rgba(0,0,0,0.8);
 
     .home & {
-        box-shadow: 0 0 30px 0 rgba(0,0,0,0.4);
-    }
 
+        &:before {
+            box-shadow: 0 0 30px 0 rgba(0,0,0,0.4);
+        }
+    }
+    .stars & {
+
+        &:before {
+            background: url(../img/stars-bg.jpg);
+        }
+    }
+    .letters & {
+
+        &:before {
+            background: url(../img/type-bg.jpg);
+            opacity: 0.2;
+        }
+    }
     &:before {
         content: "";
-        //background: url(../img/type-bg.jpg);
-        opacity: 0.1;
         background-size: cover;
         position: absolute;
         height: 100%;

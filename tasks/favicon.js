@@ -36,7 +36,7 @@ var FAVICON_DATA_FILE = './lib/faviconData.json';
 gulp.task('generate-favicon', done => {
 
 	plugins.realFavicon.generateFavicon({
-		masterPicture: paths.dev+'/img/brand/logo-mark.png',
+		masterPicture: paths.dev+'/img/brand/icon.png',
 		dest: paths.dev+'/img/brand/favicons',
 		iconsPath: 'img/brand/favicons',
 		design: {

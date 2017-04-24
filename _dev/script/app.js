@@ -24,11 +24,13 @@ let ops = {
 	wordAccuracy: 0.7,
 	addDay: false,
 	debug: true,
+	godMode: false,
 	loadDelay: 2500,
 	points: {
 		correct: 50,
 		dailyBonus: 10,
-		hearts: 3
+		hearts: 3,
+		winBonus: 10
 	}
 };
 
@@ -85,30 +87,24 @@ ready(function () {
 	localforage.getItem("tinyTerms.lists", function (err, lists) {
 
 		// Check for internet, pull list references if connection
-		if (typeof Connection !== "undefined") {
-			let connection = checkConnection();
-			notLoaded = false;
+		checkConnection(noConnection, isConnection);
 
-			if (connection === 'Unknown' || connection === '2G' || connection === 'Cell' || connection === 'None') {
-				
-				if (lists === null) {
-					alertMsg("Please connect to the internet to download lists, after they will be available offline.", () => {
-						document.querySelector(".home-btn").addEventListener("click", (e) => {
-							e.preventDefault();
-							showHome();
-						});
+		function noConnection() {
+			if (lists === null) {
+				alertMsg("Please connect to the internet to download lists, after they will be available offline.", () => {
+					document.querySelector(".home-btn").addEventListener("click", (e) => {
+						e.preventDefault();
+						showHome();
 					});
-				}
-				else {
-					tinyTerms.listChoices = lists;
-					getLists();
-				}
+				});
 			}
 			else {
-				buildLists();
+				tinyTerms.listChoices = lists;
+				getLists();
 			}
 		}
-		else {
+
+		function isConnection() {
 			buildLists();
 		}
 	});
@@ -164,48 +160,116 @@ function getLists(skipDefaultCheck) {
 	function checkDefault() {
 		// Check for existing data of newly picked list
 		localforage.getItem("tinyTerms" + tinyTermsDefault, function (err, value) {
+
 			if (value !== null) {
 				tinyTerms.pickedList = tinyTermsDefault;
 				normalLoad(tinyTerms.pickedList);
 			}
 			else {
-				if (typeof Connection !== "undefined") {
-					let connection = checkConnection();
-					notLoaded = false;
+				checkConnection(noConnection, isConnection);
+				notLoaded = false;
 
-					if (connection === 'Unknown' || connection === '2G' || connection === 'Cell' || connection === 'None') {
-
-						alertMsg("Please connect to the internet to download list, after it will be available offline.", () => {
-							document.querySelector(".home-btn").addEventListener("click", (e) => {
-								e.preventDefault();
-								showHome()
-							});
+				function noConnection() {
+					alertMsg("Please connect to the internet to download list, after it will be available offline.", () => {
+						document.querySelector(".home-btn").addEventListener("click", (e) => {
+							e.preventDefault();
+							showHome()
 						});
-					}
-					else {
-						firstLoad();
-					}
+					});
 				}
-				else {
+
+				function isConnection() {
 					firstLoad();
 				}
 			}
 		});
 	}
-
+	
 	function normalLoad(defaultlist) {
 		tinyTerms.storedName = "tinyTerms" + defaultlist;
 
 		localforage.getItem("tinyTerms" + defaultlist, function (err, value) {
+			
 			// Set session storage to stored
 			tinyTerms[tinyTerms.pickedList] = value;
 
 			// Update stored ops
-			tinyTerms[tinyTerms.pickedList].ops = ops;
-			initialise();
+			tinyTerms[tinyTerms.pickedList].ops = ops; 
+
+			localforage.getItem("tinyTerms.globalUnlocks", function (err, globalUnlocks) {
+			
+				// Set global unlocks ops attributes
+				if (globalUnlocks !== null) {
+					tinyTerms.globalUnlocks =  globalUnlocks;
+
+					// Ten terms
+					if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
+						tinyTerms[tinyTerms.pickedList].ops.displayedTerms = 10;
+					}
+				}
+				
+				// Set list unlocks ops attributes
+				if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks !== undefined) {
+
+					// Half timer
+					if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.timerHalf.active === 'unlocked') {
+						tinyTerms[tinyTerms.pickedList].ops.counterMins = 30;
+					}
+				}
+				
+				setUnlocks(initialise);
+			});
 		});
 	}
 }
+
+// Set unlocks
+const setUnlocks = function setUnlocks(callback) {
+
+	// Matches with array of menu items in menuInteraction.js
+	let listUnlocks = {
+		termsRefresh: { points: 250, active: 'locked' },
+		timerHalf: { points: 300, active: 'locked' },
+	}
+	let globalUnlocks = {
+		terms10: { points: 0, active: 'locked' },
+		coloursNeon: { points: 500, active: 'locked' },
+		symbolsSolid: { points: 1000, active: 'locked' },
+		bgStars: { points: 3000, active: 'locked' },
+		symbolsFeather: { points: 5000, active: 'locked' },
+		bgLetters: { points: 10000, active: 'locked' },
+		coloursMetal: { points: 50000, active: 'locked' },
+	}
+
+	localforage.getItem("tinyTerms.globalUnlocks", function (err, storedGlobalUnlocks) {
+
+		// Set default list unlocks
+        tinyTerms[tinyTerms.pickedList].storedData.listUnlocks = tinyTerms[tinyTerms.pickedList].storedData.listUnlocks || listUnlocks;
+		
+		// Set default global unlocks
+        tinyTerms.globalUnlocks = storedGlobalUnlocks || globalUnlocks;
+		
+		// Ten terms
+		if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
+			tinyTerms[tinyTerms.pickedList].ops.displayedTerms = 10;
+		}
+		
+		// Reset terms refresh 
+		tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.termsRefresh.active = 'locked';
+
+		// Set list unlocks ops attributes
+		if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks !== undefined) {
+
+			// Half timer
+			if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.timerHalf.active === 'unlocked') {
+				tinyTerms[tinyTerms.pickedList].ops.counterMins = 30;
+			}
+		}
+		
+		callback();
+	});
+}
+
 
 // Sets up new list, gets data
 const firstLoad = function firstLoad() {
@@ -267,7 +331,7 @@ const fetchData = function fetchData(sheetURL, postBuildCallback) {
 	});
 };
 
-// Runs if first time app has run
+// Runs if first time list has run
 const firstTime = function firstTime() {
 
 	if (tinyTerms[tinyTerms.pickedList].ops.debug !== true) {
@@ -275,12 +339,7 @@ const firstTime = function firstTime() {
 	}
 
 	// Create terms
-	appBuildHandler();
-
-	// Show intro onboarding
-	if (tinyTerms.tutComplete === null) {
-		onboardShow();
-	}
+	setUnlocks(appBuildHandler);
 
 	// Then set first time to false
 	tinyTerms[tinyTerms.pickedList].storedData.firstTime = false;
@@ -291,7 +350,7 @@ const firstTime = function firstTime() {
 
 // Initialises data and app
 const initialise = function initialise() {
-
+	
 	// Check if a new day
 	checkSameDay();
 
@@ -301,6 +360,7 @@ const initialise = function initialise() {
 
 // Calls functions to handle app creation and running
 const appBuildHandler = function appBuildHandler() {
+
 	// Get initial terms
 	let pickedTerms;
 
@@ -324,6 +384,11 @@ const appBuildHandler = function appBuildHandler() {
 		delete tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns;
 		delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
 		delete tinyTerms[tinyTerms.pickedList].storedData.dailyReminder;
+		
+		// Reset store unlocks
+		if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks !== undefined) {
+			tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.timerHalf.active = 'locked';
+		}
 
 		// Reset daily reveal bonus
 		tinyTerms[tinyTerms.pickedList].storedData.revealGoal = tinyTerms[tinyTerms.pickedList].storedData.revealGoal || {};
@@ -378,17 +443,15 @@ const appBuildHandler = function appBuildHandler() {
 	setTimeout(
 		() => {
 			document.getElementsByTagName("body")[0].classList.remove("loading");
-			document
-				.querySelector(".m-query")
-				.classList.add("animated", "slideInDown");
+			document.querySelector(".m-query").classList.add("animated", "slideInDown");
+
+			// Show onboard if incomplete
+			if (tinyTerms.tutComplete === false) {
+				onboardShow();
+			}
 		},
 		tinyTerms[tinyTerms.pickedList].ops.loadDelay
 	);
-
-	// Show onboard if incomplete
-	if (tinyTerms.tutComplete === false) {
-		onboardShow();
-	}
 
 	// Debug code
 	if (tinyTerms[tinyTerms.pickedList].ops.debug === true) {

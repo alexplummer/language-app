@@ -34,14 +34,33 @@ const viewCreate = function viewCreate(termsToCreate) {
             viewsCount = (tinyTerms[tinyTerms.pickedList].storedData.revealGoal[termValue]) || 0;
         }
 
+        // Star background
+        if (tinyTerms.globalUnlocks.bgStars.active === 'unlocked') {
+            document.querySelector('body').classList.add('stars');
+        }
+
+        // Star background
+        if (tinyTerms.globalUnlocks.bgLetters.active === 'unlocked') {
+            document.querySelector('body').classList.add('letters');
+        }
+
         document.querySelector('h1').innerHTML = tinyTerms.pickedList;
         document.querySelector('.list-action').innerHTML = tinyTerms[tinyTerms.pickedList].action + '<span class="query-holder">'+tinyTerms[tinyTerms.pickedList].storedData.dailyQuery+'</span>';
+
+        let particles = "";
+
+        for (let j = 0; j < 50; j++) {
+            particles += '<div class="particle">&#9733;</div>';
+        }
 
         // Create terms HTML
         let newHolder =
             `<div class="m-term-wrapper ${termEncode}">
                 <p class="term-holder">${termValue}</p>
                 <div class="theme-holder"><p class="symbol-holder"></p></div>
+                <div class="explosion">
+                    ${particles}
+                </div>
                 <div class="right">
                     <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${tinyTerms[tinyTerms.pickedList].ops.revealGoalTarget}</p>
                     <button class="reveal">Reveal</button>
@@ -143,17 +162,25 @@ const addHearts = function addHearts() {
 // Sets the score
 const setScore = function setScore() {
 
-    let scoreHolder = document.querySelector('.score-holder');
+    // Add to storage
+    localforage.getItem('tinyTerms.score', (err, savedScore) => {
 
-    // Set score if it doesn't exist
-    if (tinyTerms[tinyTerms.pickedList].storedData.score === undefined) {
-        tinyTerms[tinyTerms.pickedList].storedData.score = 0;
-    }
+        // Set score if it doesn't exist
+        if (savedScore === null) {
+            tinyTerms.score = 0;
 
-    let score = tinyTerms[tinyTerms.pickedList].storedData.score;
+            // Add to storage
+            localforage.setItem('tinyTerms.score', score);
+        }
+        else {
+            tinyTerms.score = savedScore;
+        }
 
-    // Add to view
-    scoreHolder.innerHTML = score;
+        let score = tinyTerms.score;
+
+        // Add to view
+        document.querySelector('.score-holder').innerHTML = score;
+    });
 }
 
 // Add progress bar

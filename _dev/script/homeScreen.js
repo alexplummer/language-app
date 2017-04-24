@@ -216,7 +216,7 @@ const showHome = function showHome() {
 	// Upload list button
 	document.querySelector('.upload-info').addEventListener('click', (e) => {
 		e.preventDefault();
-
+		
 		let modal = document.querySelector('.m-modal');
 
 		// Bring up modal
@@ -226,41 +226,83 @@ const showHome = function showHome() {
 			e.preventDefault();
 			hideModal(true);
 		});
+		
+		let unlockedView = `<header>
+								<h2 class="">Upload a list</h2>
+							</header>
+							<p>Create your very own list of Tiny Terms! For more info please visit:</p>
+							<a target="_blank" href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>
+							
+							<div class="list-uploader">
+								<label>List Name (max 25 characters)</label>
+								<input class="upload-name" type="text" placeholder="Enter list name">
+								<label>List URL</label>
+								<input class="upload-sheet" type="text" placeholder="Paste list URL">
+								<button class="upload-list">Upload</button>
+							</div>`;
+		
+		let lockedView = `<header>
+                        	<h2 class="">Upload a list</h2>
+						</header>
+						<p>Create your very own list of Tiny Terms! For more info please visit:</p>
+						<a target="_blank" href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>
+						
+						<div class="list-uploader">
+							<p>Unlock this feature for just 59p</p>
+							<button class="unlock-uploadlist">Unlock</button>
+						</div>`;
+		
+		let webView = `<header>
+                        	<h2 class="">Upload a list</h2>
+						</header>
+						<p>Create your very own list of Tiny Terms! For more info please visit:</p>
+						<a target="_blank" href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>
+						
+						<div class="list-uploader">
+							<p>This feature is only available in the App version.</p>
+						</div>`;
 
-		let view = `<header>
-                        <h2 class="">Upload a list</h2>
-                    </header>
-                    <p>Create your very own list of Tiny Terms! For more info please visit:</p>
-                    <a target="_blank" href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>
-                    
-                    <div class="list-uploader">
-                        <label>List Name (max 25 characters)</label>
-                        <input class="upload-name" type="text" placeholder="Enter list name">
-                        <label>List URL</label>
-                        <input class="upload-sheet" type="text" placeholder="Paste list URL">
-                        <button class="upload-list">Upload</button>
-                    </div>`;
+		if (typeof store !== 'undefined') {
 
-		// Add view
-		modal.querySelector('.content').innerHTML += view;
-
-		window.addEventListener("keypress", function (e) {
-			let inputName = document.querySelector('.upload-name').value;
-			let inputSheet = document.querySelector('.upload-sheet').value;
-
-			if (e.keyCode === 13) {
-				uploadList(inputName, inputSheet);
+			let product = store.get("full version");
+			
+			if (product.owned) {
+				modal.querySelector('.content').innerHTML += unlockedView;
+				unlockedListeners();
 			}
-		});
+			else {
+				modal.querySelector('.content').innerHTML += lockedView;
 
-		document.querySelector('.upload-list').addEventListener('click', (e) => {
-			e.preventDefault();
-			let inputName = document.querySelector('.upload-name').value;
-			let inputSheet = document.querySelector('.upload-sheet').value;
+				document.querySelector('.unlock-uploadlist').addEventListener('click', (e) => {
+					e.preventDefault();
+					store.order('custom list');
+				});
+			}
+		}
+		else {
+			modal.querySelector('.content').innerHTML += webView;
+		}
 
-			uploadList(inputName, inputSheet);
-		});
+		function unlockedListeners() {
+			window.addEventListener("keypress", function (e) {
+				let inputName = document.querySelector('.upload-name').value;
+				let inputSheet = document.querySelector('.upload-sheet').value;
+
+				if (e.keyCode === 13) {
+					uploadList(inputName, inputSheet);
+				}
+			});
+
+			document.querySelector('.upload-list').addEventListener('click', (e) => {
+				e.preventDefault();
+				let inputName = document.querySelector('.upload-name').value;
+				let inputSheet = document.querySelector('.upload-sheet').value;
+
+				uploadList(inputName, inputSheet);
+			});
+		}	
 	});
+
 	function uploadList(inputName, inputSheet) {
 		inputName = inputName.substring(0, 25);
 

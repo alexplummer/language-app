@@ -185,8 +185,7 @@
             display: block;
         }
         &.scroll {
-            height: 150px;
-            max-height: 150px;
+            height: 24vh;
             overflow-y: scroll;
 
             a {
@@ -292,7 +291,7 @@
             font-family: fontello;
         }
     }
-    .delete-cancel, .delete-confirm {
+    button {
         background: $clr-tertiary;
         margin-right: $size-m;
         margin-top: $size-m;
@@ -300,5 +299,76 @@
     }
     .delete-confirm {
         background: darken($clr-tertiary, 10%);
+    }
+    .store-on, .store-off {
+        width: auto;
+        font-size: $font-xs;
+        padding: $size-xs $size-s;
+        margin: 0;
+        margin-right: $size-xs;
+    }
+    .submit {
+        margin: 0;
+    }
+}
+.store {
+     
+    input[type="text"] {
+        width: 45%;
+    }
+    a {
+        @extend .icon;
+
+        strong {
+            color: $clr-tertiary;
+        }
+        &:before {
+            background: $clr-tertiary;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: $size-xs;
+        }
+        &.points-10-terms:before {
+            font-family: $font-body;
+            content: "10";
+            font-weight: bold;
+        }
+        &.points-refresh-terms {
+            @extend .icon-cw;
+        }
+        &.points-half-timer {
+            @extend .icon-hourglass-2;
+        }
+        &.points-neon-colours:before {
+            content: "";
+            background: linear-gradient(to bottom, rgba(0,255,51,1) 0%,rgba(0,255,51,1) 25%,rgba(255,51,0,1) 25%,rgba(255,51,0,1) 50%,rgba(255,255,51,1) 50%,rgba(255,255,51,1) 75%,rgba(50,214,255,1) 75%);
+        }
+        &.points-solid-symbols {
+            @extend .icon-sharp-2-corners_like;
+        }
+        &.points-star-bg:before {
+            content: "";
+            background: url(../img/stars-bg-icon.jpg);
+            background-size: 50px 50px;
+        }
+        &.points-feather-symbols {
+            @extend .icon-feather-2_fly;
+        }
+        &.points-letters-bg:before {
+            content: "";
+            background: url(../img/type-bg-icon.jpg);
+            background-size: 50px 50px;
+        }
+        &.points-metal-colours:before {
+            content: "";
+            background: url(../img/gold-bg-icon.jpg);
+        }  
     }
 }

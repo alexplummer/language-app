@@ -16,8 +16,11 @@
 .icon-2-lines-and-angles_explore:before { content: '\e80e'; } /* '' */
 .icon-2-lines-and-angles_collect:before { content: '\e80f'; } /* '' */
 .icon-2-lines-and-angles_copy:before { content: '\e810'; } /* '' */
+.icon-sharp-2-corners_like:before { content: '\e811'; } /* '' */
+.icon-feather-2_fly:before { content: '\e812'; } /* '' */
 .icon-garden:before { content: '\e81a'; } /* '' */
 .icon-down-open:before { content: '\f004'; } /* '' */
 .icon-right-open:before { content: '\f006'; } /* '' */
 .icon-graduation-cap:before { content: '\f19d'; } /* '' */
 .icon-child:before { content: '\f1ae'; } /* '' */
+.icon-hourglass-2:before { content: '\f252'; } /* '' */

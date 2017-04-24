@@ -102,6 +102,9 @@ gulp.task('clean:jsreports', cb => {
 gulp.task('clean:cssreports', cb => {
 	plugins.rimraf( './reports/css/*', cb);
 });
+gulp.task('clean:phonegap', cb => {
+	plugins.rimraf( './_phonegap/www/*', cb);
+});
 
 
 // Create folders
@@ -313,6 +316,21 @@ gulp.task('copy:prod', () => {
 	.pipe(plugins.copy(paths.prod,{prefix:1}));
 	// Return streams
 	return plugins.mergeStream(html, css, map, js, php, humans, fonts);
+});
+// Copy Phonegap
+gulp.task('copy:phonegap', () => {
+	var img =  gulp.src(paths.prod+'/img/**/*')
+	.pipe(plugins.copy('./_phonegap/www',{prefix:1}));
+	var css =  gulp.src(paths.prod+'/style/**/*')
+	.pipe(plugins.copy('./_phonegap/www',{prefix:1}));
+	var font =  gulp.src(paths.prod+'/font/**/*')
+	.pipe(plugins.copy('./_phonegap/www',{prefix:1}));
+	var js =  gulp.src(paths.prod+'/script/**/*')
+	.pipe(plugins.copy('./_phonegap/www',{prefix:1}));
+	var pgindex =  gulp.src('./_phonegap/index/**/*')
+	.pipe(plugins.copy('./_phonegap/www',{prefix:2}));
+	// Return streams
+	return plugins.mergeStream(img, css, font, js, pgindex);
 });
 
 
@@ -609,6 +627,28 @@ gulp.task('couchExcludes', () => {
 });
 
 
+// Phonegap build
+// ============
+// Builds and deploys to Phonegap
+
+gulp.task('phonegap-build', function () {
+    gulp.src('./_phonegap/www/**/*', {dot: true})
+        .pipe(plugins.phonegapBuild({
+          "appId": "2547498",
+          "user": {
+            "email": "tallnhairychild@hotmail.com",
+            "password": "Azsxd1986*"
+          },
+		  keys: {
+			android: { "key_pw": "Kmjnh1986*", "keystore_pw": "Kmjnh1986*" }
+			},
+		download: {
+			android: './_phonegap/android.apk'
+		}
+        }));
+});
+
+
 // Watch
 // ============
 // Perfom tasks based on file changes
@@ -740,4 +780,10 @@ gulp.task('couch', gulpsync.sync([
 	'phpext',
 	'couchIncludes',
 	'couchExcludes'
+]));
+gulp.task('phonegap', gulpsync.sync([
+	'prod',
+	'clean:phonegap',
+	'copy:phonegap',
+	'phonegap-build'
 ]));

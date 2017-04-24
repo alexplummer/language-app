@@ -1,7 +1,8 @@
 
 // Imports
-import { cl, clv, errorReport } from 'helperFunctions';
+import { cl, clv, errorReport, clickListener } from 'helperFunctions';
 import tinyTerms from 'app';
+import { getListOfTerms } from "termCreation";
 import { showHome } from "homeScreen";
 import { onboardShow } from "introInstructions";
 import { hideModal } from 'termInteraction';
@@ -18,7 +19,11 @@ const navMenu = function navMenu() {
     function showNav() {
         document.getElementsByTagName('h1')[0].addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelector('.m-nav').classList.remove('hidden');
+            document.querySelector('.m-nav').classList.remove('hidden', 'slideOutLeft');
+            document.querySelector('.m-nav').classList.add('animated', 'slideInLeft');
+
+            document.querySelector('.nav-bg').classList.add('animated', 'fadeIn');
+            document.querySelector('.nav-bg').classList.remove('fadeOut');
             document.getElementsByTagName('body')[0].classList.add('nav-on');
 
             setTimeout(() => { hideNav() }, 100);
@@ -28,8 +33,12 @@ const navMenu = function navMenu() {
     function hideNav() {
         document.querySelector('.nav-bg').addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelector('.m-nav').classList.add('hidden');
+            document.querySelector('.m-nav').classList.remove('slideInLeft');
+            document.querySelector('.m-nav').classList.add('slideOutLeft');
             document.getElementsByTagName('body')[0].classList.remove('nav-on');
+
+            document.querySelector('.nav-bg').classList.add('fadeOut');
+            document.querySelector('.nav-bg').classList.remove('fadeIn');
 
             setTimeout(() => { showNav() }, 100);
         });
@@ -37,8 +46,12 @@ const navMenu = function navMenu() {
 
     document.querySelector('.nav-close').addEventListener('click', (e) => {
         e.preventDefault();
-        document.querySelector('.m-nav').classList.add('hidden');
+        document.querySelector('.m-nav').classList.remove('slideInLeft');
+        document.querySelector('.m-nav').classList.add('slideOutLeft');
         document.getElementsByTagName('body')[0].classList.remove('nav-on');
+
+        document.querySelector('.nav-bg').classList.add('fadeOut');
+        document.querySelector('.nav-bg').classList.remove('fadeIn');
 
         setTimeout(() => { showNav() }, 100);
     });
@@ -71,7 +84,7 @@ const navMenu = function navMenu() {
         while (i < navItems.length);
 
         document.querySelector('.view-all').addEventListener('click', (e) => {
-            e.preventDefault();    
+            e.preventDefault();
             document.querySelector('.m-nav').classList.add('hidden');
             document.getElementsByTagName('body')[0].classList.remove('nav-on');
             document.getElementsByTagName("body")[0].classList.add("loading");
@@ -95,17 +108,232 @@ const footerMenu = function footerMenu() {
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let view = `<header>
-                        <h2 class="icon-gift">Store</h2>
+                        <h2 class="icon-gift">Store (coming soon)</h2>
                     </header>
-                    <div class="options">
-                        <p>Unlocks: (coming soon)</p>
-                        <a href="#" class="icon-right-open points-neon-colours">1000: Unlock neon colours</a>
-                        <a href="#" class="icon-right-open points-life-glyphs">5000: Unlock solid symbols</a>
-                        <a href="#" class="icon-right-open points-metal-colours">10000: Unlock metal colours</a>
+                    <div class="options store">
+                        <p>Paid unlocks:</p>
+                        <a href="#" class="points-10-terms"><strong>59p</strong> - Get 10 terms a day</a>
+                        <p>Points rewards - this list:</p>
+                        <a href="#" class="points-refresh-terms"><strong>250</strong> - Refresh terms</a>
+                        <a href="#" class="points-half-timer"><strong>300</strong> - Activate half timer (lasts 1 day)</a>
+                        <p>Points rewards - all lists:</p>
+                        <a href="#" class="points-neon-colours"><strong>500</strong> - Unlock neon colours</a>
+                        <a href="#" class="points-solid-symbols"><strong>1000</strong> - Unlock solid symbols</a>
+                        <a href="#" class="points-star-bg"><strong>3000</strong> - Unlock star background</a>
+                        <a href="#" class="points-feather-symbols"><strong>5000</strong> - Unlock feather symbols</a>
+                        <a href="#" class="points-letters-bg"><strong>10,000</strong> - Unlock letters background</a>
+                        <a href="#" class="points-metal-colours"><strong>50,000</strong> - Unlock metal colours</a>
+                        <p>Apply code:</p>
+                        <input class="" type="text" placeholder="Add code here">
+                        <button class="submit">Submit</button>
                     </div>
                     `;
         // Add view
         modal.querySelector('.content').innerHTML += view;
+
+        // Values must match list unlocks object order in app.js
+        let listItems = [
+            '.points-refresh-terms',
+            '.points-half-timer',
+        ];
+
+        // Values must match global unlocks object order in app.js
+        let globalItems = [
+            '.points-10-terms',
+            '.points-neon-colours',
+            '.points-solid-symbols',
+            '.points-star-bg',
+            '.points-feather-symbols',
+            '.points-letters-bg',
+            '.points-metal-colours'
+        ];
+
+        // God mode..... FEEL THE POWEEERR!!!
+        if (tinyTerms[tinyTerms.pickedList].ops.godMode === true) {
+            tinyTerms.score = 1000000;
+            document.querySelector('.score-holder').innerHTML = tinyTerms.score;
+        }
+
+        // Click listener for list store items
+        clickListenerFromVar(listItems, (i) => {
+            let unlockItem = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.listUnlocks)[i];
+            let currentScore = tinyTerms.score;
+            let itemCost = tinyTerms[tinyTerms.pickedList].storedData.listUnlocks[unlockItem].points;
+
+            if (currentScore - itemCost > 0) {
+                let score = currentScore - itemCost;
+
+                tinyTerms[tinyTerms.pickedList].storedData.listUnlocks[unlockItem].active = 'unlocked';
+
+                // Refresh terms
+                if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.termsRefresh.active === 'unlocked') {
+                    let pickedTerms = getListOfTerms();
+                    tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = pickedTerms;
+                }
+                localforage.setItem('tinyTerms.score', score, () => {
+                    // Save to storage
+                    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
+                        // Refresh
+                        location.reload();
+                    });
+                });
+            }
+            else {
+                let modal = document.querySelector('.m-modal');
+                let view = `<header>
+                                <h2 class="">Sorry, not enough points</h2>
+                            </header>
+                            <p>You can earn more points by completing goal meters, passing tests and finishing lists.</p>
+
+                            <button class="home-btn">Close</button>
+                            `;
+
+                // Add view
+                modal.querySelector(".content").innerHTML = view;
+                document.querySelector(".home-btn").addEventListener("click", (e) => {
+                    e.preventDefault();
+                    hideModal(true);
+                });
+            }
+        });
+
+        // Click listener for global store items
+        clickListenerFromVar(globalItems, (i) => {
+            let unlockItem = Object.keys(tinyTerms.globalUnlocks)[i];
+            let currentScore = tinyTerms.score;
+            let itemCost = tinyTerms.globalUnlocks[unlockItem].points;
+
+            if (tinyTerms.globalUnlocks[unlockItem].active === 'unlocked' 
+             || tinyTerms.globalUnlocks[unlockItem].active === 'inactive') {
+                 return false;
+            }
+            else if (currentScore - itemCost > 0) {
+                let score = currentScore - itemCost;
+
+                tinyTerms.globalUnlocks[unlockItem].active = 'unlocked';
+
+                // 10 terms
+                if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
+                    let pickedTerms = getListOfTerms();
+                    let existingTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
+                    let joinedTerms = existingTerms.concat(pickedTerms);
+
+                    tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = joinedTerms;
+                }
+                localforage.setItem('tinyTerms.score', score, () => {
+                    // Like a christmas tree all up in here
+                    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
+                        // Save to storage
+                        localforage.setItem('tinyTerms.globalUnlocks', tinyTerms.globalUnlocks, () => {
+                            // Refresh
+                            location.reload();
+                        });
+                    });
+                });
+            }
+            else {
+                let modal = document.querySelector('.m-modal');
+                let view = `<header>
+                                <h2 class="">Sorry, not enough points</h2>
+                            </header>
+                            <p>You can earn more points by completing goal meters, passing tests and finishing lists.</p>
+
+                            <button class="home-btn">Close</button>
+                            `;
+
+                // Add view
+                modal.querySelector(".content").innerHTML = view;
+                document.querySelector(".home-btn").addEventListener("click", (e) => {
+                    e.preventDefault();
+                    hideModal(true);
+                });
+            }
+        });
+
+        // Adds click functionality to selectors
+        function clickListenerFromVar(elements, clickFunction) {
+
+            for (let i = 0; i < elements.length; i++) {
+
+                document.querySelector(elements[i]).addEventListener("click", e => {
+                    e.preventDefault();
+                    clickFunction(i);
+                });
+            }
+        }
+
+        // Menu mod for list unlocked items
+        for (let i = 0; i < listItems.length; i++) {
+            let unlockItem = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.listUnlocks)[i];
+
+            if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks[unlockItem].active === 'unlocked') {
+                document.querySelector(listItems[i]).parentNode.removeChild(document.querySelector(listItems[i]));
+            }
+        }
+
+        let buttonOnHTML = `<button class="store-on">Turn on</button>`;
+        let buttonOffHTML = `<button class="store-off">Turn off</button>`;
+
+        // Menu mod for global unlocked items
+        for (let i = 0; i < globalItems.length; i++) {
+            let thisItem = globalItems[i];
+            let unlockItem = Object.keys(tinyTerms.globalUnlocks)[i];
+            let storedValue = tinyTerms.globalUnlocks[unlockItem].active;
+
+            if (storedValue === 'unlocked') {
+                document.querySelector(thisItem).innerHTML = buttonOffHTML;
+            }
+            if (storedValue === 'inactive') {
+                document.querySelector(thisItem).innerHTML = buttonOnHTML;
+            }
+        }
+        // Click listener store off buttons
+        for (let i = 0; i < document.querySelectorAll('.store-off').length; i++) {
+            
+            document.querySelectorAll('.store-off')[i].addEventListener('click', (e) => {
+                e.preventDefault();
+
+                let clickedItem = document.querySelectorAll('.store-off')[i].parentNode.className;
+                let thisItem = '.' + clickedItem;
+                let itemIndex = globalItems.indexOf('.' + clickedItem);
+                let unlockItem = Object.keys(tinyTerms.globalUnlocks)[itemIndex];
+                let storedValue = tinyTerms.globalUnlocks[unlockItem].active;
+
+                document.querySelector(thisItem).querySelector('.store-off').outerHTML = buttonOnHTML;
+
+                tinyTerms.globalUnlocks[unlockItem].active = 'inactive';
+
+                // Save to storage
+                localforage.setItem('tinyTerms.globalUnlocks', tinyTerms.globalUnlocks, () => {
+                    // Refresh
+                    location.reload();
+                });
+            });
+        }
+
+        // Click listener store on buttons
+        for (let i = 0; i < document.querySelectorAll('.store-on').length; i++) {
+
+            document.querySelectorAll('.store-on')[i].addEventListener('click', (e) => {
+                e.preventDefault();
+
+                let clickedItem = document.querySelectorAll('.store-on')[i].parentNode.className;
+                let thisItem = '.' + clickedItem;
+                let itemIndex = globalItems.indexOf('.' + clickedItem);
+                let unlockItem = Object.keys(tinyTerms.globalUnlocks)[itemIndex];
+                let storedValue = tinyTerms.globalUnlocks[unlockItem].active;
+
+                document.querySelector(thisItem).querySelector('.store-on').outerHTML = buttonOffHTML;
+
+                tinyTerms.globalUnlocks[unlockItem].active = 'unlocked';
+
+                // Save to storage
+                localforage.setItem('tinyTerms.globalUnlocks', tinyTerms.globalUnlocks, () => {
+                    // Refresh
+                    location.reload();
+                });
+            });
+        }
     });
 
     document.querySelector('.stats').addEventListener('click', (e) => {
@@ -120,11 +348,11 @@ const footerMenu = function footerMenu() {
         let correct = 0;
         let incorrect = 0;
 
-        if (tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms !== undefined) {
-            correct = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms);
-        }
         if (tinyTerms[tinyTerms.pickedList].storedData.correctTerms !== undefined) {
-            incorrect = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.correctTerms);
+            correct = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.correctTerms).length;
+        }
+        if (tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms !== undefined) {
+            incorrect = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms).length;
         }
 
         let learned = [];
@@ -132,7 +360,7 @@ const footerMenu = function footerMenu() {
         for (let i = 0; i < completed; i++) {
             let learnedTerm = Object.keys(tinyTerms[tinyTerms.pickedList].storedData.learnedTerms)[i];
             let learnedDefinition = tinyTerms[tinyTerms.pickedList].storedData.learnedTerms[learnedTerm];
-            learned += '<p class="small">'+learnedTerm+' - '+learnedDefinition+'</p>';
+            learned += '<p class="small">' + learnedTerm + ' - ' + learnedDefinition + '</p>';
         }
         if (completed === 0) {
             learned = '<p class="small">No completed terms, fill some goals!</p>'
@@ -211,10 +439,11 @@ const optionsDisplay = function optionsDisplay() {
 
             document.querySelector('.delete-confirm').addEventListener('click', () => {
                 delete tinyTerms[tinyTerms.pickedList];
-                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {;
-                    localforage.removeItem('tinyTermsDefault').then(function() {
+                localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {
+                    ;
+                    localforage.removeItem('tinyTermsDefault').then(function () {
                         location.reload();
-                    }); 
+                    });
                 });
             });
             document.querySelector('.delete-cancel').addEventListener('click', () => {

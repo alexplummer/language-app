@@ -170,6 +170,7 @@ const onboardShow = function onboardShow() {
         topTerm.style.zIndex = "50";
         let queryWrap = document.querySelector('.m-query');
         document.querySelector('.query-submit').setAttribute('disabled', 'true');
+        document.querySelector('.query-input').setAttribute('disabled', 'true');
         document.querySelector('.m-modal').style.cssText = "";
         hideModal(true);
 
@@ -198,6 +199,7 @@ const onboardShow = function onboardShow() {
         let queryWrap = document.querySelector('.m-query');
         document.querySelector('.query-holder').removeAttribute('disabled');
         document.querySelector('.query-submit').removeAttribute('disabled');
+        document.querySelector('.query-input').removeAttribute('disabled');
         
 
         queryWrap.style.zIndex = "50";
