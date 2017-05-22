@@ -1164,7 +1164,7 @@ striping:
   display: table;
   clear: both; }
 
-.icon:before, .m-footer .footer-menu a:before, .m-header h1:before, .m-header .right .settings:before, .m-menu .home-bg .nav-back:before, .m-menu nav .category:before, .m-menu .scroll-arrow:before, .m-menu .choose-list div .custom-list:before, .store a:before, .m-modal .inner header h2:before, .m-modal .close:before, .m-nav .nav-close:before, .m-query header h2:before, .m-query .hearts p:before, .m-term-wrapper .term-holder:before, .m-term-wrapper .definition-wrapper .helpers .lookup:before, .m-term-wrapper .definition-wrapper .helpers .colour:before, .m-term-wrapper .definition-wrapper .helpers .symbol:before, [class^="icon"]:before {
+.icon:before, .m-footer .footer-menu a:before, .m-header h1:before, .m-header .right .settings:before, .m-menu .home-bg .nav-back:before, .m-menu nav .category:before, .m-menu .scroll-arrow:before, .m-menu .choose-list div .custom-list:before, .store a:before, .m-modal .inner header h2:before, .m-modal .close:before, .m-modal .wiki-link-wrapper .wiki-link:before, .m-nav .nav-close:before, .m-query header h2:before, .m-query .hearts p:before, .m-term-wrapper .term-holder:before, .m-term-wrapper .definition-wrapper .helpers .lookup:before, .m-term-wrapper .definition-wrapper .helpers .colour:before, .m-term-wrapper .definition-wrapper .helpers .symbol:before, [class^="icon"]:before {
   font-family: "fontello";
   font-style: normal;
   font-weight: normal;
@@ -1191,14 +1191,14 @@ striping:
   /* Uncomment for 3D effect */
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }
 
-a.icon:before, .m-footer .footer-menu a:before, .m-header .right a.settings:before, .m-menu .home-bg a.nav-back:before, .m-menu nav a.category:before, .m-menu a.scroll-arrow:before, .m-menu .choose-list div a.custom-list:before, .store a:before, .m-modal a.close:before, .m-nav a.nav-close:before, .m-term-wrapper a.term-holder:before, .m-term-wrapper .definition-wrapper .helpers a.lookup:before, .m-term-wrapper .definition-wrapper .helpers a.colour:before, .m-term-wrapper .definition-wrapper .helpers a.symbol:before {
+a.icon:before, .m-footer .footer-menu a:before, .m-header .right a.settings:before, .m-menu .home-bg a.nav-back:before, .m-menu nav a.category:before, .m-menu a.scroll-arrow:before, .m-menu .choose-list div a.custom-list:before, .store a:before, .m-modal a.close:before, .m-modal .wiki-link-wrapper a.wiki-link:before, .m-nav a.nav-close:before, .m-term-wrapper a.term-holder:before, .m-term-wrapper .definition-wrapper .helpers a.lookup:before, .m-term-wrapper .definition-wrapper .helpers a.colour:before, .m-term-wrapper .definition-wrapper .helpers a.symbol:before {
   text-decoration: none; }
 
 /* csslint ignore:end */
 @font-face {
   font-family: 'fontello';
-  src: url("../font/fontello.eot?80792725");
-  src: url("../font/fontello.eot?80792725#iefix") format("embedded-opentype"), url("../font/fontello.woff2?80792725") format("woff2"), url("../font/fontello.woff?80792725") format("woff"), url("../font/fontello.ttf?80792725") format("truetype"), url("../font/fontello.svg?80792725#fontello") format("svg");
+  src: url("../font/fontello.eot?96238599");
+  src: url("../font/fontello.eot?96238599#iefix") format("embedded-opentype"), url("../font/fontello.woff2?96238599") format("woff2"), url("../font/fontello.woff?96238599") format("woff"), url("../font/fontello.ttf?96238599") format("truetype"), url("../font/fontello.svg?96238599#fontello") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1208,7 +1208,7 @@ a.icon:before, .m-footer .footer-menu a:before, .m-header .right a.settings:befo
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?80792725#fontello') format('svg');
+    src: url('../font/fontello.svg?96238599#fontello') format('svg');
   }
 }
 */
@@ -1323,7 +1323,7 @@ a.icon:before, .m-footer .footer-menu a:before, .m-header .right a.settings:befo
   content: '\f004'; }
 
 /* '' */
-.icon-right-open:before, .m-menu .home-bg .nav-back:before {
+.icon-right-open:before, .m-menu .home-bg .nav-back:before, .m-modal .wiki-link-wrapper .wiki-link:before {
   content: '\f006'; }
 
 /* '' */
@@ -1361,6 +1361,8 @@ body {
     background: #6e0b2a; }
     body.home .container {
       overflow: hidden; }
+  body.modal-active {
+    overflow: hidden; }
 
 .container {
   background: #1b2e65;
@@ -1393,7 +1395,7 @@ body {
     width: 100%;
     z-index: 51; }
 
-button {
+button, .btn, .store a strong, #mddtp-picker__time button {
   background: #eca90b;
   cursor: pointer;
   width: 100px;
@@ -1402,7 +1404,7 @@ button {
   padding: 0.75rem;
   border-radius: 5px;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2); }
-  button.disabled {
+  button.disabled, .btn.disabled, .store a strong.disabled, #mddtp-picker__time button.disabled {
     cursor: default;
     background: #f0c96d;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -1443,6 +1445,14 @@ table {
 .particle, .m-menu:before, .m-menu .choose-list {
   transform: translate3d(0, 0, 0); }
 
+.width {
+  width: auto; }
+
+.dotted, .m-modal .inner h3.dotted {
+  border-bottom: 2px dotted #e21657;
+  padding-bottom: 0.75rem;
+  margin: 1.5rem 0 0.75rem 0; }
+
 .explosion {
   width: 400px;
   height: 400px;
@@ -1466,13 +1476,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(28px, 64px);
+    transform: translate(33px, 141px);
     opacity: 0; } }
 
 .particle:nth-child(1) {
   top: 50%;
   left: 50%;
-  font-size: 16px;
+  font-size: 20px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1484,13 +1494,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(79px, 25px);
+    transform: translate(7px, 102px);
     opacity: 0; } }
 
 .particle:nth-child(2) {
   top: 50%;
   left: 50%;
-  font-size: 3px;
+  font-size: 11px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1502,13 +1512,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(103px, 100px);
+    transform: translate(22px, 53px);
     opacity: 0; } }
 
 .particle:nth-child(3) {
   top: 50%;
   left: 50%;
-  font-size: 20px;
+  font-size: 12px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1520,13 +1530,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(130px, 92px);
+    transform: translate(40px, 114px);
     opacity: 0; } }
 
 .particle:nth-child(4) {
   top: 50%;
   left: 50%;
-  font-size: 19px;
+  font-size: 3px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1538,13 +1548,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(145px, 64px);
+    transform: translate(139px, 126px);
     opacity: 0; } }
 
 .particle:nth-child(5) {
   top: 50%;
   left: 50%;
-  font-size: 15px;
+  font-size: 3px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1556,13 +1566,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(61px, 56px);
+    transform: translate(124px, 146px);
     opacity: 0; } }
 
 .particle:nth-child(6) {
   top: 50%;
   left: 50%;
-  font-size: 7px;
+  font-size: 5px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1574,13 +1584,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(11px, 19px);
+    transform: translate(48px, 143px);
     opacity: 0; } }
 
 .particle:nth-child(7) {
   top: 50%;
   left: 50%;
-  font-size: 8px;
+  font-size: 1px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1592,13 +1602,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(9px, 88px);
+    transform: translate(14px, 116px);
     opacity: 0; } }
 
 .particle:nth-child(8) {
   top: 50%;
   left: 50%;
-  font-size: 2px;
+  font-size: 16px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1610,13 +1620,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(25px, 89px);
+    transform: translate(121px, 6px);
     opacity: 0; } }
 
 .particle:nth-child(9) {
   top: 50%;
   left: 50%;
-  font-size: 10px;
+  font-size: 6px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1628,13 +1638,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(68px, 46px);
+    transform: translate(34px, 24px);
     opacity: 0; } }
 
 .particle:nth-child(10) {
   top: 50%;
   left: 50%;
-  font-size: 3px;
+  font-size: 25px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1646,13 +1656,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(71px, 43px);
+    transform: translate(39px, 92px);
     opacity: 0; } }
 
 .particle:nth-child(11) {
   top: 50%;
   left: 50%;
-  font-size: 1px;
+  font-size: 19px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1664,13 +1674,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(42px, 60px);
+    transform: translate(76px, 45px);
     opacity: 0; } }
 
 .particle:nth-child(12) {
   top: 50%;
   left: 50%;
-  font-size: 25px;
+  font-size: 11px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1682,13 +1692,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(104px, 116px);
+    transform: translate(89px, 97px);
     opacity: 0; } }
 
 .particle:nth-child(13) {
   top: 50%;
   left: 50%;
-  font-size: 10px;
+  font-size: 17px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1700,13 +1710,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(65px, 81px);
+    transform: translate(95px, 46px);
     opacity: 0; } }
 
 .particle:nth-child(14) {
   top: 50%;
   left: 50%;
-  font-size: 19px;
+  font-size: 23px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1718,13 +1728,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(78px, 82px);
+    transform: translate(141px, 141px);
     opacity: 0; } }
 
 .particle:nth-child(15) {
   top: 50%;
   left: 50%;
-  font-size: 6px;
+  font-size: 8px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1736,13 +1746,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(68px, 98px);
+    transform: translate(110px, 148px);
     opacity: 0; } }
 
 .particle:nth-child(16) {
   top: 50%;
   left: 50%;
-  font-size: 2px;
+  font-size: 16px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1754,13 +1764,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(116px, 34px);
+    transform: translate(95px, 55px);
     opacity: 0; } }
 
 .particle:nth-child(17) {
   top: 50%;
   left: 50%;
-  font-size: 6px;
+  font-size: 16px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1772,13 +1782,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(146px, 101px);
+    transform: translate(127px, 18px);
     opacity: 0; } }
 
 .particle:nth-child(18) {
   top: 50%;
   left: 50%;
-  font-size: 17px;
+  font-size: 18px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1790,13 +1800,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(110px, 84px);
+    transform: translate(85px, 70px);
     opacity: 0; } }
 
 .particle:nth-child(19) {
   top: 50%;
   left: 50%;
-  font-size: 25px;
+  font-size: 9px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1808,13 +1818,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(20px, 41px);
+    transform: translate(105px, 118px);
     opacity: 0; } }
 
 .particle:nth-child(20) {
   top: 50%;
   left: 50%;
-  font-size: 22px;
+  font-size: 8px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1826,13 +1836,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(146px, 71px);
+    transform: translate(141px, 84px);
     opacity: 0; } }
 
 .particle:nth-child(21) {
   top: 50%;
   left: 50%;
-  font-size: 8px;
+  font-size: 11px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1844,13 +1854,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(138px, 142px);
+    transform: translate(77px, 50px);
     opacity: 0; } }
 
 .particle:nth-child(22) {
   top: 50%;
   left: 50%;
-  font-size: 16px;
+  font-size: 6px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1862,13 +1872,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(139px, 39px);
+    transform: translate(38px, 38px);
     opacity: 0; } }
 
 .particle:nth-child(23) {
   top: 50%;
   left: 50%;
-  font-size: 20px;
+  font-size: 3px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1880,7 +1890,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(115px, 40px);
+    transform: translate(4px, 21px);
     opacity: 0; } }
 
 .particle:nth-child(24) {
@@ -1898,13 +1908,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(87px, 24px);
+    transform: translate(4px, 108px);
     opacity: 0; } }
 
 .particle:nth-child(25) {
   top: 50%;
   left: 50%;
-  font-size: 20px;
+  font-size: 18px;
   animation-duration: 1s;
   color: #eca90b; }
 
@@ -1916,11 +1926,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-48px, -94px);
+    transform: translate(-33px, -101px);
     opacity: 0; } }
 
 .particle:nth-child(26) {
-  font-size: 3px; }
+  font-size: 15px; }
 
 .explode .particle:nth-child(26) {
   animation-name: anim-26; }
@@ -1930,11 +1940,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-111px, -97px);
+    transform: translate(-40px, -14px);
     opacity: 0; } }
 
 .particle:nth-child(27) {
-  font-size: 5px; }
+  font-size: 15px; }
 
 .explode .particle:nth-child(27) {
   animation-name: anim-27; }
@@ -1944,11 +1954,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-116px, -99px);
+    transform: translate(-77px, -128px);
     opacity: 0; } }
 
 .particle:nth-child(28) {
-  font-size: 2px; }
+  font-size: 9px; }
 
 .explode .particle:nth-child(28) {
   animation-name: anim-28; }
@@ -1958,11 +1968,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-60px, -18px);
+    transform: translate(-39px, -118px);
     opacity: 0; } }
 
 .particle:nth-child(29) {
-  font-size: 2px; }
+  font-size: 10px; }
 
 .explode .particle:nth-child(29) {
   animation-name: anim-29; }
@@ -1972,11 +1982,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-33px, -93px);
+    transform: translate(-114px, -71px);
     opacity: 0; } }
 
 .particle:nth-child(30) {
-  font-size: 14px; }
+  font-size: 4px; }
 
 .explode .particle:nth-child(30) {
   animation-name: anim-30; }
@@ -1986,11 +1996,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-107px, -18px);
+    transform: translate(-8px, -17px);
     opacity: 0; } }
 
 .particle:nth-child(31) {
-  font-size: 9px; }
+  font-size: 8px; }
 
 .explode .particle:nth-child(31) {
   animation-name: anim-31; }
@@ -2000,11 +2010,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-81px, -44px);
+    transform: translate(-74px, -134px);
     opacity: 0; } }
 
 .particle:nth-child(32) {
-  font-size: 4px; }
+  font-size: 10px; }
 
 .explode .particle:nth-child(32) {
   animation-name: anim-32; }
@@ -2014,11 +2024,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-26px, -78px);
+    transform: translate(-87px, -2px);
     opacity: 0; } }
 
 .particle:nth-child(33) {
-  font-size: 12px; }
+  font-size: 11px; }
 
 .explode .particle:nth-child(33) {
   animation-name: anim-33; }
@@ -2028,7 +2038,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-33px, -37px);
+    transform: translate(-9px, -5px);
     opacity: 0; } }
 
 .particle:nth-child(34) {
@@ -2042,11 +2052,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-48px, -132px);
+    transform: translate(-34px, -9px);
     opacity: 0; } }
 
 .particle:nth-child(35) {
-  font-size: 5px; }
+  font-size: 8px; }
 
 .explode .particle:nth-child(35) {
   animation-name: anim-35; }
@@ -2056,11 +2066,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-31px, -66px);
+    transform: translate(-108px, -117px);
     opacity: 0; } }
 
 .particle:nth-child(36) {
-  font-size: 10px; }
+  font-size: 14px; }
 
 .explode .particle:nth-child(36) {
   animation-name: anim-36; }
@@ -2070,7 +2080,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-101px, -58px);
+    transform: translate(-129px, -111px);
     opacity: 0; } }
 
 .particle:nth-child(37) {
@@ -2084,11 +2094,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-64px, -34px);
+    transform: translate(-119px, -92px);
     opacity: 0; } }
 
 .particle:nth-child(38) {
-  font-size: 10px; }
+  font-size: 12px; }
 
 .explode .particle:nth-child(38) {
   animation-name: anim-38; }
@@ -2098,11 +2108,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-81px, -150px);
+    transform: translate(-17px, -148px);
     opacity: 0; } }
 
 .particle:nth-child(39) {
-  font-size: 8px; }
+  font-size: 9px; }
 
 .explode .particle:nth-child(39) {
   animation-name: anim-39; }
@@ -2112,7 +2122,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-21px, -115px);
+    transform: translate(-40px, -119px);
     opacity: 0; } }
 
 .particle:nth-child(40) {
@@ -2126,11 +2136,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-22px, -54px);
+    transform: translate(-69px, -142px);
     opacity: 0; } }
 
 .particle:nth-child(41) {
-  font-size: 3px; }
+  font-size: 11px; }
 
 .explode .particle:nth-child(41) {
   animation-name: anim-41; }
@@ -2140,11 +2150,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-81px, -103px);
+    transform: translate(-18px, -75px);
     opacity: 0; } }
 
 .particle:nth-child(42) {
-  font-size: 7px; }
+  font-size: 5px; }
 
 .explode .particle:nth-child(42) {
   animation-name: anim-42; }
@@ -2154,11 +2164,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-130px, -19px);
+    transform: translate(-73px, -13px);
     opacity: 0; } }
 
 .particle:nth-child(43) {
-  font-size: 15px; }
+  font-size: 2px; }
 
 .explode .particle:nth-child(43) {
   animation-name: anim-43; }
@@ -2168,11 +2178,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-77px, -144px);
+    transform: translate(-109px, -147px);
     opacity: 0; } }
 
 .particle:nth-child(44) {
-  font-size: 10px; }
+  font-size: 6px; }
 
 .explode .particle:nth-child(44) {
   animation-name: anim-44; }
@@ -2182,11 +2192,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-82px, -143px);
+    transform: translate(-82px, -23px);
     opacity: 0; } }
 
 .particle:nth-child(45) {
-  font-size: 15px; }
+  font-size: 9px; }
 
 .explode .particle:nth-child(45) {
   animation-name: anim-45; }
@@ -2196,11 +2206,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-69px, -123px);
+    transform: translate(-30px, -128px);
     opacity: 0; } }
 
 .particle:nth-child(46) {
-  font-size: 2px; }
+  font-size: 10px; }
 
 .explode .particle:nth-child(46) {
   animation-name: anim-46; }
@@ -2210,11 +2220,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-90px, -75px);
+    transform: translate(-75px, -3px);
     opacity: 0; } }
 
 .particle:nth-child(47) {
-  font-size: 3px; }
+  font-size: 13px; }
 
 .explode .particle:nth-child(47) {
   animation-name: anim-47; }
@@ -2224,11 +2234,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-105px, -5px);
+    transform: translate(-149px, -87px);
     opacity: 0; } }
 
 .particle:nth-child(48) {
-  font-size: 7px; }
+  font-size: 4px; }
 
 .explode .particle:nth-child(48) {
   animation-name: anim-48; }
@@ -2238,11 +2248,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-32px, -120px);
+    transform: translate(-11px, -26px);
     opacity: 0; } }
 
 .particle:nth-child(49) {
-  font-size: 14px; }
+  font-size: 5px; }
 
 .explode .particle:nth-child(49) {
   animation-name: anim-49; }
@@ -2252,11 +2262,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-140px, -62px);
+    transform: translate(-36px, -99px);
     opacity: 0; } }
 
 .particle:nth-child(50) {
-  font-size: 9px; }
+  font-size: 12px; }
 
 .explode .particle:nth-child(50) {
   animation-name: anim-50; }
@@ -2277,7 +2287,7 @@ table {
   width: 100%;
   left: 50%;
   transform: translateX(-50%); }
-  .onboard-wrap .inner, .m-modal .inner {
+  .onboard-wrap .close-wrap, .m-modal .close-wrap {
     left: 0; }
 
 .m-nav {
@@ -2358,7 +2368,7 @@ h2 {
   padding: 0;
   font-size: 1.25rem;
   font-weight: 100; }
-  h2.icon:before, .m-header .right h2.settings:before, .m-menu .home-bg h2.nav-back:before, .m-menu nav h2.category:before, .m-menu h2.scroll-arrow:before, .m-menu .choose-list div h2.custom-list:before, .m-modal .inner header h2:before, .m-modal h2.close:before, .m-nav h2.nav-close:before, .m-query header h2:before, .m-term-wrapper h2.term-holder:before, .m-term-wrapper .definition-wrapper .helpers h2.lookup:before, .m-term-wrapper .definition-wrapper .helpers h2.colour:before, .m-term-wrapper .definition-wrapper .helpers h2.symbol:before {
+  h2.icon:before, .m-header .right h2.settings:before, .m-menu .home-bg h2.nav-back:before, .m-menu nav h2.category:before, .m-menu h2.scroll-arrow:before, .m-menu .choose-list div h2.custom-list:before, .m-modal .inner header h2:before, .m-modal h2.close:before, .m-modal .wiki-link-wrapper h2.wiki-link:before, .m-nav h2.nav-close:before, .m-query header h2:before, .m-term-wrapper h2.term-holder:before, .m-term-wrapper .definition-wrapper .helpers h2.lookup:before, .m-term-wrapper .definition-wrapper .helpers h2.colour:before, .m-term-wrapper .definition-wrapper .helpers h2.symbol:before {
     margin-right: 12px;
     color: #555; }
 
@@ -3852,7 +3862,7 @@ h2 {
     line-height: 1.125rem;
     font-weight: 100;
     position: relative;
-    left: -25px;
+    margin-left: -25px;
     cursor: pointer; }
     .m-header h1:before {
       font-size: 1.125rem;
@@ -3865,7 +3875,9 @@ h2 {
     margin-bottom: 0.625rem; }
     .m-header .right .score {
       float: right;
-      margin-right: 0.75rem; }
+      margin-right: 0.75rem;
+      position: relative;
+      top: -1px; }
       .m-header .right .score p, .m-header .right .score span {
         color: #fff;
         padding: 0;
@@ -3878,7 +3890,7 @@ h2 {
         font-weight: 100;
         position: relative;
         top: 2px; }
-      @media (max-width: 345px) {
+      @media (max-width: 365px) {
         .m-header .right .score {
           display: none; } }
     .m-header .right .settings {
@@ -4203,7 +4215,13 @@ h2 {
   width: 45%; }
 
 .store a strong {
-  color: #e21657; }
+  width: 75px;
+  background: #e21657;
+  color: #fff;
+  text-align: center;
+  display: inline-block;
+  padding: 0.375rem 0.375rem;
+  margin: 0 0.375rem; }
 
 .store a:before {
   background: #e21657;
@@ -4246,24 +4264,49 @@ h2 {
   height: 100vh;
   padding: 0 0.75rem;
   z-index: 100; }
-  .m-modal .inner {
+  .m-modal .close-wrap {
     position: relative;
     top: 50%;
     width: 100%;
     min-width: 300px;
     max-height: 90vh;
-    overflow-y: scroll;
-    padding-bottom: 20px;
     transform: translateY(-50%); }
+  .m-modal .inner {
+    overflow-y: scroll;
+    max-height: 90vh;
+    padding-bottom: 20px; }
     .m-modal .inner header {
       padding-top: 0.75rem;
       border-bottom: 1px solid #ddd; }
+    .m-modal .inner h2, .m-modal .inner h2 span {
+      font-size: 1.5625rem; }
+    .m-modal .inner h3, .m-modal .inner h3 span {
+      margin: 20px 0 10px 0; }
+    .m-modal .inner h4, .m-modal .inner h4 span, .m-modal .inner h5, .m-modal .inner h5 span, .m-modal .inner h6, .m-modal .inner h6 span {
+      font-size: 1.25rem;
+      font-weight: bold; }
+    .m-modal .inner textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem; }
+    .m-modal .inner li {
+      padding-top: 0; }
   .m-modal .close {
     position: absolute;
-    font-size: 1.25rem;
-    top: 0;
-    right: 0.75rem;
+    z-index: 101;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 2.5625rem;
+    width: 2.5625rem;
+    font-size: 2.0625rem;
+    top: -19px;
+    right: -10px;
     color: #e21657; }
+    .m-modal .close:before {
+      margin: 0; }
   .m-modal p {
     font-size: 1.25rem;
     font-weight: 400;
@@ -4338,6 +4381,11 @@ h2 {
         margin-right: 0.75rem; }
         .m-modal .colour-wrap li a.no-colour {
           border: 1px solid #bbb; }
+  .m-modal .wiki-link-wrapper {
+    list-style: none;
+    margin: 0; }
+    .m-modal .wiki-link-wrapper .wiki-link.active {
+      font-weight: bold; }
 
 .m-nav {
   background: #1b2e65;
@@ -4524,6 +4572,35 @@ h2 {
     text-transform: none;
     font-weight: 400;
     letter-spacing: normal; }
+
+.m-reminders button {
+  width: auto;
+  padding: 0.75rem;
+  margin: 0 0.375rem 1.5rem 0; }
+
+.m-reminders .time-wrap button {
+  margin: 0 0 0 0.375rem; }
+
+.m-reminders input {
+  width: 80px;
+  text-align: center; }
+
+#mddtp-picker__time {
+  background: #fff; }
+  #mddtp-picker__time * {
+    line-height: auto; }
+  #mddtp-picker__time span {
+    padding: 0;
+    margin: 0; }
+  #mddtp-picker__time .mddtp-picker__header {
+    width: 100%; }
+  #mddtp-picker__time .mddtp-picker__header, #mddtp-picker__time .mddtp-picker__selection span {
+    background: #e21657; }
+  #mddtp-picker__time button {
+    background: #e21657;
+    line-height: 0;
+    text-transform: capitalize;
+    color: #fff; }
 
 .m-term-wrapper {
   position: relative; }

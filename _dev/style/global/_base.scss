@@ -24,6 +24,9 @@ body {
             overflow: hidden;
         }
     }
+    &.modal-active {
+        overflow: hidden;
+    }
 }
 .container {
     background: lighten($clr-dark,5%);
@@ -72,7 +75,7 @@ body {
         z-index: $z-m + 1;
     }
 }
-button {
+button, .btn {
     background: $clr-hlight;
     cursor: pointer;
     width: 100px;

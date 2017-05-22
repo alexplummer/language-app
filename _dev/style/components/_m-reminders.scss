@@ -1,0 +1,46 @@
+// Reminders
+// ============
+// Adds notification reminders 
+
+.m-reminders {
+
+    button {
+        width: auto;
+        padding: $size-s;
+        margin: 0 $size-xs $size-m 0;
+    }
+    .time-wrap {
+
+        button {
+            margin: 0 0 0 $size-xs;
+        }
+    }
+    input {
+        width:  80px;
+        text-align: center;
+    }
+}
+#mddtp-picker__time {
+    background: #fff;
+
+    * {
+        line-height: auto;
+    }
+    span {
+        padding: 0;
+        margin: 0;
+    }
+    .mddtp-picker__header {
+        width: 100%;
+    }
+    .mddtp-picker__header, .mddtp-picker__selection span {
+        background: $clr-tertiary;
+    }
+    button {
+        @extend .btn;
+        background: $clr-tertiary;
+        line-height: 0;
+        text-transform: capitalize;
+        color: #fff;
+    }
+}

@@ -20,7 +20,7 @@
         line-height: $font-m;
         font-weight: 100;
         position: relative;
-        left: -25px;
+        margin-left: -25px;
         cursor: pointer;
 
         &:before {
@@ -38,6 +38,8 @@
         .score {
             float: right;
             margin-right: $size-s;
+            position: relative;
+            top: -1px;
 
             p, span {
                 color: #fff;
@@ -57,7 +59,7 @@
                 position: relative;
                 top: 2px;
             }
-            @media (max-width: 345px) {
+            @media (max-width: 365px) {
                 display: none;
             }
         }

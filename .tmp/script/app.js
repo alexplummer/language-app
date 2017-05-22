@@ -739,9 +739,24 @@ var tinyTermsApp = function () {
             modal.classList.remove('hidden');
             document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-            var view = '<header>\n                        <h2 class="dictionary">Dictionary definitions</h2>\n                    </header>\n                    <p>' + term + ':</p>\n                    <ul class="definitions">\n                    </ul>';
+            var view = '<header>\n                        <h2 class="dictionary">Further study</h2>\n                    </header>\n                    <h3>Practice writing</h3>\n                    <textarea class="writing-practice" placeholder="Write the definition here, alone or as part of a sentance."></textarea>\n                    <button class="writing-check">Check</button>\n                    <h3 class="dotted">Dictionary definitions</h3>\n                    <p>' + term + ':</p>\n                    <ul class="definitions"></ul>\n                    <h3 class="dotted">Wiki info</h3>\n                    <ul class="wiki-link-wrapper"></ul>\n                    <div class="wiki-result"></div>\n                    ';
 
             modal.querySelector('.content').innerHTML += view;
+
+            // Check practice writing
+            document.querySelector('.writing-check').addEventListener('click', function (e) {
+                e.preventDefault();
+                var practiceContent = document.querySelector('.writing-practice').value.toUpperCase();
+                var definition = tinyTerms$1[tinyTerms$1.pickedList].terms[term].definition.toUpperCase();
+
+                if (practiceContent.indexOf(definition) > -1) {
+                    document.querySelector('.writing-practice').value = "";
+                    document.querySelector('.writing-practice').placeholder = "Well done, that's correct!";
+                } else {
+                    document.querySelector('.writing-practice').value = "";
+                    document.querySelector('.writing-practice').placeholder = "That's incorrect, try again.";
+                }
+            });
 
             // Make JSONP call to Glosbe API
             var definitionHolder = modal.querySelector('.definitions');
@@ -782,6 +797,75 @@ var tinyTermsApp = function () {
                     })();
                 } catch (err) {
                     console.log(err);
+                }
+            });
+
+            // Wiki lookup
+            jsonp('https://' + tinyTerms$1[tinyTerms$1.pickedList].dictFrom + '.wikipedia.org/w/api.php?action=opensearch&limit=3&namespace=0&format=json&search=' + term).then(function (data) {
+
+                // List out wiki results
+                for (var _i2 = 0; _i2 < 3; _i2++) {
+
+                    if (data[1][_i2] !== undefined) {
+                        document.querySelector('.wiki-link-wrapper').innerHTML += '<li><a href="#" class="wiki-link">' + data[1][_i2] + '</a></li>';
+                    }
+                }
+
+                // List out wiki results
+                var wikiLink = document.querySelectorAll('.wiki-link');
+
+                wikiLink[0].classList.add('active');
+
+                // Write out the first result
+                var firstTerm = wikiLink[0].innerHTML;
+
+                jsonp('https://' + tinyTerms$1[tinyTerms$1.pickedList].dictFrom + '.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=' + firstTerm).then(function (data) {
+
+                    var result = Object.keys(data.query.pages)[0];
+                    result = data.query.pages[result].extract;
+
+                    if (result === undefined) {
+                        jsonp('https://' + tinyTerms$1[tinyTerms$1.pickedList].dictFrom + '.wikipedia.org/w/api.php?action=parse&prop=text&page=' + firstTerm).then(function (data) {
+                            result = JSON.parse(data.parse.text["*"]);
+                        });
+                    }
+                    if (result === undefined) {
+                        result = "Sorry, no info found.";
+                    }
+                    document.querySelector('.wiki-result').innerHTML = result;
+                });
+
+                // Add event listeners for other results
+
+                var _loop = function _loop(j) {
+
+                    wikiLink[j].addEventListener('click', function (e) {
+                        e.preventDefault();
+                        var term = wikiLink[j].innerHTML;
+
+                        document.querySelector('.active').classList.remove('active');
+                        wikiLink[j].classList.add('active');
+
+                        jsonp('https://' + tinyTerms$1[tinyTerms$1.pickedList].dictFrom + '.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=' + term).then(function (data) {
+
+                            var result = Object.keys(data.query.pages)[0];
+                            result = data.query.pages[result].extract;
+
+                            if (result === undefined) {
+                                jsonp('https://' + tinyTerms$1[tinyTerms$1.pickedList].dictFrom + '.wikipedia.org/w/api.php?action=parse&prop=text&page=' + term).then(function (data) {
+                                    result = JSON.parse(data.parse.text["*"]);
+                                });
+                            }
+                            if (result === undefined) {
+                                result = "Sorry, no info found.";
+                            }
+                            document.querySelector('.wiki-result').innerHTML = result;
+                        });
+                    });
+                };
+
+                for (var j = 0; j < wikiLink.length; j++) {
+                    _loop(j);
                 }
             });
         });
@@ -897,15 +981,15 @@ var tinyTermsApp = function () {
             symbolHTML += '<table>';
             var _k2 = 0;
 
-            for (var _i2 = 0; _i2 < appData.fonts.light.length; _i2++) {
+            for (var _i3 = 0; _i3 < appData.fonts.light.length; _i3++) {
 
                 if (_k2 % 5 === 0 && _k2 != 0) {
                     symbolHTML += '</tr><tr>';
                 }
-                symbolHTML += '<td><p class=' + appData.fonts.light[_i2] + '></p></td>';
+                symbolHTML += '<td><p class=' + appData.fonts.light[_i3] + '></p></td>';
                 _k2++;
 
-                if (_i2 === appData.fonts.light.length - 1) {
+                if (_i3 === appData.fonts.light.length - 1) {
                     symbolHTML += "</tr>";
                 }
             }
@@ -917,15 +1001,15 @@ var tinyTermsApp = function () {
         var k = 0;
 
         // Default symbols
-        for (var _i3 = 0; _i3 < appData.fonts.feather.length; _i3++) {
+        for (var _i4 = 0; _i4 < appData.fonts.feather.length; _i4++) {
 
             if (k % 5 === 0 && k != 0) {
                 symbolHTML += '</tr><tr>';
             }
-            symbolHTML += '<td><p class=' + appData.fonts.feather[_i3] + '></p></td>';
+            symbolHTML += '<td><p class=' + appData.fonts.feather[_i4] + '></p></td>';
             k++;
 
-            if (_i3 === appData.fonts.feather.length - 1) {
+            if (_i4 === appData.fonts.feather.length - 1) {
                 symbolHTML += "</tr>";
             }
         }
@@ -971,8 +1055,8 @@ var tinyTermsApp = function () {
             var termWrapper = document.querySelector('.' + termEncode + '');
             var pickedSymbol = "";
 
-            for (var _i4 = 0; _i4 < modal.getElementsByTagName('table').length; _i4++) {
-                symbolClickListener(modal.getElementsByTagName('table')[_i4]);
+            for (var _i5 = 0; _i5 < modal.getElementsByTagName('table').length; _i5++) {
+                symbolClickListener(modal.getElementsByTagName('table')[_i5]);
             }
 
             function symbolClickListener(eachTable) {
@@ -1076,7 +1160,7 @@ var tinyTermsApp = function () {
                 document.querySelector('.custom').style.display = "inline-block";
             }
 
-            var _loop = function _loop(i) {
+            var _loop2 = function _loop2(i) {
                 categoryBtn[i].addEventListener('click', function (e) {
                     e.preventDefault();
 
@@ -1098,7 +1182,7 @@ var tinyTermsApp = function () {
             };
 
             for (var i = 0; i < categoryBtn.length; i++) {
-                _loop(i);
+                _loop2(i);
             }
         }
 
@@ -1186,18 +1270,18 @@ var tinyTermsApp = function () {
             // Add listener to remove list
             var removeList = document.querySelectorAll('.custom-list');
 
-            var _loop2 = function _loop2(_i5) {
+            var _loop3 = function _loop3(_i6) {
 
-                removeList[_i5].addEventListener('click', function (e) {
+                removeList[_i6].addEventListener('click', function (e) {
                     e.preventDefault();
-                    var insertPoint = removeList[_i5].nextSibling;
+                    var insertPoint = removeList[_i6].nextSibling;
                     document.querySelector('.create-list').classList.add('hidden');
-                    removeList[_i5].classList.add('hidden');
-                    removeList[_i5].parentNode.insertBefore(document.createElement("div"), insertPoint.nextSibling);
+                    removeList[_i6].classList.add('hidden');
+                    removeList[_i6].parentNode.insertBefore(document.createElement("div"), insertPoint.nextSibling);
                     insertPoint.nextSibling.innerHTML = '<p>Are you sure you want to delete your list? (Can\'t undo)</p><button class="delete-cancel">Cancel</button><button class="delete-confirm">Confim</button>';
 
                     document.querySelector('.delete-confirm').addEventListener('click', function () {
-                        var listName = removeList[_i5].parentNode.childNodes[1].innerHTML;
+                        var listName = removeList[_i6].parentNode.childNodes[1].innerHTML;
 
                         localforage.getItem('tinyTerms.uploadedLists', function (err, uploadedLists) {
                             tinyTerms$1.uploadedLists = uploadedLists || {};
@@ -1209,8 +1293,8 @@ var tinyTermsApp = function () {
 
                         // Delete list from nav
                         localforage.setItem('tinyTerms.uploadedLists', tinyTerms$1.uploadedLists, function () {
-                            removeList[_i5].parentNode.removeChild(insertPoint.nextSibling);
-                            removeList[_i5].parentNode.parentNode.removeChild(document.querySelector('.' + makeSafeClass(listName)));
+                            removeList[_i6].parentNode.removeChild(insertPoint.nextSibling);
+                            removeList[_i6].parentNode.parentNode.removeChild(document.querySelector('.' + makeSafeClass(listName)));
 
                             // Delete list references
                             localforage.removeItem(tinyTerms$1.storedName).then(function () {
@@ -1222,15 +1306,15 @@ var tinyTermsApp = function () {
                         });
                     });
                     document.querySelector('.delete-cancel').addEventListener('click', function () {
-                        removeList[_i5].parentNode.removeChild(insertPoint.nextSibling);
-                        removeList[_i5].classList.remove('hidden');
+                        removeList[_i6].parentNode.removeChild(insertPoint.nextSibling);
+                        removeList[_i6].classList.remove('hidden');
                         document.querySelector('.create-list').classList.remove('hidden');
                     });
                 });
             };
 
-            for (var _i5 = 0; _i5 < removeList.length; _i5++) {
-                _loop2(_i5);
+            for (var _i6 = 0; _i6 < removeList.length; _i6++) {
+                _loop3(_i6);
             }
         }
 
@@ -1255,8 +1339,8 @@ var tinyTermsApp = function () {
             var webView = '<header>\n                        \t<h2 class="">Upload a list</h2>\n\t\t\t\t\t\t</header>\n\t\t\t\t\t\t<p>Create your very own list of Tiny Terms! For more info please visit:</p>\n\t\t\t\t\t\t<a target="_blank" href="http://www.tiny-terms.com">http://www.tiny-terms.com</a>\n\t\t\t\t\t\t\n\t\t\t\t\t\t<div class="list-uploader">\n\t\t\t\t\t\t\t<p>This feature is only available in the App version.</p>\n\t\t\t\t\t\t</div>';
 
             if (typeof store !== 'undefined') {
-
-                var product = store.get("full version");
+                store.refresh();
+                var product = store.get("custom list");
 
                 if (product.owned) {
                     modal.querySelector('.content').innerHTML += unlockedView;
@@ -1359,7 +1443,7 @@ var tinyTermsApp = function () {
         if (typeof cordova !== "undefined") {
             cordova.plugins.instabug.invoke();
         } else {
-            var _ret4 = function () {
+            var _ret5 = function () {
                 var modal = document.querySelector('.m-modal');
                 modal.classList.remove("hidden");
                 document.getElementsByTagName("body")[0].classList.add("modal-active");
@@ -1382,7 +1466,7 @@ var tinyTermsApp = function () {
                 };
             }();
 
-            if ((typeof _ret4 === 'undefined' ? 'undefined' : _typeof(_ret4)) === "object") return _ret4.v;
+            if ((typeof _ret5 === 'undefined' ? 'undefined' : _typeof(_ret5)) === "object") return _ret5.v;
         }
     };
 
@@ -1442,7 +1526,7 @@ var tinyTermsApp = function () {
             modal.classList.remove("hidden");
             document.getElementsByTagName("body")[0].classList.add("modal-active");
 
-            var view = '<header>\n\t\t\t\t\t\t<h2 class="">The list didn\'t load</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<p>Please check you have internet connection.</p>\n\n\t\t\t\t\t<button class="home-btn">Close</button>\n\t\t\t\t\t';
+            var view = '<header>\n\t\t\t\t\t\t<h2 class="">The list didn\'t load</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<p>Please check you have internet connection.</p> \n\t\t\t\t\t<p>If you are using a custom list please check the URL you added is correct.</p>\n\n\t\t\t\t\t<button class="home-btn">Close</button>\n\t\t\t\t\t';
 
             // Add view
             modal.querySelector(".content").innerHTML = view;
@@ -1464,6 +1548,9 @@ var tinyTermsApp = function () {
                 var termContent = data.Sheet1.elements[i].Term;
                 var definitionContent = data.Sheet1.elements[i].Definition;
                 var supportContent = data.Sheet1.elements[i].Support;
+
+                termContent = termContent.replace(/[!@#$%^&*]/g, "");
+                definitionContent = definitionContent.replace(/[!@#$%^&*]/g, "");
 
                 tinyTerms$1[tinyTerms$1.pickedList].terms[termContent] = {};
                 tinyTerms$1[tinyTerms$1.pickedList].terms[termContent].term = termContent;
@@ -1586,7 +1673,7 @@ var tinyTermsApp = function () {
 
     // Adds click functionality to selectors
     function clickListener(elements, clickFunction) {
-        var _loop3 = function _loop3(i) {
+        var _loop4 = function _loop4(i) {
             elements[i].addEventListener("click", function (e) {
                 e.preventDefault();
                 clickFunction(i);
@@ -1594,7 +1681,7 @@ var tinyTermsApp = function () {
         };
 
         for (var i = 0; i < elements.length; i++) {
-            _loop3(i);
+            _loop4(i);
         }
     }
 
@@ -1873,7 +1960,7 @@ var tinyTermsApp = function () {
         modal.classList.remove('hidden');
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-        var view = '<header>\n                    <h2 class="icon-child">Welcome to Tiny Terms!</h2>\n                </header>\n                <p>Looks like this is your first time here, so let\'s go over some basics before you get started.</p>\n                <button class="onboard-1">Let\'s go!</button>\n                <a href="#" class="close-tut">Skip the tutorial</a>\n                ';
+        var view = '<header>\n                    <h2 class="icon-child">Welcome</h2>\n                </header>\n                <p>Looks like this is your first time here, so let\'s go over some basics before you get started.</p>\n                <button class="onboard-1">Let\'s go!</button>\n                <a href="#" class="close-tut">Skip the tutorial</a>\n                ';
         modal.querySelector('.content').innerHTML = view;
         modal.classList.add('onboard');
         document.querySelector('.close-tut').addEventListener('click', function (e) {
@@ -1987,9 +2074,24 @@ var tinyTermsApp = function () {
             });
         }
         function onboardStage7() {
+            topTerm.querySelector('.lookup').classList.add('animated', 'pulse', 'infinite');
+            document.querySelector('.query-holder').setAttribute('disabled', 'true');
+
+            var termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
+            onBoardText.style.top = termOffset + "px";
+
+            var view = '<p>Clicking the Further Study button will give you detailed info on the term and the ability to practice writing it.</p>\n                    <button class="onboard-7">Next</button>';
+            onBoardText.innerHTML = view;
+
+            document.querySelector('.onboard-7').addEventListener('click', function (e) {
+                e.preventDefault();
+                onboardStage7b();
+            });
+        }
+        function onboardStage7b() {
+            topTerm.querySelector('.lookup').classList.remove('animated', 'pulse', 'infinite');
             topTerm.querySelector('.colour').classList.add('animated', 'pulse', 'infinite');
             topTerm.querySelector('.symbol').classList.add('animated', 'pulse', 'infinite');
-            document.querySelector('.query-holder').setAttribute('disabled', 'true');
 
             var termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
             onBoardText.style.top = termOffset + "px";
@@ -2112,8 +2214,8 @@ var tinyTermsApp = function () {
             tinyTerms$1.AllPicked = tinyTermsAllPicked || [];
             var navHTML = nav.innerHTML;
 
-            for (var _i6 = 0; _i6 < tinyTerms$1.AllPicked.length; _i6++) {
-                navHTML += '<a href="#">' + tinyTerms$1.AllPicked[_i6] + '</a>';
+            for (var _i7 = 0; _i7 < tinyTerms$1.AllPicked.length; _i7++) {
+                navHTML += '<a href="#">' + tinyTerms$1.AllPicked[_i7] + '</a>';
             }
             nav.innerHTML = navHTML;
 
@@ -2157,15 +2259,18 @@ var tinyTermsApp = function () {
             modal.classList.remove('hidden');
             document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-            var view = '<header>\n                        <h2 class="icon-gift">Store (coming soon)</h2>\n                    </header>\n                    <div class="options store">\n                        <p>Paid unlocks:</p>\n                        <a href="#" class="points-10-terms"><strong>59p</strong> - Get 10 terms a day</a>\n                        <p>Points rewards - this list:</p>\n                        <a href="#" class="points-refresh-terms"><strong>250</strong> - Refresh terms</a>\n                        <a href="#" class="points-half-timer"><strong>300</strong> - Activate half timer (lasts 1 day)</a>\n                        <p>Points rewards - all lists:</p>\n                        <a href="#" class="points-neon-colours"><strong>500</strong> - Unlock neon colours</a>\n                        <a href="#" class="points-solid-symbols"><strong>1000</strong> - Unlock solid symbols</a>\n                        <a href="#" class="points-star-bg"><strong>3000</strong> - Unlock star background</a>\n                        <a href="#" class="points-feather-symbols"><strong>5000</strong> - Unlock feather symbols</a>\n                        <a href="#" class="points-letters-bg"><strong>10,000</strong> - Unlock letters background</a>\n                        <a href="#" class="points-metal-colours"><strong>50,000</strong> - Unlock metal colours</a>\n                        <p>Apply code:</p>\n                        <input class="" type="text" placeholder="Add code here">\n                        <button class="submit">Submit</button>\n                    </div>\n                    ';
+            var view = '<header>\n                        <h2 class="icon-gift">Store</h2>\n                    </header>\n                    <div class="options store">\n                        <p>Paid unlocks:</p>\n                        <a href="#" class="points-10-terms"><strong>59p</strong> Get 10 terms a day</a>\n                        <p>Points rewards - this list:</p>\n                        <a href="#" class="points-refresh-terms"><strong>250</strong> Refresh terms</a>\n                        <a href="#" class="points-half-timer"><strong>300</strong> Half timer (1 day)</a>\n                        <p>Points rewards - all lists:</p>\n                        <a href="#" class="points-neon-colours"><strong>500</strong> Neon colours</a>\n                        <a href="#" class="points-solid-symbols"><strong>1000</strong> Solid symbols</a>\n                        <a href="#" class="points-star-bg"><strong>3000</strong> Star background</a>\n                        <a href="#" class="points-feather-symbols"><strong>5000</strong> Feather symbols</a>\n                        <a href="#" class="points-letters-bg"><strong>10,000</strong> Letters background</a>\n                        <a href="#" class="points-metal-colours"><strong>50,000</strong> Metal colours</a>\n                        <p>Apply code:</p>\n                        <input class="" type="text" placeholder="Add code here">\n                        <button class="submit">Submit</button>\n                    </div>\n                    ';
             // Add view
             modal.querySelector('.content').innerHTML += view;
+
+            // Values must match paid unlocks object order in app.js
+            var paidItems = ['.points-10-terms'];
 
             // Values must match list unlocks object order in app.js
             var listItems = ['.points-refresh-terms', '.points-half-timer'];
 
             // Values must match global unlocks object order in app.js
-            var globalItems = ['.points-10-terms', '.points-neon-colours', '.points-solid-symbols', '.points-star-bg', '.points-feather-symbols', '.points-letters-bg', '.points-metal-colours'];
+            var globalItems = ['.points-neon-colours', '.points-solid-symbols', '.points-star-bg', '.points-feather-symbols', '.points-letters-bg', '.points-metal-colours'];
 
             // God mode..... FEEL THE POWEEERR!!!
             if (tinyTerms$1[tinyTerms$1.pickedList].ops.godMode === true) {
@@ -2209,6 +2314,61 @@ var tinyTermsApp = function () {
                 }
             });
 
+            // Paid unlocks click listeners
+            clickListenerFromVar(paidItems, function (i) {
+                var unlockItem = Object.keys(tinyTerms$1.paidUnlocks)[i];
+
+                if (tinyTerms$1.paidUnlocks[unlockItem].active === 'unlocked' || tinyTerms$1.paidUnlocks[unlockItem].active === 'inactive') {
+                    return false;
+                } else {
+
+                    var webView = '<header>\n                                    <h2 class="">Available in the app</h2>\n                                </header>\n                                <p>Download the Android app today to unlock this feature.</p>';
+
+                    if (typeof store !== 'undefined') {
+                        store.refresh();
+                        var product = store.get("custom list");
+
+                        if (product.owned) {
+                            tinyTerms$1.paidUnlocks[unlockItem].active = 'unlocked';
+                        } else {
+                            document.querySelector('.unlock-uploadlist').addEventListener('click', function (e) {
+                                e.preventDefault();
+                                store.order('extra items');
+
+                                store.when("extra items").approved(function (order) {
+                                    tinyTerms$1.paidUnlocks[unlockItem].active = 'unlocked';
+                                    order.finish();
+                                });
+                            });
+                        }
+                    } else {
+                        modal.querySelector('.content').innerHTML = webView;
+                    }
+
+                    // 10 terms
+                    if (tinyTerms$1.paidUnlocks.terms10.active === 'unlocked') {
+                        var pickedTerms = getListOfTerms();
+                        var existingTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms;
+                        var joinedTerms = existingTerms.concat(pickedTerms);
+
+                        tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms = joinedTerms;
+
+                        localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList], function () {
+                            // Save to storage
+                            localforage.setItem('tinyTerms.paidUnlocks', tinyTerms$1.paidUnlocks, function () {
+                                // Refresh
+                                location.reload();
+                            });
+                        });
+                    }
+                }
+            });
+
+            // Hide 10 terms
+            if (tinyTerms$1.paidUnlocks.terms10.active === 'unlocked') {
+                document.querySelector('.points-10-terms').innerHTML = "(Unlocked)";
+            }
+
             // Click listener for global store items
             clickListenerFromVar(globalItems, function (i) {
                 var unlockItem = Object.keys(tinyTerms$1.globalUnlocks)[i];
@@ -2222,14 +2382,6 @@ var tinyTermsApp = function () {
 
                     tinyTerms$1.globalUnlocks[unlockItem].active = 'unlocked';
 
-                    // 10 terms
-                    if (tinyTerms$1.globalUnlocks.terms10.active === 'unlocked') {
-                        var pickedTerms = getListOfTerms();
-                        var existingTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms;
-                        var joinedTerms = existingTerms.concat(pickedTerms);
-
-                        tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms = joinedTerms;
-                    }
                     localforage.setItem('tinyTerms.score', score, function () {
                         // Like a christmas tree all up in here
                         localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList], function () {
@@ -2255,7 +2407,7 @@ var tinyTermsApp = function () {
 
             // Adds click functionality to selectors
             function clickListenerFromVar(elements, clickFunction) {
-                var _loop4 = function _loop4(i) {
+                var _loop5 = function _loop5(i) {
 
                     document.querySelector(elements[i]).addEventListener("click", function (e) {
                         e.preventDefault();
@@ -2264,7 +2416,7 @@ var tinyTermsApp = function () {
                 };
 
                 for (var i = 0; i < elements.length; i++) {
-                    _loop4(i);
+                    _loop5(i);
                 }
             }
 
@@ -2281,9 +2433,9 @@ var tinyTermsApp = function () {
             var buttonOffHTML = '<button class="store-off">Turn off</button>';
 
             // Menu mod for global unlocked items
-            for (var _i7 = 0; _i7 < globalItems.length; _i7++) {
-                var thisItem = globalItems[_i7];
-                var _unlockItem = Object.keys(tinyTerms$1.globalUnlocks)[_i7];
+            for (var _i8 = 0; _i8 < globalItems.length; _i8++) {
+                var thisItem = globalItems[_i8];
+                var _unlockItem = Object.keys(tinyTerms$1.globalUnlocks)[_i8];
                 var storedValue = tinyTerms$1.globalUnlocks[_unlockItem].active;
 
                 if (storedValue === 'unlocked') {
@@ -2295,12 +2447,12 @@ var tinyTermsApp = function () {
             }
             // Click listener store off buttons
 
-            var _loop5 = function _loop5(_i8) {
+            var _loop6 = function _loop6(_i9) {
 
-                document.querySelectorAll('.store-off')[_i8].addEventListener('click', function (e) {
+                document.querySelectorAll('.store-off')[_i9].addEventListener('click', function (e) {
                     e.preventDefault();
 
-                    var clickedItem = document.querySelectorAll('.store-off')[_i8].parentNode.className;
+                    var clickedItem = document.querySelectorAll('.store-off')[_i9].parentNode.className;
                     var thisItem = '.' + clickedItem;
                     var itemIndex = globalItems.indexOf('.' + clickedItem);
                     var unlockItem = Object.keys(tinyTerms$1.globalUnlocks)[itemIndex];
@@ -2318,18 +2470,17 @@ var tinyTermsApp = function () {
                 });
             };
 
-            for (var _i8 = 0; _i8 < document.querySelectorAll('.store-off').length; _i8++) {
-                _loop5(_i8);
+            for (var _i9 = 0; _i9 < document.querySelectorAll('.store-off').length; _i9++) {
+                _loop6(_i9);
             }
-
             // Click listener store on buttons
 
-            var _loop6 = function _loop6(_i9) {
+            var _loop7 = function _loop7(_i10) {
 
-                document.querySelectorAll('.store-on')[_i9].addEventListener('click', function (e) {
+                document.querySelectorAll('.store-on')[_i10].addEventListener('click', function (e) {
                     e.preventDefault();
 
-                    var clickedItem = document.querySelectorAll('.store-on')[_i9].parentNode.className;
+                    var clickedItem = document.querySelectorAll('.store-on')[_i10].parentNode.className;
                     var thisItem = '.' + clickedItem;
                     var itemIndex = globalItems.indexOf('.' + clickedItem);
                     var unlockItem = Object.keys(tinyTerms$1.globalUnlocks)[itemIndex];
@@ -2347,8 +2498,8 @@ var tinyTermsApp = function () {
                 });
             };
 
-            for (var _i9 = 0; _i9 < document.querySelectorAll('.store-on').length; _i9++) {
-                _loop6(_i9);
+            for (var _i10 = 0; _i10 < document.querySelectorAll('.store-on').length; _i10++) {
+                _loop7(_i10);
             }
         });
 
@@ -2398,13 +2549,21 @@ var tinyTermsApp = function () {
             modal.classList.remove('hidden');
             document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-            var view = '<header>\n                        <h2 class="icon-cog-outline">Options</h2>\n                    </header>\n                    <div class="options">\n                        <p>Help</p>\n                        <a href="#" class="icon-right-open show-tut">Show the tutorial again</a>\n                        <a href="mailto:info@tiny-terms.com" class="icon-right-open">Email a question</a>\n                        <a href="#" class="icon-right-open feedback">Report a bug/leave feedback</a>\n                        <p>More Options</p>\n                        <a href="#" class="icon-right-open reset-list">Reset list progress</a>\n                        <a href="#" class="icon-right-open reset">Reset the app</a>\n                        <p class="low-header">Credits</p>\n                        <p><small>All design and development by Alex Plummer.</small><br>\n                        <small>Icons courtesy of <a href="http://www.toicon.com/authors/1">Shannon E Thomas</a> at <a href="http://www.toicon.com">toicon.com</a></small></p>\n                    </div>\n                    ';
+            var view = '<header>\n                        <h2 class="icon-cog-outline">Options</h2>\n                    </header>\n                    <div class="options">\n                        <p>Help</p>\n                        <a href="#" class="icon-right-open show-tut">Show the tutorial again</a>\n                        <a href="mailto:info@tiny-terms.com" class="icon-right-open">Email a question</a>\n                        <a href="#" class="icon-right-open feedback">Report a bug/leave feedback</a>\n                        <p>More Options</p>\n                        <a href="#" class="icon-right-open reminders">Reminders</a>\n                        <a href="#" class="icon-right-open reset-list">Reset list progress</a>\n                        <a href="#" class="icon-right-open reset">Reset the app</a>\n                        <p class="low-header">Credits</p>\n                        <p><small>All design and development by Alex Plummer.</small><br>\n                        <small>Icons courtesy of <a href="http://www.toicon.com/authors/1">Shannon E Thomas</a> at <a href="http://www.toicon.com">toicon.com</a></small></p>\n                    </div>\n                    ';
 
             // Add view
             modal.querySelector('.content').innerHTML += view;
 
             var resetList = document.querySelector('.reset-list');
             var resetApp = document.querySelector('.reset');
+
+            if (typeof cordova === 'undefined') {
+                document.querySelector('.options').removeChild(document.querySelector('.options').querySelector('.reminders'));
+            } else {
+                document.querySelector('.reminders').addEventListener('click', function (e) {
+                    e.preventDefault();notifyAsk();
+                });
+            }
 
             document.querySelector('.show-tut').addEventListener('click', function (e) {
                 e.preventDefault();onboardShow();
@@ -2432,7 +2591,6 @@ var tinyTermsApp = function () {
                 document.querySelector('.delete-confirm').addEventListener('click', function () {
                     delete tinyTerms$1[tinyTerms$1.pickedList];
                     localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]).then(function (value) {
-
                         localforage.removeItem('tinyTermsDefault').then(function () {
                             location.reload();
                         });
@@ -2461,6 +2619,152 @@ var tinyTermsApp = function () {
         });
     };
 
+    // Ask for reminders
+    var notifyAsk = function notifyAsk() {
+        var modal = document.querySelector('.m-modal');
+
+        modal.classList.remove('hidden');
+        document.getElementsByTagName('body')[0].classList.add('modal-active');
+
+        var view = '<header>\n                    <h2 class="icon-cog-outline">Reminders</h2>\n                </header>\n                <div class="m-reminders options">\n                    <p>You can configure reminders here, they are really helpful if you keep forgetting to learn terms!</p>\n                    <button class="save-times">Save reminders</button>\n                    <button class="add-time">New reminder</button>\n                    <div class="time-holders">\n                    </div>\n                </div>\n                ';
+
+        // Add view
+        modal.querySelector('.content').innerHTML = view;
+
+        var defaultTimes = [[8, 15], [12, 15], [17, 50]];
+
+        tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes = tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes || defaultTimes;
+
+        // Get stored times, then add to DOM
+        getTimes();
+
+        function getTimes() {
+            var reminderTimesLength = tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes.length;
+
+            document.querySelector('.time-holders').innerHTML = "";
+
+            // Build times based off stored data
+            for (var i = 0; i < reminderTimesLength; i++) {
+                var hours = tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes[i][0];
+                var mins = tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes[i][1];
+                if (mins === 0) {
+                    mins = '00';
+                }
+                var time = hours + ':' + mins;
+
+                addTime(i, time);
+            }
+        }
+
+        // Add to DOM
+        function addTime(i, time) {
+            var timeClass = 'time-' + i;
+            var timeTemplate = '<div class="time-wrap ' + timeClass + '">\n                                <input type="text" class="time-input" disabled value="' + time + '">\n                                <button class="change-time">Change</button>\n                                <button class="remove-time">Remove</button>\n                            </div>';
+
+            document.querySelector('.time-holders').innerHTML += timeTemplate;
+            updateListeners();
+        }
+
+        // Add a new time 
+        document.querySelector('.add-time').addEventListener('click', function (e) {
+            tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes.push([12, 0]);
+            getTimes();
+        });
+
+        // Save reminders
+        document.querySelector('.save-times').addEventListener('click', function (e) {
+            e.preventDefault();
+            saveReminders();
+
+            // Save to storage
+            localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]).then(function (value) {
+                hideModal(true);
+            });
+        });
+
+        function saveReminders() {
+            var reminderTimesLength = tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes.length;
+
+            // Reset stored
+            tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes = [];
+
+            // Build times based off edited times
+            var timeButtons = document.querySelectorAll('.time-wrap');
+            var timeCount = timeButtons.length;
+
+            for (var i = 0; i < timeCount; i++) {
+                var editedTime = document.querySelectorAll('.time-wrap')[i].querySelector('.time-input').value;
+
+                var hours = editedTime.split(":")[0];
+                var mins = editedTime.split(":")[1];
+
+                // Add to stored
+                tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes.push([hours, mins]);
+
+                var theDate = new Date();
+
+                theDate.setHours(hours);
+                theDate.setMinutes(mins);
+                theDate.setSeconds(0);
+
+                cordova.plugins.notification.local.schedule({
+                    id: i,
+                    text: "It's time to learn!",
+                    firstAt: theDate,
+                    every: "day",
+                    led: "e21657"
+                });
+            }
+        }
+
+        // Update listeners for buttons
+        function updateListeners() {
+            var timeButtons = document.querySelectorAll('.time-wrap');
+            var timeCount = timeButtons.length;
+
+            // Edit time
+
+            var _loop8 = function _loop8(i) {
+                document.querySelectorAll('.time-wrap')[i].querySelector('.change-time').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var thisToggle = 'x' + i;
+                    var thisWrap = '.time-' + i;
+                    var thisInput = document.querySelector(thisWrap).getElementsByTagName('input')[0];
+
+                    thisToggle = new mdDateTimePicker.default({
+                        type: 'time',
+                        mode: true
+                    });
+
+                    thisToggle.time = moment().hours(12).minutes(0);
+                    thisToggle.toggle();
+                    thisToggle.trigger = thisInput;
+
+                    thisInput.addEventListener('onOk', function () {
+                        var hours = thisToggle.time.hours().toString();
+                        var mins = thisToggle.time.minutes().toString();
+
+                        if (mins < 10) {
+                            mins = '0' + mins;
+                        }
+                        this.value = hours + ':' + mins;
+                    });
+                });
+
+                // Remove time
+                document.querySelectorAll('.time-wrap')[i].querySelector('.remove-time').addEventListener('click', function (e) {
+                    tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes.splice(i, 1).pop();
+                    cordova.plugins.notification.local.cancel(i, function () {});
+                    getTimes();
+                });
+            };
+
+            for (var i = 0; i < timeCount; i++) {
+                _loop8(i);
+            }
+        }
+    };
+
     // Imports
     // App namespace
     var tinyTerms$1 = tinyTerms$1 || {};
@@ -2484,6 +2788,23 @@ var tinyTermsApp = function () {
         }
     };
 
+    // Matches with array of menu items in menuInteraction.js
+    var paidUnlocks = {
+        terms10: { points: 0, active: 'locked' }
+    };
+    var listUnlocks = {
+        termsRefresh: { points: 250, active: 'locked' },
+        timerHalf: { points: 300, active: 'locked' }
+    };
+    var globalUnlocks = {
+        coloursNeon: { points: 500, active: 'locked' },
+        symbolsSolid: { points: 1000, active: 'locked' },
+        bgStars: { points: 3000, active: 'locked' },
+        symbolsFeather: { points: 5000, active: 'locked' },
+        bgLetters: { points: 10000, active: 'locked' },
+        coloursMetal: { points: 50000, active: 'locked' }
+    };
+
     // Crash protection
     var notLoaded = true;
 
@@ -2495,7 +2816,7 @@ var tinyTermsApp = function () {
             modal.classList.remove("hidden");
             document.getElementsByTagName("body")[0].classList.add("modal-active");
 
-            var view = '<header>\n\t\t\t\t\t\t<h2 class="">Uh oh!</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<br>\n\t\t\t\t\t<h3>Sorry something went wrong</h3>\n\t\t\t\t\t<br>\n\t\t\t\t\t<button class="crash-report">Report issue</button><button class="home-btn">Close</button>\n\t\t\t\t\t';
+            var view = '<header>\n\t\t\t\t\t\t<h2 class="">Uh oh!</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<br>\n\t\t\t\t\t<p>Sorry something went wrong.</p>\n\t\t\t\t\t<p>If this keeps happening you can reset the list by <a href="#" class="reset-list">clicking here</a> (wipes list progress).</p>\n\t\t\t\t\t<br>\n\t\t\t\t\t<button class="crash-report">Report issue</button><button class="home-btn">Close</button>\n\t\t\t\t\t';
 
             // Add view
             modal.querySelector(".content").innerHTML = view;
@@ -2504,6 +2825,18 @@ var tinyTermsApp = function () {
             document.querySelector('.crash-report').addEventListener("click", function (e) {
                 e.preventDefault();
                 errorReport();
+            });
+
+            document.querySelector(".reset-list").addEventListener("click", function (e) {
+                e.preventDefault();
+
+                delete tinyTerms$1[tinyTerms$1.pickedList];
+
+                localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]).then(function (value) {
+                    localforage.removeItem('tinyTermsDefault').then(function () {
+                        location.reload();
+                    });
+                });
             });
 
             document.querySelector(".home-btn").addEventListener("click", function (e) {
@@ -2517,17 +2850,6 @@ var tinyTermsApp = function () {
     ready(function () {
         "use strict";
 
-        // Error handling
-
-        errorAlert('Sorry there was a problem.', function () {
-
-            // Clear list references callback
-            localforage.removeItem(tinyTerms$1.storedName).then(function () {
-                localforage.removeItem(tinyTerms$1.pickedList);
-            });
-            notLoaded = false;
-        });
-
         localforage.getItem("tinyTerms.lists", function (err, lists) {
 
             // Check for internet, pull list references if connection
@@ -2535,7 +2857,7 @@ var tinyTermsApp = function () {
 
             function noConnection() {
                 if (lists === null) {
-                    alertMsg("Please connect to the internet to download lists, after they will be available offline.", function () {
+                    alertMsg("Please connect to the internet to download the lists, after they will be available offline.", function () {
                         document.querySelector(".home-btn").addEventListener("click", function (e) {
                             e.preventDefault();
                             showHome();
@@ -2600,30 +2922,34 @@ var tinyTermsApp = function () {
             });
         });
 
+        // Check to see if default list already has data
         function checkDefault() {
             // Check for existing data of newly picked list
             localforage.getItem("tinyTerms" + tinyTermsDefault, function (err, value) {
 
+                // If data exists in storage, load normally
                 if (value !== null) {
                     tinyTerms$1.pickedList = tinyTermsDefault;
                     normalLoad(tinyTerms$1.pickedList);
-                } else {
-                    var noConnection = function noConnection() {
-                        alertMsg("Please connect to the internet to download list, after it will be available offline.", function () {
-                            document.querySelector(".home-btn").addEventListener("click", function (e) {
-                                e.preventDefault();
-                                showHome();
-                            });
-                        });
-                    };
-
-                    var isConnection = function isConnection() {
-                        firstLoad();
-                    };
-
-                    checkConnection(noConnection, isConnection);
-                    notLoaded = false;
                 }
+                // Fetch data if connection
+                else {
+                        var noConnection = function noConnection() {
+                            alertMsg("Please connect to the internet to download the list, after it will be available offline.", function () {
+                                document.querySelector(".home-btn").addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    showHome();
+                                });
+                            });
+                        };
+
+                        var isConnection = function isConnection() {
+                            firstLoad();
+                        };
+
+                        checkConnection(noConnection, isConnection);
+                        notLoaded = false;
+                    }
             });
         }
 
@@ -2631,6 +2957,7 @@ var tinyTermsApp = function () {
             tinyTerms$1.storedName = "tinyTerms" + defaultlist;
 
             localforage.getItem("tinyTerms" + defaultlist, function (err, value) {
+
                 // Set session storage to stored
                 tinyTerms$1[tinyTerms$1.pickedList] = value;
 
@@ -2667,47 +2994,38 @@ var tinyTermsApp = function () {
     // Set unlocks
     var setUnlocks = function setUnlocks(callback) {
 
-        // Matches with array of menu items in menuInteraction.js
-        var listUnlocks = {
-            termsRefresh: { points: 250, active: 'locked' },
-            timerHalf: { points: 300, active: 'locked' }
-        };
-        var globalUnlocks = {
-            terms10: { points: 0, active: 'locked' },
-            coloursNeon: { points: 500, active: 'locked' },
-            symbolsSolid: { points: 1000, active: 'locked' },
-            bgStars: { points: 3000, active: 'locked' },
-            symbolsFeather: { points: 5000, active: 'locked' },
-            bgLetters: { points: 10000, active: 'locked' },
-            coloursMetal: { points: 50000, active: 'locked' }
-        };
+        // Set paid list unlocks
+        localforage.getItem("tinyTerms.paidUnlocks", function (err, storedPaidUnlocks) {
 
-        localforage.getItem("tinyTerms.globalUnlocks", function (err, storedGlobalUnlocks) {
-
-            // Set default list unlocks
-            tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks = tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks || listUnlocks;
-
-            // Set default global unlocks
-            tinyTerms$1.globalUnlocks = storedGlobalUnlocks || globalUnlocks;
+            tinyTerms$1.paidUnlocks = storedPaidUnlocks || paidUnlocks;
 
             // Ten terms
-            if (tinyTerms$1.globalUnlocks.terms10.active === 'unlocked') {
+            if (tinyTerms$1.paidUnlocks.terms10.active === 'unlocked') {
                 tinyTerms$1[tinyTerms$1.pickedList].ops.displayedTerms = 10;
             }
 
-            // Reset terms refresh 
-            tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks.termsRefresh.active = 'locked';
+            // Set global unlocks
+            localforage.getItem("tinyTerms.globalUnlocks", function (err, storedGlobalUnlocks) {
 
-            // Set list unlocks ops attributes
-            if (tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks !== undefined) {
+                // Set default list unlocks
+                tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks = tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks || listUnlocks;
 
-                // Half timer
-                if (tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks.timerHalf.active === 'unlocked') {
-                    tinyTerms$1[tinyTerms$1.pickedList].ops.counterMins = 30;
+                // Set default global unlocks
+                tinyTerms$1.globalUnlocks = storedGlobalUnlocks || globalUnlocks;
+
+                // Reset terms refresh 
+                tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks.termsRefresh.active = 'locked';
+
+                // Set list unlocks ops attributes
+                if (tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks !== undefined) {
+
+                    // Half timer
+                    if (tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks.timerHalf.active === 'unlocked') {
+                        tinyTerms$1[tinyTerms$1.pickedList].ops.counterMins = 30;
+                    }
                 }
-            }
-
-            callback();
+                callback();
+            });
         });
     };
 
@@ -2724,25 +3042,35 @@ var tinyTermsApp = function () {
             tinyTerms$1[tinyTerms$1.pickedList].ops = ops;
             tinyTerms$1.storedName = "tinyTerms" + tinyTerms$1.pickedList;
 
-            // Set new list to storage, add as default
-            localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
+            // Add to storage
+            localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList], function () {
+                // Add default lists to uploadedLists, same place as user upload
+                localforage.getItem("tinyTerms.uploadedLists", function (err, uploadedLists) {
+                    var sheetURL = void 0;
 
-            // Add default lists to uploadedLists, same place as user upload
-            localforage.getItem("tinyTerms.uploadedLists", function (err, uploadedLists) {
-                var sheetURL = void 0;
-
-                uploadedLists = uploadedLists || {};
-                // If list from uploaded lists
-                if (uploadedLists.hasOwnProperty(tinyTerms$1.pickedList)) {
-                    sheetURL = uploadedLists[tinyTerms$1.pickedList].sheetURL;
-                }
-                // Else from default lists
-                else {
-                        sheetURL = tinyTerms$1.listChoices[tinyTerms$1.pickedList].sheetURL;
+                    uploadedLists = uploadedLists || {};
+                    // If list from uploaded lists
+                    if (uploadedLists.hasOwnProperty(tinyTerms$1.pickedList)) {
+                        sheetURL = uploadedLists[tinyTerms$1.pickedList].sheetURL;
                     }
+                    // Else from default lists
+                    else {
+                            sheetURL = tinyTerms$1.listChoices[tinyTerms$1.pickedList].sheetURL;
+                        }
 
-                // Fetch data for list
-                fetchData(sheetURL, firstTime);
+                    // Error handling for Tabletop
+                    errorAlert('Couldn\'t load the list URL, did you copy it correctly?', function () {
+
+                        // Clear list references callback
+                        localforage.removeItem(tinyTerms$1.storedName).then(function () {
+                            localforage.removeItem(tinyTerms$1.pickedList);
+                        });
+                        notLoaded = false;
+                    });
+
+                    // Fetch data for list
+                    fetchData(sheetURL, firstTime);
+                });
             });
         });
     };
@@ -2752,16 +3080,6 @@ var tinyTermsApp = function () {
 
         // Add a callback method
         tinyTerms$1.postBuildCallback = postBuildCallback;
-
-        // Error handling for Tabletop
-        errorAlert('Couldn\'t load the list URL, did you copy it correctly?', function () {
-
-            // Clear list references callback
-            localforage.removeItem(tinyTerms$1.storedName).then(function () {
-                localforage.removeItem(tinyTerms$1.pickedList);
-            });
-            notLoaded = false;
-        });
 
         // Get data from sheets
         Tabletop.init({
@@ -2773,10 +3091,6 @@ var tinyTermsApp = function () {
 
     // Runs if first time list has run
     var firstTime = function firstTime() {
-
-        if (tinyTerms$1[tinyTerms$1.pickedList].ops.debug !== true) {
-            window.onerror = "";
-        }
 
         // Create terms
         setUnlocks(appBuildHandler);
@@ -2791,6 +3105,16 @@ var tinyTermsApp = function () {
     // Initialises data and app
     var initialise = function initialise() {
 
+        // Check if list data got downloaded
+        if (tinyTerms$1[tinyTerms$1.pickedList].storedData.dateOpened === undefined) {
+            // Clear list references if badly downloaded
+            localforage.removeItem(tinyTerms$1.storedName).then(function () {
+                localforage.removeItem('tinyTermsDefault').then(function () {
+                    localforage.removeItem(tinyTerms$1.pickedList);
+                });
+            });
+            notLoaded = false;
+        }
         // Check if a new day
         checkSameDay();
 
@@ -2876,13 +3200,40 @@ var tinyTermsApp = function () {
         // App should have loaded by here
         notLoaded = false;
 
+        if (tinyTerms$1.tutComplete === true && typeof cordova !== 'undefined') {
+
+            // Ask for reminders
+            localforage.getItem("tinyTerms.askNotify", function (err, value) {
+
+                if (value === null) {
+                    var modal = document.querySelector('.m-modal');
+                    modal.classList.remove("hidden");
+                    document.getElementsByTagName("body")[0].classList.add("modal-active");
+
+                    var view = '<header>\n\t\t\t\t\t\t\t\t<h2 class="">Setup reminders</h2>\n\t\t\t\t\t\t\t</header>\n\t\t\t\t\t\t\t<p>Tiny Terms allows you to add reminders, these notifications are helpful if you want to really commit to learning those terms.</p>\n\t\t\t\t\t\t\t<p><strong>(You can change reminder settings from the menu)</strong></p>\n\t\t\t\t\t\t\t<button class="remind-yes width">Setup reminders</button>\n\t\t\t\t\t\t\t';
+
+                    // Add view
+                    modal.querySelector(".content").innerHTML = view;
+
+                    document.querySelector('.remind-yes').addEventListener('click', function (e) {
+                        e.preventDefault();
+                        notifyAsk();
+                    });
+
+                    // Set storage
+                    value = true;
+                    localforage.setItem('tinyTerms.askNotify', value);
+                }
+            });
+        }
+
         // Once loaded
         setTimeout(function () {
             document.getElementsByTagName("body")[0].classList.remove("loading");
             document.querySelector(".m-query").classList.add("animated", "slideInDown");
 
             // Show onboard if incomplete
-            if (tinyTerms$1.tutComplete === false) {
+            if (tinyTerms$1.tutComplete === null || tinyTerms$1.tutComplete === false) {
                 onboardShow();
             }
         }, tinyTerms$1[tinyTerms$1.pickedList].ops.loadDelay);

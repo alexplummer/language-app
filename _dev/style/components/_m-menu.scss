@@ -320,7 +320,14 @@
         @extend .icon;
 
         strong {
-            color: $clr-tertiary;
+            @extend .btn;
+            width: 75px;
+            background: $clr-tertiary;
+            color: #fff;
+            text-align: center;
+            display: inline-block;
+            padding: $size-xs $size-xs;
+            margin: 0 $size-xs;
         }
         &:before {
             background: $clr-tertiary;

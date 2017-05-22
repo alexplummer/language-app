@@ -6,7 +6,7 @@ import { viewCreate, addHearts, setScore, progressBar } from "viewCreation";
 import { createNewQuery } from "queryInteraction";
 import { showHome } from "homeScreen";
 import { onboardShow } from "introInstructions";
-import { navMenu, footerMenu, optionsDisplay } from "menuInteraction";
+import { navMenu, footerMenu, optionsDisplay, notifyAsk } from "menuInteraction";
 import appData from "appData";
 
 // Exports
@@ -16,7 +16,7 @@ export default tinyTerms;
 let tinyTerms = tinyTerms || {};
 
 // Global options
-let ops = {
+const ops = {
 	displayedTerms: 5,
 	counterMins: 60,
 	counterSecs: 0,
@@ -34,6 +34,23 @@ let ops = {
 	}
 };
 
+// Matches with array of menu items in menuInteraction.js
+const paidUnlocks = {
+	terms10: { points: 0, active: 'locked' },
+}
+const listUnlocks = {
+	termsRefresh: { points: 250, active: 'locked' },
+	timerHalf: { points: 300, active: 'locked' },
+}
+const globalUnlocks = {
+	coloursNeon: { points: 500, active: 'locked' },
+	symbolsSolid: { points: 1000, active: 'locked' },
+	bgStars: { points: 3000, active: 'locked' },
+	symbolsFeather: { points: 5000, active: 'locked' },
+	bgLetters: { points: 10000, active: 'locked' },
+	coloursMetal: { points: 50000, active: 'locked' },
+}
+
 // Crash protection
 let notLoaded = true;
 
@@ -49,7 +66,8 @@ setTimeout(() => {
 						<h2 class="">Uh oh!</h2>
 					</header>
 					<br>
-					<h3>Sorry something went wrong</h3>
+					<p>Sorry something went wrong.</p>
+					<p>If this keeps happening you can reset the list by <a href="#" class="reset-list">clicking here</a> (wipes list progress).</p>
 					<br>
 					<button class="crash-report">Report issue</button><button class="home-btn">Close</button>
 					`;
@@ -63,6 +81,18 @@ setTimeout(() => {
 			errorReport();
 		});
 
+		document.querySelector(".reset-list").addEventListener("click", (e) => {
+			e.preventDefault();
+
+			delete tinyTerms[tinyTerms.pickedList];
+
+			localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {
+				localforage.removeItem('tinyTermsDefault').then(function () {
+					location.reload();
+				});
+			});
+		});
+
 		document.querySelector(".home-btn").addEventListener("click", (e) => {
 			e.preventDefault();
 			showHome();
@@ -74,16 +104,6 @@ setTimeout(() => {
 ready(function () {
 	"use strict";
 
-	// Error handling
-	errorAlert('Sorry there was a problem.', () => {
-
-		// Clear list references callback
-		localforage.removeItem(tinyTerms.storedName).then(function () {
-			localforage.removeItem(tinyTerms.pickedList);
-		});
-		notLoaded = false;
-	});
-
 	localforage.getItem("tinyTerms.lists", function (err, lists) {
 
 		// Check for internet, pull list references if connection
@@ -91,7 +111,7 @@ ready(function () {
 
 		function noConnection() {
 			if (lists === null) {
-				alertMsg("Please connect to the internet to download lists, after they will be available offline.", () => {
+				alertMsg("Please connect to the internet to download the lists, after they will be available offline.", () => {
 					document.querySelector(".home-btn").addEventListener("click", (e) => {
 						e.preventDefault();
 						showHome();
@@ -157,20 +177,23 @@ function getLists(skipDefaultCheck) {
 		});
 	});
 
+	// Check to see if default list already has data
 	function checkDefault() {
 		// Check for existing data of newly picked list
 		localforage.getItem("tinyTerms" + tinyTermsDefault, function (err, value) {
 
+			// If data exists in storage, load normally
 			if (value !== null) {
 				tinyTerms.pickedList = tinyTermsDefault;
 				normalLoad(tinyTerms.pickedList);
 			}
+			// Fetch data if connection
 			else {
 				checkConnection(noConnection, isConnection);
 				notLoaded = false;
 
 				function noConnection() {
-					alertMsg("Please connect to the internet to download list, after it will be available offline.", () => {
+					alertMsg("Please connect to the internet to download the list, after it will be available offline.", () => {
 						document.querySelector(".home-btn").addEventListener("click", (e) => {
 							e.preventDefault();
 							showHome()
@@ -226,47 +249,38 @@ function getLists(skipDefaultCheck) {
 // Set unlocks
 const setUnlocks = function setUnlocks(callback) {
 
-	// Matches with array of menu items in menuInteraction.js
-	let listUnlocks = {
-		termsRefresh: { points: 250, active: 'locked' },
-		timerHalf: { points: 300, active: 'locked' },
-	}
-	let globalUnlocks = {
-		terms10: { points: 0, active: 'locked' },
-		coloursNeon: { points: 500, active: 'locked' },
-		symbolsSolid: { points: 1000, active: 'locked' },
-		bgStars: { points: 3000, active: 'locked' },
-		symbolsFeather: { points: 5000, active: 'locked' },
-		bgLetters: { points: 10000, active: 'locked' },
-		coloursMetal: { points: 50000, active: 'locked' },
-	}
+	// Set paid list unlocks
+	localforage.getItem("tinyTerms.paidUnlocks", function (err, storedPaidUnlocks) {
 
-	localforage.getItem("tinyTerms.globalUnlocks", function (err, storedGlobalUnlocks) {
+		tinyTerms.paidUnlocks = storedPaidUnlocks || paidUnlocks;
 
-		// Set default list unlocks
-        tinyTerms[tinyTerms.pickedList].storedData.listUnlocks = tinyTerms[tinyTerms.pickedList].storedData.listUnlocks || listUnlocks;
-		
-		// Set default global unlocks
-        tinyTerms.globalUnlocks = storedGlobalUnlocks || globalUnlocks;
-		
 		// Ten terms
-		if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
+		if (tinyTerms.paidUnlocks.terms10.active === 'unlocked') {
 			tinyTerms[tinyTerms.pickedList].ops.displayedTerms = 10;
 		}
-		
-		// Reset terms refresh 
-		tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.termsRefresh.active = 'locked';
 
-		// Set list unlocks ops attributes
-		if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks !== undefined) {
+		// Set global unlocks
+		localforage.getItem("tinyTerms.globalUnlocks", function (err, storedGlobalUnlocks) {
 
-			// Half timer
-			if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.timerHalf.active === 'unlocked') {
-				tinyTerms[tinyTerms.pickedList].ops.counterMins = 30;
+			// Set default list unlocks
+			tinyTerms[tinyTerms.pickedList].storedData.listUnlocks = tinyTerms[tinyTerms.pickedList].storedData.listUnlocks || listUnlocks;
+			
+			// Set default global unlocks
+			tinyTerms.globalUnlocks = storedGlobalUnlocks || globalUnlocks;
+						
+			// Reset terms refresh 
+			tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.termsRefresh.active = 'locked';
+
+			// Set list unlocks ops attributes
+			if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks !== undefined) {
+
+				// Half timer
+				if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks.timerHalf.active === 'unlocked') {
+					tinyTerms[tinyTerms.pickedList].ops.counterMins = 30;
+				}
 			}
-		}
-		
-		callback();
+			callback();
+		});
 	});
 }
 
@@ -284,26 +298,38 @@ const firstLoad = function firstLoad() {
 		tinyTerms[tinyTerms.pickedList].ops = ops;
 		tinyTerms.storedName = "tinyTerms" + tinyTerms.pickedList;
 
-		// Set new list to storage, add as default
-		localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+		// Add to storage
+		localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
+			// Add default lists to uploadedLists, same place as user upload
+			localforage.getItem("tinyTerms.uploadedLists", function (err, uploadedLists) {
+				let sheetURL;
 
-		// Add default lists to uploadedLists, same place as user upload
-		localforage.getItem("tinyTerms.uploadedLists", function (err, uploadedLists) {
-			let sheetURL;
+				uploadedLists = uploadedLists || {};
+				// If list from uploaded lists
+				if (uploadedLists.hasOwnProperty(tinyTerms.pickedList)) {
+					sheetURL = uploadedLists[tinyTerms.pickedList].sheetURL;
+				}
+				// Else from default lists
+				else {
+					sheetURL = tinyTerms.listChoices[tinyTerms.pickedList].sheetURL;
+				}
 
-			uploadedLists = uploadedLists || {};
-			// If list from uploaded lists
-			if (uploadedLists.hasOwnProperty(tinyTerms.pickedList)) {
-				sheetURL = uploadedLists[tinyTerms.pickedList].sheetURL;
-			}
-			// Else from default lists
-			else {
-				sheetURL = tinyTerms.listChoices[tinyTerms.pickedList].sheetURL;
-			}
+				// Error handling for Tabletop
+				errorAlert('Couldn\'t load the list URL, did you copy it correctly?', () => {
 
-			// Fetch data for list
-			fetchData(sheetURL, firstTime);
+					// Clear list references callback
+					localforage.removeItem(tinyTerms.storedName).then(function () {
+						localforage.removeItem(tinyTerms.pickedList);
+					});
+					notLoaded = false;
+				});
+
+				// Fetch data for list
+				fetchData(sheetURL, firstTime);
+			});
 		});
+
+		
 	});
 };
 
@@ -312,16 +338,6 @@ const fetchData = function fetchData(sheetURL, postBuildCallback) {
 
 	// Add a callback method
 	tinyTerms.postBuildCallback = postBuildCallback;
-
-	// Error handling for Tabletop
-	errorAlert('Couldn\'t load the list URL, did you copy it correctly?', () => {
-
-		// Clear list references callback
-		localforage.removeItem(tinyTerms.storedName).then(function () {
-			localforage.removeItem(tinyTerms.pickedList);
-		});
-		notLoaded = false;
-	});
 
 	// Get data from sheets
 	Tabletop.init({
@@ -333,10 +349,6 @@ const fetchData = function fetchData(sheetURL, postBuildCallback) {
 
 // Runs if first time list has run
 const firstTime = function firstTime() {
-
-	if (tinyTerms[tinyTerms.pickedList].ops.debug !== true) {
-		window.onerror = "";
-	}
 
 	// Create terms
 	setUnlocks(appBuildHandler);
@@ -351,6 +363,16 @@ const firstTime = function firstTime() {
 // Initialises data and app
 const initialise = function initialise() {
 	
+	// Check if list data got downloaded
+	if (tinyTerms[tinyTerms.pickedList].storedData.dateOpened === undefined) {
+		// Clear list references if badly downloaded
+		localforage.removeItem(tinyTerms.storedName).then(function () {
+			localforage.removeItem('tinyTermsDefault').then(function () {
+					localforage.removeItem(tinyTerms.pickedList);
+				});
+		});
+		notLoaded = false;
+	}
 	// Check if a new day
 	checkSameDay();
 
@@ -439,6 +461,39 @@ const appBuildHandler = function appBuildHandler() {
 	// App should have loaded by here
 	notLoaded = false;
 
+	if (tinyTerms.tutComplete === true && typeof cordova !== 'undefined') {
+
+		// Ask for reminders
+		localforage.getItem("tinyTerms.askNotify", function (err, value) {
+
+			if (value === null) {
+				let modal = document.querySelector('.m-modal');
+				modal.classList.remove("hidden");
+				document.getElementsByTagName("body")[0].classList.add("modal-active");
+
+				let view = `<header>
+								<h2 class="">Setup reminders</h2>
+							</header>
+							<p>Tiny Terms allows you to add reminders, these notifications are helpful if you want to really commit to learning those terms.</p>
+							<p><strong>(You can change reminder settings from the menu)</strong></p>
+							<button class="remind-yes width">Setup reminders</button>
+							`;
+
+				// Add view
+				modal.querySelector(".content").innerHTML = view;
+
+				document.querySelector('.remind-yes').addEventListener('click', (e) => {
+					e.preventDefault();
+					notifyAsk();
+				});
+
+				// Set storage
+				value = true;
+				localforage.setItem('tinyTerms.askNotify', value);
+			}
+		});
+	}
+
 	// Once loaded
 	setTimeout(
 		() => {
@@ -446,7 +501,7 @@ const appBuildHandler = function appBuildHandler() {
 			document.querySelector(".m-query").classList.add("animated", "slideInDown");
 
 			// Show onboard if incomplete
-			if (tinyTerms.tutComplete === false) {
+			if (tinyTerms.tutComplete === null || tinyTerms.tutComplete === false) {
 				onboardShow();
 			}
 		},

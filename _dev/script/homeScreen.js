@@ -263,8 +263,8 @@ const showHome = function showHome() {
 						</div>`;
 
 		if (typeof store !== 'undefined') {
-
-			let product = store.get("full version");
+			store.refresh();
+			let product = store.get("custom list");
 			
 			if (product.owned) {
 				modal.querySelector('.content').innerHTML += unlockedView;

@@ -36,6 +36,7 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="../bower_components/animate.css/animate.css" />
     <!-- endbower -->
+    <link rel="stylesheet" href="../bower_components/md-date-time-picker/dist/css/mdDateTimePicker.min.css">
     <link rel="stylesheet" href="style/style.css">
     <!-- endbuild -->
     <link rel="apple-touch-icon" sizes="76x76" href="img/brand/favicons/apple-touch-icon.png?v=6">
@@ -63,9 +64,11 @@
     <div class="nav-bg"></div>
     <div class="container">
         <div class="m-modal hidden">
-            <div class="inner">
+            <div class="close-wrap">
                 <a class="close" href="#"></a>
-                <div class="content"></div>
+                <div class="inner">
+                    <div class="content"></div>
+                </div>
             </div>
         </div>
         <div class="onboard-wrap">
@@ -135,10 +138,17 @@
     <!-- bower:js -->
     <script src="../bower_components/localforage/dist/localforage.js"></script>
     <script src="../bower_components/tabletop/src/tabletop.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/get-size/get-size.js"></script>
+    <script src="../bower_components/ev-emitter/ev-emitter.js"></script>
+    <script src="../bower_components/unipointer/unipointer.js"></script>
+    <script src="../bower_components/unidragger/unidragger.js"></script>
+    <script src="../bower_components/draggabilly/draggabilly.js"></script>
     <!-- endbower -->
     <!-- inject:imports -->
     <script src="script/app.js"></script>
     <!-- endinject -->
+    <script src="../bower_components/md-date-time-picker/dist/js/mdDateTimePicker.min.js"></script>
     <!-- endbuild -->
 </body>
 

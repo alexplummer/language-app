@@ -24,7 +24,7 @@ const onboardShow = function onboardShow() {
     document.getElementsByTagName('body')[0].classList.add('modal-active');
 
     let view = `<header>
-                    <h2 class="icon-child">Welcome to Tiny Terms!</h2>
+                    <h2 class="icon-child">Welcome</h2>
                 </header>
                 <p>Looks like this is your first time here, so let's go over some basics before you get started.</p>
                 <button class="onboard-1">Let's go!</button>
@@ -148,9 +148,25 @@ const onboardShow = function onboardShow() {
         });
     }
     function onboardStage7() {
+        topTerm.querySelector('.lookup').classList.add('animated', 'pulse', 'infinite');
+        document.querySelector('.query-holder').setAttribute('disabled', 'true');
+
+        let termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
+        onBoardText.style.top = termOffset + "px";
+
+        let view = `<p>Clicking the Further Study button will give you detailed info on the term and the ability to practice writing it.</p>
+                    <button class="onboard-7">Next</button>`;
+        onBoardText.innerHTML = view;
+
+        document.querySelector('.onboard-7').addEventListener('click', (e) => {
+            e.preventDefault();
+            onboardStage7b();
+        });
+    }
+    function onboardStage7b() {
+        topTerm.querySelector('.lookup').classList.remove('animated', 'pulse', 'infinite');
         topTerm.querySelector('.colour').classList.add('animated', 'pulse', 'infinite');
         topTerm.querySelector('.symbol').classList.add('animated', 'pulse', 'infinite');
-        document.querySelector('.query-holder').setAttribute('disabled', 'true');
 
         let termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
         onBoardText.style.top = termOffset + "px";

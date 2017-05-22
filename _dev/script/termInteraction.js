@@ -1,6 +1,6 @@
 
 // Imports
-import { cl, clv, clickListener, alertMsg, jsonp, findKeys, makeSafeClass } from 'helperFunctions';
+import { cl, clv, clickListener, alertMsg, jsonp, findKeys, findOneKey, makeSafeClass } from 'helperFunctions';
 import appData from 'appData';
 import tinyTerms from 'app';
 import { createNewQuery } from 'queryInteraction';
@@ -23,7 +23,7 @@ const revealedBtnHandler = function revealedBtnHandler() {
 
         // Explode!!
         let explode = revealBtn[i].parentNode.parentNode.querySelector('.explosion');
-        
+
         explode.classList.add('explode');
 
         setTimeout(() => explode.classList.remove('explode'), 1000);
@@ -109,7 +109,7 @@ const revealedBtnHandler = function revealedBtnHandler() {
                 // Add to stored data
                 tinyTerms.score = score;
                 // Save to storage
-                localforage.setItem('tinyTerms.score', score);   
+                localforage.setItem('tinyTerms.score', score);
             }
 
             // Update progress bar
@@ -126,7 +126,7 @@ const revealedBtnHandler = function revealedBtnHandler() {
             }
             // Set only once a day
             tinyTerms[tinyTerms.pickedList].storedData.revealGoal.complete = true;
-            
+
             // Add to score
             let score = tinyTerms.score;
             score += tinyTerms[tinyTerms.pickedList].ops.points.dailyBonus;
@@ -135,7 +135,7 @@ const revealedBtnHandler = function revealedBtnHandler() {
             // Add to stored data
             tinyTerms.score = score;
             // Save to storage
-            localforage.setItem('tinyTerms.score', score);   
+            localforage.setItem('tinyTerms.score', score);
         }
         tinyTerms[tinyTerms.pickedList].storedData.revealGoal[term] = revealGoalCount;
 
@@ -324,13 +324,36 @@ const dictionaryLookup = function dictionaryLookup() {
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let view = `<header>
-                        <h2 class="dictionary">Dictionary definitions</h2>
+                        <h2 class="dictionary">Further study</h2>
                     </header>
+                    <h3>Practice writing</h3>
+                    <textarea class="writing-practice" placeholder="Write the definition here, alone or as part of a sentance."></textarea>
+                    <button class="writing-check">Check</button>
+                    <h3 class="dotted">Dictionary definitions</h3>
                     <p>${term}:</p>
-                    <ul class="definitions">
-                    </ul>`;
+                    <ul class="definitions"></ul>
+                    <h3 class="dotted">Wiki info</h3>
+                    <ul class="wiki-link-wrapper"></ul>
+                    <div class="wiki-result"></div>
+                    `;
 
         modal.querySelector('.content').innerHTML += view;
+
+        // Check practice writing
+        document.querySelector('.writing-check').addEventListener('click',(e) => {
+            e.preventDefault();
+            let practiceContent = document.querySelector('.writing-practice').value.toUpperCase();
+            let definition = tinyTerms[tinyTerms.pickedList].terms[term].definition.toUpperCase();
+
+            if (practiceContent.indexOf(definition) > -1) {
+                document.querySelector('.writing-practice').value = "";
+                document.querySelector('.writing-practice').placeholder = "Well done, that's correct!"; 
+            }
+            else {
+                document.querySelector('.writing-practice').value = "";
+                document.querySelector('.writing-practice').placeholder = "That's incorrect, try again.";
+            }
+        });
 
         // Make JSONP call to Glosbe API
         let definitionHolder = modal.querySelector('.definitions');
@@ -374,6 +397,70 @@ const dictionaryLookup = function dictionaryLookup() {
                     console.log(err);
                 }
             });
+
+        // Wiki lookup
+        jsonp('https://' + tinyTerms[tinyTerms.pickedList].dictFrom + '.wikipedia.org/w/api.php?action=opensearch&limit=3&namespace=0&format=json&search=' + term).then(function (data) {
+
+            // List out wiki results
+            for (let i = 0; i < 3; i++) {
+
+                if (data[1][i] !== undefined) {
+                    document.querySelector('.wiki-link-wrapper').innerHTML += '<li><a href="#" class="wiki-link">' + data[1][i] + '</a></li>';
+                }
+            }
+
+            // List out wiki results
+            let wikiLink = document.querySelectorAll('.wiki-link');
+
+            wikiLink[0].classList.add('active');
+
+            // Write out the first result
+            let firstTerm = wikiLink[0].innerHTML;
+
+            jsonp('https://' + tinyTerms[tinyTerms.pickedList].dictFrom + '.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=' + firstTerm).then(function (data) {
+
+                let result = Object.keys(data.query.pages)[0];
+                result = data.query.pages[result].extract;
+
+                if (result === undefined) { 
+                    jsonp('https://' + tinyTerms[tinyTerms.pickedList].dictFrom + '.wikipedia.org/w/api.php?action=parse&prop=text&page=' + firstTerm).then(function (data) {
+                        result = JSON.parse(data.parse.text["*"]);
+                    });
+                }
+                if (result === undefined) { 
+                    result = "Sorry, no info found.";
+                }
+                document.querySelector('.wiki-result').innerHTML = result;
+            });
+
+            // Add event listeners for other results
+            for (let j = 0; j < wikiLink.length; j++) {
+
+                wikiLink[j].addEventListener('click', (e) => {
+                    e.preventDefault();
+                    let term = wikiLink[j].innerHTML;
+
+                    document.querySelector('.active').classList.remove('active');
+                    wikiLink[j].classList.add('active');
+
+                    jsonp('https://' + tinyTerms[tinyTerms.pickedList].dictFrom + '.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&redirects=true&titles=' + term).then(function (data) {
+
+                        let result = Object.keys(data.query.pages)[0];
+                        result = data.query.pages[result].extract;
+
+                        if (result === undefined) { 
+                            jsonp('https://' + tinyTerms[tinyTerms.pickedList].dictFrom + '.wikipedia.org/w/api.php?action=parse&prop=text&page=' + term).then(function (data) {
+                                result = JSON.parse(data.parse.text["*"]);
+                            });
+                        }
+                        if (result === undefined) { 
+                            result = "Sorry, no info found.";
+                        }
+                        document.querySelector('.wiki-result').innerHTML = result;
+                    });
+                })
+            }
+        });
     });
 }
 
@@ -412,7 +499,7 @@ const addColour = function addColour() {
                         <li><a href="#" data-colour="#212121"></a></li>
                         <li><a href="#" class="no-colour" data-colour="#fff"></a></li>
                     </ul>`;
-        
+
         let neonColours = `
                            <li><a href="#" data-colour="#FF0099"></a></li>
                            <li><a href="#" data-colour="#83F52C"></a></li>
@@ -421,7 +508,7 @@ const addColour = function addColour() {
                            <li><a href="#" data-colour="#9D00FF"></a></li>
                            <li><a href="#" data-colour="#E6FB04"></a></li>
                             `;
-        
+
         let metalColours = `
                            <li><a href="#" data-colour="#CC9900"></a></li>
                            <li><a href="#" data-colour="#C0C0C0"></a></li>
@@ -433,7 +520,7 @@ const addColour = function addColour() {
 
         // Unlocks
         if (tinyTerms.globalUnlocks !== undefined) {
-            
+
             // Neon colours
             if (tinyTerms.globalUnlocks.coloursNeon.active === 'unlocked') {
                 modal.querySelector('.colour-wrap').innerHTML += neonColours;
@@ -538,7 +625,7 @@ const pickSymbol = function pickSymbol() {
     // Default symbols
     for (let i = 0; i < appData.fonts.feather.length; i++) {
 
-        
+
 
         if (k % 5 === 0 && k != 0) {
             symbolHTML += '</tr><tr>';
@@ -606,7 +693,7 @@ const pickSymbol = function pickSymbol() {
         for (let i = 0; i < modal.getElementsByTagName('table').length; i++) {
             symbolClickListener(modal.getElementsByTagName('table')[i]);
         }
-        
+
         function symbolClickListener(eachTable) {
 
             eachTable.addEventListener('click', function (e) {
@@ -623,7 +710,7 @@ const pickSymbol = function pickSymbol() {
                 hideModal(true);
             }, false);
         }
-        
+
         document.querySelector('.symbol-clear').addEventListener('click', (e) => {
             // Set storage
             termWrapper.querySelector('.symbol-holder').classList = ('symbol-holder');

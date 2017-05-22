@@ -8,7 +8,7 @@ import { onboardShow } from "introInstructions";
 import { hideModal } from 'termInteraction';
 
 // Exports
-export { navMenu, footerMenu, optionsDisplay };
+export { navMenu, footerMenu, optionsDisplay, notifyAsk };
 
 // Nav menu functions
 const navMenu = function navMenu() {
@@ -108,21 +108,21 @@ const footerMenu = function footerMenu() {
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let view = `<header>
-                        <h2 class="icon-gift">Store (coming soon)</h2>
+                        <h2 class="icon-gift">Store</h2>
                     </header>
                     <div class="options store">
                         <p>Paid unlocks:</p>
-                        <a href="#" class="points-10-terms"><strong>59p</strong> - Get 10 terms a day</a>
+                        <a href="#" class="points-10-terms"><strong>59p</strong> Get 10 terms a day</a>
                         <p>Points rewards - this list:</p>
-                        <a href="#" class="points-refresh-terms"><strong>250</strong> - Refresh terms</a>
-                        <a href="#" class="points-half-timer"><strong>300</strong> - Activate half timer (lasts 1 day)</a>
+                        <a href="#" class="points-refresh-terms"><strong>250</strong> Refresh terms</a>
+                        <a href="#" class="points-half-timer"><strong>300</strong> Half timer (1 day)</a>
                         <p>Points rewards - all lists:</p>
-                        <a href="#" class="points-neon-colours"><strong>500</strong> - Unlock neon colours</a>
-                        <a href="#" class="points-solid-symbols"><strong>1000</strong> - Unlock solid symbols</a>
-                        <a href="#" class="points-star-bg"><strong>3000</strong> - Unlock star background</a>
-                        <a href="#" class="points-feather-symbols"><strong>5000</strong> - Unlock feather symbols</a>
-                        <a href="#" class="points-letters-bg"><strong>10,000</strong> - Unlock letters background</a>
-                        <a href="#" class="points-metal-colours"><strong>50,000</strong> - Unlock metal colours</a>
+                        <a href="#" class="points-neon-colours"><strong>500</strong> Neon colours</a>
+                        <a href="#" class="points-solid-symbols"><strong>1000</strong> Solid symbols</a>
+                        <a href="#" class="points-star-bg"><strong>3000</strong> Star background</a>
+                        <a href="#" class="points-feather-symbols"><strong>5000</strong> Feather symbols</a>
+                        <a href="#" class="points-letters-bg"><strong>10,000</strong> Letters background</a>
+                        <a href="#" class="points-metal-colours"><strong>50,000</strong> Metal colours</a>
                         <p>Apply code:</p>
                         <input class="" type="text" placeholder="Add code here">
                         <button class="submit">Submit</button>
@@ -131,15 +131,19 @@ const footerMenu = function footerMenu() {
         // Add view
         modal.querySelector('.content').innerHTML += view;
 
+        // Values must match paid unlocks object order in app.js
+        let paidItems = [
+            '.points-10-terms'
+        ];
+
         // Values must match list unlocks object order in app.js
         let listItems = [
             '.points-refresh-terms',
-            '.points-half-timer',
+            '.points-half-timer'
         ];
 
         // Values must match global unlocks object order in app.js
         let globalItems = [
-            '.points-10-terms',
             '.points-neon-colours',
             '.points-solid-symbols',
             '.points-star-bg',
@@ -197,29 +201,83 @@ const footerMenu = function footerMenu() {
             }
         });
 
+        // Paid unlocks click listeners
+        clickListenerFromVar(paidItems, (i) => {
+            let unlockItem = Object.keys(tinyTerms.paidUnlocks)[i];
+
+            if (tinyTerms.paidUnlocks[unlockItem].active === 'unlocked'
+                || tinyTerms.paidUnlocks[unlockItem].active === 'inactive') {
+                return false;
+            }
+            else {
+
+                let webView = `<header>
+                                    <h2 class="">Available in the app</h2>
+                                </header>
+                                <p>Download the Android app today to unlock this feature.</p>`;
+
+                if (typeof store !== 'undefined') {
+                    store.refresh();
+                    let product = store.get("custom list");
+
+                    if (product.owned) {
+                        tinyTerms.paidUnlocks[unlockItem].active = 'unlocked';
+                    }
+                    else {
+                        document.querySelector('.unlock-uploadlist').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            store.order('extra items');
+
+                            store.when("extra items").approved(function (order) {
+                                tinyTerms.paidUnlocks[unlockItem].active = 'unlocked';
+                                order.finish();
+                            });
+                        });
+                    }
+                }
+                else {
+                    modal.querySelector('.content').innerHTML = webView;
+                }
+
+                // 10 terms
+                if (tinyTerms.paidUnlocks.terms10.active === 'unlocked') {
+                    let pickedTerms = getListOfTerms();
+                    let existingTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
+                    let joinedTerms = existingTerms.concat(pickedTerms);
+
+                    tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = joinedTerms;
+
+                    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
+                        // Save to storage
+                        localforage.setItem('tinyTerms.paidUnlocks', tinyTerms.paidUnlocks, () => {
+                            // Refresh
+                            location.reload();
+                        });
+                    });
+                }
+            }
+        });
+
+        // Hide 10 terms
+        if (tinyTerms.paidUnlocks.terms10.active === 'unlocked') {
+            document.querySelector('.points-10-terms').innerHTML = "(Unlocked)";
+        }
+
         // Click listener for global store items
         clickListenerFromVar(globalItems, (i) => {
             let unlockItem = Object.keys(tinyTerms.globalUnlocks)[i];
             let currentScore = tinyTerms.score;
             let itemCost = tinyTerms.globalUnlocks[unlockItem].points;
 
-            if (tinyTerms.globalUnlocks[unlockItem].active === 'unlocked' 
-             || tinyTerms.globalUnlocks[unlockItem].active === 'inactive') {
-                 return false;
+            if (tinyTerms.globalUnlocks[unlockItem].active === 'unlocked'
+                || tinyTerms.globalUnlocks[unlockItem].active === 'inactive') {
+                return false;
             }
             else if (currentScore - itemCost > 0) {
                 let score = currentScore - itemCost;
 
                 tinyTerms.globalUnlocks[unlockItem].active = 'unlocked';
 
-                // 10 terms
-                if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
-                    let pickedTerms = getListOfTerms();
-                    let existingTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
-                    let joinedTerms = existingTerms.concat(pickedTerms);
-
-                    tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = joinedTerms;
-                }
                 localforage.setItem('tinyTerms.score', score, () => {
                     // Like a christmas tree all up in here
                     localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
@@ -289,7 +347,7 @@ const footerMenu = function footerMenu() {
         }
         // Click listener store off buttons
         for (let i = 0; i < document.querySelectorAll('.store-off').length; i++) {
-            
+
             document.querySelectorAll('.store-off')[i].addEventListener('click', (e) => {
                 e.preventDefault();
 
@@ -310,7 +368,6 @@ const footerMenu = function footerMenu() {
                 });
             });
         }
-
         // Click listener store on buttons
         for (let i = 0; i < document.querySelectorAll('.store-on').length; i++) {
 
@@ -404,6 +461,7 @@ const optionsDisplay = function optionsDisplay() {
                         <a href="mailto:info@tiny-terms.com" class="icon-right-open">Email a question</a>
                         <a href="#" class="icon-right-open feedback">Report a bug/leave feedback</a>
                         <p>More Options</p>
+                        <a href="#" class="icon-right-open reminders">Reminders</a>
                         <a href="#" class="icon-right-open reset-list">Reset list progress</a>
                         <a href="#" class="icon-right-open reset">Reset the app</a>
                         <p class="low-header">Credits</p>
@@ -417,6 +475,13 @@ const optionsDisplay = function optionsDisplay() {
 
         let resetList = document.querySelector('.reset-list');
         let resetApp = document.querySelector('.reset');
+
+        if (typeof cordova === 'undefined') {
+            document.querySelector('.options').removeChild(document.querySelector('.options').querySelector('.reminders'));
+        }
+        else {
+            document.querySelector('.reminders').addEventListener('click', (e) => { e.preventDefault(); notifyAsk() });
+        }
 
         document.querySelector('.show-tut').addEventListener('click', (e) => { e.preventDefault(); onboardShow() });
 
@@ -440,7 +505,6 @@ const optionsDisplay = function optionsDisplay() {
             document.querySelector('.delete-confirm').addEventListener('click', () => {
                 delete tinyTerms[tinyTerms.pickedList];
                 localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {
-                    ;
                     localforage.removeItem('tinyTermsDefault').then(function () {
                         location.reload();
                     });
@@ -467,4 +531,155 @@ const optionsDisplay = function optionsDisplay() {
             });
         });
     });
+}
+
+// Ask for reminders
+const notifyAsk = function notifyAsk() {
+    let modal = document.querySelector('.m-modal');
+
+    modal.classList.remove('hidden');
+    document.getElementsByTagName('body')[0].classList.add('modal-active');
+
+    let view = `<header>
+                    <h2 class="icon-cog-outline">Reminders</h2>
+                </header>
+                <div class="m-reminders options">
+                    <p>You can configure reminders here, they are really helpful if you keep forgetting to learn terms!</p>
+                    <button class="save-times">Save reminders</button>
+                    <button class="add-time">New reminder</button>
+                    <div class="time-holders">
+                    </div>
+                </div>
+                `;
+
+    // Add view
+    modal.querySelector('.content').innerHTML = view;
+
+    let defaultTimes = [[8, 15], [12, 15], [17, 50]];
+
+    tinyTerms[tinyTerms.pickedList].storedData.reminderTimes = tinyTerms[tinyTerms.pickedList].storedData.reminderTimes || defaultTimes;
+
+    // Get stored times, then add to DOM
+    getTimes();
+
+    function getTimes() {
+        let reminderTimesLength = tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.length;
+
+        document.querySelector('.time-holders').innerHTML = "";
+
+        // Build times based off stored data
+        for (let i = 0; i < reminderTimesLength; i++) {
+            let hours = tinyTerms[tinyTerms.pickedList].storedData.reminderTimes[i][0];
+            let mins = tinyTerms[tinyTerms.pickedList].storedData.reminderTimes[i][1];
+            if (mins === 0) { mins = '00' };
+            let time = hours + ':' + mins;
+
+            addTime(i, time);
+        }
+    }
+
+    // Add to DOM
+    function addTime(i, time) {
+        let timeClass = 'time-' + i;
+        let timeTemplate = `<div class="time-wrap ${timeClass}">
+                                <input type="text" class="time-input" disabled value="${time}">
+                                <button class="change-time">Change</button>
+                                <button class="remove-time">Remove</button>
+                            </div>`;
+
+        document.querySelector('.time-holders').innerHTML += timeTemplate;
+        updateListeners();
+    }
+
+    // Add a new time 
+    document.querySelector('.add-time').addEventListener('click', (e) => {
+        tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.push([12, 0]);
+        getTimes();
+    });
+
+    // Save reminders
+    document.querySelector('.save-times').addEventListener('click', (e) => {
+        e.preventDefault();
+        saveReminders();
+
+        // Save to storage
+        localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {
+             hideModal(true);
+        });
+    });
+
+    function saveReminders() {
+        let reminderTimesLength = tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.length;
+
+        // Reset stored
+        tinyTerms[tinyTerms.pickedList].storedData.reminderTimes = [];
+
+        // Build times based off edited times
+        let timeButtons = document.querySelectorAll('.time-wrap');
+        let timeCount = timeButtons.length;
+
+        for (let i = 0; i < timeCount; i++) {
+            let editedTime = document.querySelectorAll('.time-wrap')[i].querySelector('.time-input').value;
+
+            let hours = editedTime.split(":")[0];
+            let mins  = editedTime.split(":")[1];
+
+            // Add to stored
+            tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.push([hours, mins]);
+
+            let theDate = new Date();
+
+            theDate.setHours(hours);
+            theDate.setMinutes(mins);
+            theDate.setSeconds(0);
+
+            cordova.plugins.notification.local.schedule({
+                id: i,
+                text: "It's time to learn!",
+                firstAt: theDate,
+                every: "day",
+                led: "e21657"
+            });
+        }
+    }
+
+    // Update listeners for buttons
+    function updateListeners() {
+        let timeButtons = document.querySelectorAll('.time-wrap');
+        let timeCount = timeButtons.length;
+
+        // Edit time
+        for (let i = 0; i < timeCount; i++) {
+            document.querySelectorAll('.time-wrap')[i].querySelector('.change-time').addEventListener('click', function (e) {
+                e.preventDefault();
+                let thisToggle = 'x' + i;
+                let thisWrap = '.time-' + i;
+                let thisInput = document.querySelector(thisWrap).getElementsByTagName('input')[0];
+
+                thisToggle = new mdDateTimePicker.default({
+                    type: 'time',
+                    mode: true
+                });
+
+                thisToggle.time = moment().hours(12).minutes(0);
+                thisToggle.toggle();
+                thisToggle.trigger = thisInput;
+
+                thisInput.addEventListener('onOk', function () {
+                    let hours = thisToggle.time.hours().toString();
+                    let mins = thisToggle.time.minutes().toString();
+
+                    if (mins < 10) { mins = '0' + mins };
+                    this.value = hours + ':' + mins;
+                });
+            });
+
+            // Remove time
+            document.querySelectorAll('.time-wrap')[i].querySelector('.remove-time').addEventListener('click', function (e) {
+                tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.splice(i, 1).pop();
+                cordova.plugins.notification.local.cancel(i, function () { });
+                getTimes();
+            });
+        }
+    }
 }

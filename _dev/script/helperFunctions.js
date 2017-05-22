@@ -27,6 +27,7 @@ export {
 	appBlur,
 	jsonp,
 	findKeys,
+	findOneKey,
 	updateDataCount,
 	getCSS
 };
@@ -165,7 +166,8 @@ const buildData = function buildData(data) {
 		let view = `<header>
 						<h2 class="">The list didn't load</h2>
 					</header>
-					<p>Please check you have internet connection.</p>
+					<p>Please check you have internet connection.</p> 
+					<p>If you are using a custom list please check the URL you added is correct.</p>
 
 					<button class="home-btn">Close</button>
 					`;
@@ -191,6 +193,9 @@ const buildData = function buildData(data) {
 			let termContent = data.Sheet1.elements[i].Term;
 			let definitionContent = data.Sheet1.elements[i].Definition;
 			let supportContent = data.Sheet1.elements[i].Support;
+
+			termContent = termContent.replace(/[!@#$%^&*]/g, "");
+			definitionContent = definitionContent.replace(/[!@#$%^&*]/g, "");
 
 			tinyTerms[tinyTerms.pickedList].terms[termContent] = {};
 			tinyTerms[tinyTerms.pickedList].terms[termContent].term = termContent;
@@ -488,6 +493,26 @@ const findKeys = function findKeys(obj, key) {
 	}
 	return keysList;
 };
+
+
+// Search object for one key
+function findOneKey(obj, key) {
+	var val = obj[key];
+	console.log(obj);
+	if (val !== undefined) {
+		return val;
+	}
+	for (var name in obj) {
+		console.log(name);
+		var result = findOneKey(obj[name], key);
+		console.log(result);
+		if (result !== undefined) {
+			return result;
+		}
+	}
+	return undefined;
+}
+
 
 // Handles count of a type of data
 const updateDataCount = function updateDataCount(

@@ -19,6 +19,14 @@
 %gpu {
     transform: translate3d(0, 0, 0);
 }
+.width {
+    width: auto;
+}
+.dotted, .m-modal .inner h3.dotted {
+    border-bottom: 2px dotted $clr-tertiary;
+    padding-bottom: $size-s;
+    margin: $size-m 0 $size-s 0;
+}
 .explosion {
     width: 400px;
     height: 400px;
