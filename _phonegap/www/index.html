@@ -15,7 +15,7 @@
     <div class="m-loader">
         <div class="splash-icon"></div>
         <div class="loader">
-            <img src="img/brand/logo.svg" /><span class="loader-item">L</span><span class="loader-item">O</span><span class="loader-item">A</span>
+            <img src="img/brand/logo_white.svg" /><span class="loader-item">L</span><span class="loader-item">O</span><span class="loader-item">A</span>
             <span
                 class="loader-item">D</span><span class="loader-item">I</span><span class="loader-item">N</span><span class="loader-item">G</span>
         </div>
@@ -91,11 +91,11 @@
         <div class="terms-wrapper"></div>
         <footer class="m-footer">
             <div class="footer-menu">
-                <div><a class="refresh icon-cw" href="#">Refresh</a>
+                <div><a class="refresh icon-009-reload" href="#">Refresh</a>
                 </div>
-                <div><a class="store icon-gift" href="#">Store</a>
+                <div><a class="store icon-007-signs" href="#">Store</a>
                 </div>
-                <div><a class="stats icon-chart-bar" href="#">Stats</a>
+                <div><a class="stats icon-008-bar-chart" href="#">Stats</a>
                 </div>
             </div>
         </footer>
@@ -143,16 +143,6 @@
                 });
 
                 store.refresh();
-
-                store.when("custom list").approved(function (order) {
-                    alert('You just unlocked the FULL VERSION!');
-                    order.finish();
-                });
-
-                store.when("extra items").approved(function (order) {
-                    alert('You just unlocked the FULL VERSION!');
-                    order.finish();
-                });
             }
         }
     </script>

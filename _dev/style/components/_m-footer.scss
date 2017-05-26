@@ -4,12 +4,13 @@
 
 .m-footer {
     padding: 0;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.4);
     overflow: hidden;
     
     .footer-menu {
         @extend %row;
-        background: lighten($clr-dark, 15%);
+        background: darken(#34495e,0%);
+        //border-top: 1px solid #fff;
         padding: 0 30px;
 
         div {  
@@ -22,7 +23,7 @@
             color: #f5f5f5;
             text-decoration: none;
             position: relative;
-            top: 1px;
+            top: 2px;
 
             &:before {
                 font-size: $font-l;

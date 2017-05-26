@@ -7,18 +7,27 @@
     @extend %cf;
     position: relative;
 
+    &.bg-active  {
+
+        .term-holder:before {
+            color: #fff;
+        }
+         .theme-holder .symbol-holder {
+            color: rgba(250,250,250,0.2);
+        }
+    }
     .term-holder {
         float: left;
         @extend %text-light;
-        font-size: $font-l;
+        font-size: $font-m;
         position: relative;
         z-index: $z-m;
-        top: 26px;
-        min-height: 86px;
+        top: 31px;
+        min-height: 101px;
         padding-right: 150px;
-        padding-left: 30px;
+        padding-left: 40px;
         @extend .icon;
-        @extend .icon-volume;
+        @extend .icon-010-volume;
 
         &.lines-2 {
             top: 18px;
@@ -42,10 +51,12 @@
             }
         }
         &:before {
+            font-size: $font-xl * 1.2;
+            color: $clr-link;
             cursor: pointer;
-            margin-right: $size-s;
             position: absolute;
             left: -5px;
+            top: 9px;
         }
         &.no-speak {
             padding-left: 0;
@@ -60,7 +71,7 @@
         }
     }
     .theme-holder {
-        border-radius: 5px;
+        border-radius: 10px;
         position: absolute;
         opacity: 0.8;
         width: 100%;
@@ -78,23 +89,93 @@
             top: -20px;
             left: 0;
         }
-        &.bg-active .symbol-holder {
-            color: rgba(250,250,250,0.2);
-        }
+    }
+    .explode + .right button:before {
+        display: none;
     }
     .right {
-        @extend %background-striped;
+        background: #eee;
         position: absolute;
         right: $size-s;
         z-index: $z-l;
-        border-left: 1px solid rgba(0,0,0,0.1);
         padding: 0 $size-s;
         margin-right: -$size-s;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
 
+        &.animated {
+            border-bottom-right-radius: 0;
+        }
+        .goal-indicators {
+            text-align: center;
+
+            span {
+                position: relative;
+                top: 4px;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                border: 2px solid $clr-dark;
+                display: inline-block;
+                line-height: 0;
+                padding: 0;
+                
+                &:after {
+                    content: "";
+                    width: 7px;
+                    position: absolute;
+                    right: -7px;
+                    top: 3px;
+                    border-bottom: 1px solid $clr-dark;
+                }
+                &:last-of-type:after {
+                    display: none;
+                }
+                &.filled {
+                    background: $clr-shade;
+                }
+                /*
+                &:nth-child(1) {
+
+                    &.filled {
+                        background: #E74c3c;
+                    }
+                }
+                &:nth-child(2) {
+
+                    &.filled {
+                        background: #F1c40f;
+                    }
+                }
+                &:nth-child(3) {
+
+                    &.filled {
+                        background: #2Ecc71;
+                    }
+                }
+                */
+            }
+        }
         button {
+            @extend .icon;
+            @extend .icon-down-open;
             margin-bottom: $size-s - ($size-1px * 2);
             position: relative;
-            z-index: $z-m + 3;
+            z-index: $z-l + 3;
+            line-height: 15px;
+
+            &.disabled {
+                @extend .icon-clock;
+                animation-duration: 0.3s;
+                border: 0;
+
+                &:before {
+                    font-size: $font-l;
+                    line-height: 5px;
+                    position: relative;
+                    top: 2px;
+                }
+            }
         }
     }
     .term-views {
@@ -106,15 +187,10 @@
         top: 3px;
 
         span {
-            @extend %small-caps;
 
             &:first-of-type {
-                position: relative;
-                top: -2px;
+                @extend %small-caps;
             }
-        }
-        .count {
-            @extend %text-light;
         }
     }
     .definition-wrapper {
@@ -124,7 +200,7 @@
         border-bottom-right-radius: 10px;
         padding: $size-s;
         box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.05);
-        background: $clr-lighter;
+        background: #fff;
         border-top: 1px solid #ddd;
         position: relative;
         z-index: $z-m;
@@ -150,25 +226,32 @@
             .lookup, .colour, .symbol {
                 @extend .icon;
                 font-size: $font-m;
-                background: lighten($clr-dark, 15%);
+                background: $clr-link;
                 color: #f5f5f5;
                 border-radius: 50%;
                 width: 30px;
                 height: 30px;
                 line-height: 30px;
+                font-size: 17px;
                 padding-top: 0;
                 margin-left: 2px;
                 text-align: center;
                 display: inline-block;
             }
             .lookup {
-                @extend .icon-book;
+                @extend .icon-002-open-book;
+                font-size: $font-m * 1.1;
+
+                &:before {
+                    position: relative;
+                    top: 1px;
+                }
             }
             .colour {
-                @extend .icon-tint;
+                @extend .icon-001-drop-silhouette;
             }
             .symbol {
-                @extend .icon-garden;
+                @extend .icon-003-edit-draw-pencil;
             }
         }
         .support-wrapper {

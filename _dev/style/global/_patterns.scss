@@ -23,9 +23,12 @@
     width: auto;
 }
 .dotted, .m-modal .inner h3.dotted {
-    border-bottom: 2px dotted $clr-tertiary;
+    border-bottom: 2px dotted #999;
     padding-bottom: $size-s;
     margin: $size-m 0 $size-s 0;
+}
+%primary-grad {
+    background: linear-gradient(to bottom,darken(#154168,0%) 1%,darken(#1b1e51,0%)  100%);
 }
 .explosion {
     width: 400px;
@@ -33,7 +36,7 @@
     position: absolute;
     right: -130px;
     margin-top: -140px;
-    z-index: $z-m + 1;
+    z-index: $z-l + 1;
     pointer-events: none;
 }
 .particle {
@@ -42,7 +45,7 @@
     top: 50%;
     left: 50%;
     animation-duration: 1.5s;
-    color: $clr-hlight;
+    color: $clr-link;
     opacity: 0;
     @extend %gpu;
 }
@@ -64,7 +67,6 @@
         $width: random(25);
         font-size: $width + px;
         animation-duration: 1s;
-        color: $clr-hlight;
     }
     .explode .particle:nth-child(#{$i}) {
         animation-name: anim-#{$i};

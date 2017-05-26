@@ -14,8 +14,8 @@ $animationTiming: cubic-bezier(.645, .045, .355, 1);
 	display: block;
 }
 .m-loader {
+	background: #0e2271;
 	display: none;
-	background: $clr-primary;
 	position: fixed;
 	z-index: $z-max;
 	top: 0;
@@ -38,6 +38,7 @@ $animationTiming: cubic-bezier(.645, .045, .355, 1);
 		position: absolute;
 		top: -120px;
 		left: 5px;
+		z-index: $z-max + 2;
 	}
 	.loader {
 		display: block;
@@ -45,9 +46,23 @@ $animationTiming: cubic-bezier(.645, .045, .355, 1);
 		left: 50%;
 		top: 55%;
 		transform: translateY(-50%) translateX(-50%);
+		z-index: $z-max + 2;
 		font-size: 0;
 		transform-style: preserve-3d;
 		perspective: 800px;
+	
+		&:after {
+			content: "";
+			width: 600px;
+			height: 600px;
+			display: block;
+			position: absolute;
+			z-index: $z-max + 1;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-60%);
+			background: radial-gradient(ellipse at center, fade-out(#0034ff,0.7) 0%,fade-out(#0034ff,1) 50%,fade-out(#0034ff,1) 100%);
+		}
 	}
 	.loader-item {
 		display: inline-block;

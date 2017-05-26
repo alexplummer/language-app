@@ -2,7 +2,7 @@
 import { ready, cl, clv, buildData, errorReport, errorAlert, alertMsg, checkSameDay, checkConnection, arrayCheck, getTodaysDate, appBlur } from "helperFunctions";
 import { getListOfTerms } from "termCreation";
 import { revealedBtnHandler, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol } from "termInteraction";
-import { viewCreate, addHearts, setScore, progressBar } from "viewCreation";
+import { viewCreate, addHearts, goalMeters, setScore, progressBar } from "viewCreation";
 import { createNewQuery } from "queryInteraction";
 import { showHome } from "homeScreen";
 import { onboardShow } from "introInstructions";
@@ -22,7 +22,7 @@ const ops = {
 	counterSecs: 0,
 	revealGoalTarget: 3,
 	wordAccuracy: 0.7,
-	addDay: false,
+	addDay: true,
 	debug: true,
 	godMode: false,
 	loadDelay: 2500,
@@ -406,6 +406,7 @@ const appBuildHandler = function appBuildHandler() {
 		delete tinyTerms[tinyTerms.pickedList].storedData.revealCountdowns;
 		delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
 		delete tinyTerms[tinyTerms.pickedList].storedData.dailyReminder;
+		delete tinyTerms[tinyTerms.pickedList].storedData.hearts;
 		
 		// Reset store unlocks
 		if (tinyTerms[tinyTerms.pickedList].storedData.listUnlocks !== undefined) {
@@ -449,6 +450,7 @@ const appBuildHandler = function appBuildHandler() {
 
 	// Builds UI elements
 	progressBar();
+	goalMeters();
 
 	// Shows options menu
 	navMenu();

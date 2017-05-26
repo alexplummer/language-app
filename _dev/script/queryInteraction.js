@@ -89,7 +89,6 @@ const createNewQuery = function createNewQuery(bonus) {
         document.querySelector('.query-holder').innerHTML = randomTerm;
 
         // Add hearts
-        delete tinyTerms[tinyTerms.pickedList].storedData.hearts;
         addHearts();
 
         // Show the query wrapper
@@ -132,30 +131,37 @@ const createNewQuery = function createNewQuery(bonus) {
             // Hide the query input
             document.querySelector('.query-form').classList.add('hidden');
             heartHolder.classList.add('hidden');
+
             // If mispelled
             if (spelling === "mispelled") {
                 // Display win message
                 resultHolder.innerHTML = "Well done but check your spelling (" + input + "), the definition is <strong>\"" + definition + "\"</strong>";
-                resultHolder.classList.remove('hidden');
+                resultHolder.classList.remove('hidden','wrong');
+                resultHolder.classList.add('right');
             }
             else {
                 // Display win message
                 resultHolder.innerHTML = "Well done, the definition is <strong>\"" + definition + "\"</strong>";
-                resultHolder.classList.remove('hidden');
+                resultHolder.classList.remove('hidden','wrong');
+                resultHolder.classList.add('right');
             }
             
             // Add to score
             let score = tinyTerms.score;
             score += tinyTerms[tinyTerms.pickedList].ops.points.correct;
+
             // Update view
             scoreHolder.innerHTML = score;
+
             // Add to stored data
             tinyTerms.score = score;
+
              // Save to storage
             localforage.setItem('tinyTerms.score', score, () => {
                 tinyTerms[tinyTerms.pickedList].storedData.correctTerms[randomTerm] = definition;
                 tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;
                 delete tinyTerms[tinyTerms.pickedList].storedData.dailyQuery;
+
                 // Save to storage
                 localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
             });    
@@ -167,25 +173,34 @@ const createNewQuery = function createNewQuery(bonus) {
             
             // Add placeholder
             queryInput.placeholder = queryInput.value;
+
             // Remove guess
             queryInput.value = "";
+
             // Update view
             resultHolder.innerHTML = "Try again.";
-            resultHolder.classList.remove('hidden');
+            resultHolder.classList.remove('hidden','wrong');
+            resultHolder.classList.add('wrong');
+
             // Lose a heart
             heartHolder.removeChild(heartHolder.getElementsByTagName('p')[0]);
-            tinyTerms[tinyTerms.pickedList].storedData.hearts -= 1;
+            tinyTerms[tinyTerms.pickedList].storedData.hearts = tinyTerms[tinyTerms.pickedList].storedData.hearts - 1;
+
             // If all hearts lost
             if (tinyTerms[tinyTerms.pickedList].storedData.hearts === 0) {
                 // Hide query 
                 document.querySelector('.query-form').classList.add('hidden');
                 heartHolder.classList.add('hidden');
+
                 // Update DOM
                 queryInput.value = "";
                 queryInput.placeholder = "Enter the definition";
+
                 // Update view
                 resultHolder.innerHTML = "Sorry, you are out of attempts!";
-                resultHolder.classList.remove('hidden');
+                resultHolder.classList.remove('hidden','wrong','right');
+                resultHolder.classList.add('lost');
+
                 // Add to storedDatta 
                 tinyTerms[tinyTerms.pickedList].storedData.incorrectTerms[randomTerm] = definition;
                 tinyTerms[tinyTerms.pickedList].storedData.queryComplete = true;

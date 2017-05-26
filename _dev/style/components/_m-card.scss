@@ -4,8 +4,9 @@
 
 .m-card {
     background: #fff;
-    margin: $size-s 0;
+    margin: ($size-s * 1.5) 0;
     padding: 0 $size-s;
-    border-radius: 5px;
+    border-radius: 10px;
     min-width: 320px;
+    box-shadow: 0 5px 0 0 #bbb;
 }

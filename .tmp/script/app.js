@@ -53,7 +53,7 @@ var tinyTermsApp = function () {
                     document.querySelector('body').classList.add('stars');
                 }
 
-                // Star background
+                // Letters background
                 if (tinyTerms$1.globalUnlocks.bgLetters.active === 'unlocked') {
                     document.querySelector('body').classList.add('letters');
                 }
@@ -68,7 +68,7 @@ var tinyTermsApp = function () {
                 }
 
                 // Create terms HTML
-                var newHolder = '<div class="m-term-wrapper ' + termEncode + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"><p class="symbol-holder"></p></div>\n                <div class="explosion">\n                    ' + particles + '\n                </div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + tinyTerms$1[tinyTerms$1.pickedList].ops.revealGoalTarget + '</p>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
+                var newHolder = '<div class="m-term-wrapper ' + termEncode + '">\n                <p class="term-holder">' + termValue + '</p>\n                <div class="theme-holder"><p class="symbol-holder"></p></div>\n                <div class="explosion">\n                    ' + particles + '\n                </div>\n                <div class="right">\n                    <p class="term-views"><span>Goal:</span> <span class="count">' + viewsCount + '</span> / ' + tinyTerms$1[tinyTerms$1.pickedList].ops.revealGoalTarget + '</p>\n                    <div class="goal-indicators">\n                        <span></span>\n                        <span></span>\n                        <span></span>\n                    </div>\n                    <button class="reveal">Reveal</button>\n                </div>\n                <div class="definition-wrapper hidden">\n                    <p class="definition-holder">' + definitionValue + '</p>\n                    <div class="helpers">\n                        <a href="#" class="lookup"></a>\n                        <a href="#" class="colour"></a>\n                        <a href="#" class="symbol"></a>\n                    </div>\n                    <div class="support-wrapper">' + supportValue + '</div>\n                </div>\n            </div>';
 
                 viewHTML += newHolder;
             }
@@ -96,7 +96,7 @@ var tinyTermsApp = function () {
         for (var i = 0; i < termHolders.length; i++) {
             termHolders[i].style.minHeight = '0px';
             termHolders[i].classList.add('lines-' + countLines(termHolders[i]));
-            termHolders[i].style.minHeight = '86px';
+            termHolders[i].style.minHeight = '101px';
         }
 
         // Add theme to previously created terms
@@ -119,8 +119,11 @@ var tinyTermsApp = function () {
                     var pickedColour = tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue].colour;
                     // Add colour to object
                     termWrapper.querySelector('.theme-holder').style.background = pickedColour;
-                    termWrapper.querySelector('.theme-holder').classList.add('bg-active');
-                    termWrapper.querySelector('.term-holder').style.color = "#fff";
+
+                    if (pickedColour !== "#fff") {
+                        termWrapper.querySelector('.term-holder').style.color = "#fff";
+                        termWrapper.classList.add('bg-active');
+                    }
                 }
                 // Check storage for assigned symbol
                 if (tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue] !== undefined && tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[_termValue].symbol !== undefined) {
@@ -209,6 +212,23 @@ var tinyTermsApp = function () {
 
         // Add to storage
         localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
+    };
+
+    // Fill goal meters
+    var goalMeters = function goalMeters() {
+        var termWrappers = document.querySelectorAll('.m-term-wrapper');
+
+        for (var i = 0; i < termWrappers.length; i++) {
+            var goalCount = termWrappers[i].querySelector('.count').innerHTML;
+            goalCount = parseInt(goalCount);
+
+            for (var j = 0; j < goalCount; j++) {
+
+                if (j < 3) {
+                    termWrappers[i].querySelector('.goal-indicators').getElementsByTagName('span')[j].classList.add('filled');
+                }
+            }
+        }
     };
 
     // Sets the score
@@ -328,7 +348,6 @@ var tinyTermsApp = function () {
             document.querySelector('.query-holder').innerHTML = randomTerm;
 
             // Add hearts
-            delete tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts;
             addHearts();
 
             // Show the query wrapper
@@ -368,29 +387,36 @@ var tinyTermsApp = function () {
                 // Hide the query input
                 document.querySelector('.query-form').classList.add('hidden');
                 heartHolder.classList.add('hidden');
+
                 // If mispelled
                 if (spelling === "mispelled") {
                     // Display win message
                     resultHolder.innerHTML = "Well done but check your spelling (" + input + "), the definition is <strong>\"" + definition + "\"</strong>";
-                    resultHolder.classList.remove('hidden');
+                    resultHolder.classList.remove('hidden', 'wrong');
+                    resultHolder.classList.add('right');
                 } else {
                     // Display win message
                     resultHolder.innerHTML = "Well done, the definition is <strong>\"" + definition + "\"</strong>";
-                    resultHolder.classList.remove('hidden');
+                    resultHolder.classList.remove('hidden', 'wrong');
+                    resultHolder.classList.add('right');
                 }
 
                 // Add to score
                 var score = tinyTerms$1.score;
                 score += tinyTerms$1[tinyTerms$1.pickedList].ops.points.correct;
+
                 // Update view
                 scoreHolder.innerHTML = score;
+
                 // Add to stored data
                 tinyTerms$1.score = score;
+
                 // Save to storage
                 localforage.setItem('tinyTerms.score', score, function () {
                     tinyTerms$1[tinyTerms$1.pickedList].storedData.correctTerms[randomTerm] = definition;
                     tinyTerms$1[tinyTerms$1.pickedList].storedData.queryComplete = true;
                     delete tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyQuery;
+
                     // Save to storage
                     localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
                 });
@@ -402,25 +428,34 @@ var tinyTermsApp = function () {
 
                 // Add placeholder
                 queryInput.placeholder = queryInput.value;
+
                 // Remove guess
                 queryInput.value = "";
+
                 // Update view
                 resultHolder.innerHTML = "Try again.";
-                resultHolder.classList.remove('hidden');
+                resultHolder.classList.remove('hidden', 'wrong');
+                resultHolder.classList.add('wrong');
+
                 // Lose a heart
                 heartHolder.removeChild(heartHolder.getElementsByTagName('p')[0]);
-                tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts -= 1;
+                tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts = tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts - 1;
+
                 // If all hearts lost
                 if (tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts === 0) {
                     // Hide query 
                     document.querySelector('.query-form').classList.add('hidden');
                     heartHolder.classList.add('hidden');
+
                     // Update DOM
                     queryInput.value = "";
                     queryInput.placeholder = "Enter the definition";
+
                     // Update view
                     resultHolder.innerHTML = "Sorry, you are out of attempts!";
-                    resultHolder.classList.remove('hidden');
+                    resultHolder.classList.remove('hidden', 'wrong', 'right');
+                    resultHolder.classList.add('lost');
+
                     // Add to storedDatta 
                     tinyTerms$1[tinyTerms$1.pickedList].storedData.incorrectTerms[randomTerm] = definition;
                     tinyTerms$1[tinyTerms$1.pickedList].storedData.queryComplete = true;
@@ -492,6 +527,9 @@ var tinyTermsApp = function () {
             // Update DOM
             countHolder.innerHTML = revealGoalCount;
 
+            // Add to goal meter
+            goalMeters();
+
             // If bonus is met
             if (revealGoalCount === tinyTerms$1[tinyTerms$1.pickedList].ops.revealGoalTarget) {
 
@@ -540,6 +578,9 @@ var tinyTermsApp = function () {
 
                     // Keep query active 
                     tinyTerms$1[tinyTerms$1.pickedList].storedData.queryComplete = false;
+
+                    // Delete hearts
+                    delete tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts;
 
                     // Create a new query
                     createNewQuery(true);
@@ -903,6 +944,7 @@ var tinyTermsApp = function () {
                 if (tinyTerms$1.globalUnlocks.coloursNeon.active === 'unlocked') {
                     modal.querySelector('.colour-wrap').innerHTML += neonColours;
                 }
+
                 // Metal colours
                 if (tinyTerms$1.globalUnlocks.coloursMetal.active === 'unlocked') {
                     modal.querySelector('.colour-wrap').innerHTML += metalColours;
@@ -910,6 +952,7 @@ var tinyTermsApp = function () {
             }
 
             var coloursHolder = modal.querySelector('.colour-wrap');
+
             // Add colour vars
             colours = coloursHolder.getElementsByTagName('a');
 
@@ -928,13 +971,19 @@ var tinyTermsApp = function () {
             // Pick a colour
             clickListener(colours, function (i) {
                 var pickedColour = colours[i].getAttribute('data-colour');
+
                 // Add colour to object
                 termWrapper.querySelector('.theme-holder').style.background = pickedColour;
-                termWrapper.querySelector('.theme-holder').classList.add('bg-active');
-                termWrapper.querySelector('.term-holder').style.color = "#fff";
+
+                if (pickedColour !== "#fff") {
+                    termWrapper.querySelector('.term-holder').style.color = "#fff";
+                    termWrapper.classList.add('bg-active');
+                }
+
                 // Set storage
                 tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms[term].colour = pickedColour;
                 localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]);
+
                 // Hide modal
                 hideModal(true);
             });
@@ -1351,6 +1400,11 @@ var tinyTermsApp = function () {
                     document.querySelector('.unlock-uploadlist').addEventListener('click', function (e) {
                         e.preventDefault();
                         store.order('custom list');
+
+                        store.when("custom list").approved(function (order) {
+                            order.finish();
+                            location.reload();
+                        });
                     });
                 }
             } else {
@@ -1960,7 +2014,7 @@ var tinyTermsApp = function () {
         modal.classList.remove('hidden');
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-        var view = '<header>\n                    <h2 class="icon-child">Welcome</h2>\n                </header>\n                <p>Looks like this is your first time here, so let\'s go over some basics before you get started.</p>\n                <button class="onboard-1">Let\'s go!</button>\n                <a href="#" class="close-tut">Skip the tutorial</a>\n                ';
+        var view = '<header>\n                    <h2 class="icon-compass">Welcome</h2>\n                </header>\n                <p>Looks like this is your first time here, so let\'s go over some basics before you get started.</p>\n                <button class="onboard-1">Let\'s go!</button>\n                <a href="#" class="close-tut">Skip the tutorial</a>\n                ';
         modal.querySelector('.content').innerHTML = view;
         modal.classList.add('onboard');
         document.querySelector('.close-tut').addEventListener('click', function (e) {
@@ -2096,7 +2150,7 @@ var tinyTermsApp = function () {
             var termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
             onBoardText.style.top = termOffset + "px";
 
-            var view = '<p>You can add a colour and symbol to the term, the visual association will help you rememeber.</p>\n                    <button class="onboard-7">Next</button>';
+            var view = '<p>You can add a colour and symbol to the term, the visual association will help you remember.</p>\n                    <button class="onboard-7">Next</button>';
             onBoardText.innerHTML = view;
 
             document.querySelector('.onboard-7').addEventListener('click', function (e) {
@@ -2122,7 +2176,7 @@ var tinyTermsApp = function () {
             onBoardText.style.top = termOffset + "px";
             queryWrap.style.zIndex = "100";
 
-            var view = '<p>Each day you get a mini test to see how well you have rememebered, you can also unlock an extra test by completing at least one goal meter in a day.</p>\n                    <button class="onboard-8">Next</button>';
+            var view = '<p>Each day you get a mini test to see how well you have remembered, you can also unlock an extra test by completing at least one goal meter in a day.</p>\n                    <button class="onboard-8">Next</button>';
             onBoardText.innerHTML = view;
 
             document.querySelector('.onboard-8').addEventListener('click', function (e) {
@@ -2259,7 +2313,7 @@ var tinyTermsApp = function () {
             modal.classList.remove('hidden');
             document.getElementsByTagName('body')[0].classList.add('modal-active');
 
-            var view = '<header>\n                        <h2 class="icon-gift">Store</h2>\n                    </header>\n                    <div class="options store">\n                        <p>Paid unlocks:</p>\n                        <a href="#" class="points-10-terms"><strong>59p</strong> Get 10 terms a day</a>\n                        <p>Points rewards - this list:</p>\n                        <a href="#" class="points-refresh-terms"><strong>250</strong> Refresh terms</a>\n                        <a href="#" class="points-half-timer"><strong>300</strong> Half timer (1 day)</a>\n                        <p>Points rewards - all lists:</p>\n                        <a href="#" class="points-neon-colours"><strong>500</strong> Neon colours</a>\n                        <a href="#" class="points-solid-symbols"><strong>1000</strong> Solid symbols</a>\n                        <a href="#" class="points-star-bg"><strong>3000</strong> Star background</a>\n                        <a href="#" class="points-feather-symbols"><strong>5000</strong> Feather symbols</a>\n                        <a href="#" class="points-letters-bg"><strong>10,000</strong> Letters background</a>\n                        <a href="#" class="points-metal-colours"><strong>50,000</strong> Metal colours</a>\n                        <p>Apply code:</p>\n                        <input class="" type="text" placeholder="Add code here">\n                        <button class="submit">Submit</button>\n                    </div>\n                    ';
+            var view = '<header>\n                        <h2 class="icon-007-signs">Store</h2>\n                    </header>\n                    <div class="options store">\n                        <p>Paid unlocks:</p>\n                        <a href="#" class="points-10-terms"><strong>59p</strong> Get 10 terms a day</a>\n                        <p>Points rewards - this list:</p>\n                        <a href="#" class="points-refresh-terms"><strong>250</strong> Refresh terms</a>\n                        <a href="#" class="points-half-timer"><strong>300</strong> Half timer (1 day)</a>\n                        <p>Points rewards - all lists:</p>\n                        <a href="#" class="points-neon-colours"><strong>500</strong> Neon colours</a>\n                        <a href="#" class="points-solid-symbols"><strong>1000</strong> Solid symbols</a>\n                        <a href="#" class="points-star-bg"><strong>3000</strong> Star background</a>\n                        <a href="#" class="points-feather-symbols"><strong>5000</strong> Feather symbols</a>\n                        <a href="#" class="points-letters-bg"><strong>10,000</strong> Letters background</a>\n                        <a href="#" class="points-metal-colours"><strong>50,000</strong> Metal colours</a>\n                        <p>Apply code:</p>\n                        <input class="" type="text" placeholder="Add code here">\n                        <button class="submit">Submit</button>\n                    </div>\n                    ';
             // Add view
             modal.querySelector('.content').innerHTML += view;
 
@@ -2321,46 +2375,50 @@ var tinyTermsApp = function () {
                 if (tinyTerms$1.paidUnlocks[unlockItem].active === 'unlocked' || tinyTerms$1.paidUnlocks[unlockItem].active === 'inactive') {
                     return false;
                 } else {
+                    (function () {
+                        var check10 = function check10() {
+                            // 10 terms
+                            if (tinyTerms$1.paidUnlocks.terms10.active === 'unlocked') {
+                                var pickedTerms = getListOfTerms();
+                                var existingTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms;
+                                var joinedTerms = existingTerms.concat(pickedTerms);
 
-                    var webView = '<header>\n                                    <h2 class="">Available in the app</h2>\n                                </header>\n                                <p>Download the Android app today to unlock this feature.</p>';
+                                tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms = joinedTerms;
 
-                    if (typeof store !== 'undefined') {
-                        store.refresh();
-                        var product = store.get("custom list");
+                                localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList], function () {
+                                    // Save to storage
+                                    localforage.setItem('tinyTerms.paidUnlocks', tinyTerms$1.paidUnlocks, function () {
+                                        // Refresh
+                                        location.reload();
+                                    });
+                                });
+                            }
+                        };
 
-                        if (product.owned) {
-                            tinyTerms$1.paidUnlocks[unlockItem].active = 'unlocked';
-                        } else {
-                            document.querySelector('.unlock-uploadlist').addEventListener('click', function (e) {
-                                e.preventDefault();
+                        var webView = '<header>\n                                    <h2 class="">Available in the app</h2>\n                                </header>\n                                <p>Download the Android app today to unlock this feature.</p>';
+
+                        if (typeof store !== 'undefined') {
+                            store.refresh();
+                            var product = store.get("extra items");
+
+                            if (product.owned) {
+                                tinyTerms$1.paidUnlocks[unlockItem].active = 'unlocked';
+                                check10();
+                            } else {
                                 store.order('extra items');
 
                                 store.when("extra items").approved(function (order) {
                                     tinyTerms$1.paidUnlocks[unlockItem].active = 'unlocked';
                                     order.finish();
+                                    check10();
                                 });
-                            });
+                            }
+                        } else {
+                            modal.querySelector('.content').innerHTML = webView;
                         }
-                    } else {
-                        modal.querySelector('.content').innerHTML = webView;
-                    }
 
-                    // 10 terms
-                    if (tinyTerms$1.paidUnlocks.terms10.active === 'unlocked') {
-                        var pickedTerms = getListOfTerms();
-                        var existingTerms = tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms;
-                        var joinedTerms = existingTerms.concat(pickedTerms);
-
-                        tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyTerms = joinedTerms;
-
-                        localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList], function () {
-                            // Save to storage
-                            localforage.setItem('tinyTerms.paidUnlocks', tinyTerms$1.paidUnlocks, function () {
-                                // Refresh
-                                location.reload();
-                            });
-                        });
-                    }
+                        check10();
+                    })();
                 }
             });
 
@@ -2533,7 +2591,7 @@ var tinyTermsApp = function () {
                 learned = '<p class="small">No completed terms, fill some goals!</p>';
             }
 
-            var view = '<header>\n                        <h2 class="icon-chart-bar">Progress</h2>\n                    </header>\n                    <div class="options stats">\n                        <p><strong>' + name + '</strong></p>\n                        <p><strong>Total completed terms:</strong> <span class="right">' + completed + ' <span class="small">/ ' + remaining + '</span></span></p>\n                        <br>\n                        <p><strong>Total viewed terms:</strong> <span class="right">' + viewed + ' <span class="small">/ ' + remaining + '</span></span></p>\n                        <p><strong>Total correct tests:</strong> <span class="right">' + correct + '</span></p>\n                        <p><strong>Total incorrect tests:</strong> <span class="right">' + incorrect + '</span></p>\n                        <h3>Completed terms:</h3>\n                        ' + learned + '\n                    </div>\n                    ';
+            var view = '<header>\n                        <h2 class="icon-008-bar-chart">Progress</h2>\n                    </header>\n                    <div class="options stats">\n                        <p><strong>' + name + '</strong></p>\n                        <p><strong>Total completed terms:</strong> <span class="right">' + completed + ' <span class="small">/ ' + remaining + '</span></span></p>\n                        <br>\n                        <p><strong>Total viewed terms:</strong> <span class="right">' + viewed + ' <span class="small">/ ' + remaining + '</span></span></p>\n                        <p><strong>Total correct tests:</strong> <span class="right">' + correct + '</span></p>\n                        <p><strong>Total incorrect tests:</strong> <span class="right">' + incorrect + '</span></p>\n                        <h3>Completed terms:</h3>\n                        ' + learned + '\n                    </div>\n                    ';
             // Add view
             modal.querySelector('.content').innerHTML += view;
         });
@@ -2678,7 +2736,10 @@ var tinyTermsApp = function () {
 
             // Save to storage
             localforage.setItem(tinyTerms$1.storedName, tinyTerms$1[tinyTerms$1.pickedList]).then(function (value) {
-                hideModal(true);
+                var view = '<header>\n                            <h2 class="icon-cog-outline">Saved</h2>\n                        </header>\n                        <div class="m-reminders options">\n                            <p>Thanks, your reminders have been saved.</p>\n                        </div>\n                        ';
+
+                // Add view
+                modal.querySelector('.content').innerHTML = view;
             });
         });
 
@@ -2687,6 +2748,7 @@ var tinyTermsApp = function () {
 
             // Reset stored
             tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes = [];
+            cordova.plugins.notification.local.cancelAll(function () {}, this);
 
             // Build times based off edited times
             var timeButtons = document.querySelectorAll('.time-wrap');
@@ -2754,7 +2816,6 @@ var tinyTermsApp = function () {
                 // Remove time
                 document.querySelectorAll('.time-wrap')[i].querySelector('.remove-time').addEventListener('click', function (e) {
                     tinyTerms$1[tinyTerms$1.pickedList].storedData.reminderTimes.splice(i, 1).pop();
-                    cordova.plugins.notification.local.cancel(i, function () {});
                     getTimes();
                 });
             };
@@ -2776,7 +2837,7 @@ var tinyTermsApp = function () {
         counterSecs: 0,
         revealGoalTarget: 3,
         wordAccuracy: 0.7,
-        addDay: false,
+        addDay: true,
         debug: true,
         godMode: false,
         loadDelay: 2500,
@@ -3145,6 +3206,7 @@ var tinyTermsApp = function () {
             delete tinyTerms$1[tinyTerms$1.pickedList].storedData.revealCountdowns;
             delete tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyQuery;
             delete tinyTerms$1[tinyTerms$1.pickedList].storedData.dailyReminder;
+            delete tinyTerms$1[tinyTerms$1.pickedList].storedData.hearts;
 
             // Reset store unlocks
             if (tinyTerms$1[tinyTerms$1.pickedList].storedData.listUnlocks !== undefined) {
@@ -3188,6 +3250,7 @@ var tinyTermsApp = function () {
 
         // Builds UI elements
         progressBar();
+        goalMeters();
 
         // Shows options menu
         navMenu();

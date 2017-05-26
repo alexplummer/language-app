@@ -6,7 +6,7 @@ import tinyTerms from 'app';
 import { createRevealTimer } from 'termInteraction';
 
 // Exports
-export { viewCreate, addHearts, setScore, progressBar };
+export { viewCreate, addHearts, goalMeters, setScore, progressBar };
 
 // Create app view
 const viewCreate = function viewCreate(termsToCreate) {
@@ -39,7 +39,7 @@ const viewCreate = function viewCreate(termsToCreate) {
             document.querySelector('body').classList.add('stars');
         }
 
-        // Star background
+        // Letters background
         if (tinyTerms.globalUnlocks.bgLetters.active === 'unlocked') {
             document.querySelector('body').classList.add('letters');
         }
@@ -63,6 +63,11 @@ const viewCreate = function viewCreate(termsToCreate) {
                 </div>
                 <div class="right">
                     <p class="term-views"><span>Goal:</span> <span class="count">${viewsCount}</span> / ${tinyTerms[tinyTerms.pickedList].ops.revealGoalTarget}</p>
+                    <div class="goal-indicators">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                     <button class="reveal">Reveal</button>
                 </div>
                 <div class="definition-wrapper hidden">
@@ -80,14 +85,14 @@ const viewCreate = function viewCreate(termsToCreate) {
     }
     // Add to view
     document.querySelector('.terms-wrapper').innerHTML = viewHTML;
-
+    
     // Style terms based on number of lines
     let termHolders = document.querySelectorAll('.term-holder');
 
     for (let i = 0; i < termHolders.length; i++) {
         termHolders[i].style.minHeight = '0px';
         termHolders[i].classList.add('lines-'+countLines(termHolders[i]));
-        termHolders[i].style.minHeight = '86px';
+        termHolders[i].style.minHeight = '101px';
     }
 
     // Add theme to previously created terms
@@ -103,8 +108,12 @@ const viewCreate = function viewCreate(termsToCreate) {
             let pickedColour = tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].colour;
             // Add colour to object
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
-            termWrapper.querySelector('.theme-holder').classList.add('bg-active');
-            termWrapper.querySelector('.term-holder').style.color = "#fff";
+            
+            if (pickedColour !== "#fff") {
+                termWrapper.querySelector('.term-holder').style.color = "#fff";
+                termWrapper.classList.add('bg-active');
+            }
+            
         }
         // Check storage for assigned symbol
         if (tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue] !== undefined && tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[termValue].symbol !== undefined) {
@@ -157,6 +166,23 @@ const addHearts = function addHearts() {
 
     // Add to storage
     localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+}
+
+// Fill goal meters
+const goalMeters = function goalMeters() {
+    let termWrappers = document.querySelectorAll('.m-term-wrapper');
+
+    for (let i = 0; i < termWrappers.length; i++) {
+        let goalCount = termWrappers[i].querySelector('.count').innerHTML;
+        goalCount = parseInt(goalCount);
+
+        for (let j = 0; j < goalCount; j++) {
+
+            if (j < 3) {
+                termWrappers[i].querySelector('.goal-indicators').getElementsByTagName('span')[j].classList.add('filled');
+            }
+        }
+    }
 }
 
 // Sets the score

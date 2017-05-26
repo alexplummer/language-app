@@ -5,7 +5,7 @@
 .m-progress-bar {
     padding: 0;
     text-align: center;
-    background: darken($clr-tertiary,15%);
+    background: lighten(#1b699e,0%);
     height: 15px;
     position: relative;
 
@@ -24,7 +24,7 @@
 
         span {
             font-size: $font-xs;
-            color: rgba(250,250,250,.8);
+            color: #fff;
             font-weight: 400;
         }
     }
@@ -35,6 +35,6 @@
         z-index: $z-m - 1;
         width: 0;
         height: 15px;
-        background: darken($clr-tertiary,8%);
+        background: lighten(#3498db,14%);
     }
 }

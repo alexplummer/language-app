@@ -37,7 +37,7 @@ join($type-header-els, $type-normal-els);
 // All fonts
 @each $el in $type-all-els {
     #{$el} {
-        color: $clr-shade;
+        color: $clr-dark;
     }
 }
 // Quote font

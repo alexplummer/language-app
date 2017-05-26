@@ -276,6 +276,11 @@ const showHome = function showHome() {
 				document.querySelector('.unlock-uploadlist').addEventListener('click', (e) => {
 					e.preventDefault();
 					store.order('custom list');
+
+					store.when("custom list").approved(function (order) {
+						order.finish();
+						location.reload();
+					});
 				});
 			}
 		}

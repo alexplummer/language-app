@@ -24,7 +24,7 @@ const onboardShow = function onboardShow() {
     document.getElementsByTagName('body')[0].classList.add('modal-active');
 
     let view = `<header>
-                    <h2 class="icon-child">Welcome</h2>
+                    <h2 class="icon-compass">Welcome</h2>
                 </header>
                 <p>Looks like this is your first time here, so let's go over some basics before you get started.</p>
                 <button class="onboard-1">Let's go!</button>
@@ -171,7 +171,7 @@ const onboardShow = function onboardShow() {
         let termOffset = topTerm.offsetTop + definitionHolder.offsetTop + definitionHolder.offsetHeight + 95;
         onBoardText.style.top = termOffset + "px";
 
-        let view = `<p>You can add a colour and symbol to the term, the visual association will help you rememeber.</p>
+        let view = `<p>You can add a colour and symbol to the term, the visual association will help you remember.</p>
                     <button class="onboard-7">Next</button>`;
         onBoardText.innerHTML = view;
 
@@ -198,7 +198,7 @@ const onboardShow = function onboardShow() {
         onBoardText.style.top = termOffset + "px";
         queryWrap.style.zIndex = "100";
 
-        let view = `<p>Each day you get a mini test to see how well you have rememebered, you can also unlock an extra test by completing at least one goal meter in a day.</p>
+        let view = `<p>Each day you get a mini test to see how well you have remembered, you can also unlock an extra test by completing at least one goal meter in a day.</p>
                     <button class="onboard-8">Next</button>`;
         onBoardText.innerHTML = view;
 

@@ -3,18 +3,18 @@
 // ============
 // Colour scheme variables
 
-$clr-primary:   #1b2e65;
-$clr-secondary: #1A56A5;
-$clr-tertiary:  #e21657;
-$clr-hlight:    #eca90b;
-$clr-shade:     #3F4747;
+$clr-primary:   #5283FB;
+$clr-secondary: #2b0f5e;
+$clr-tertiary:  #3498db;
+$clr-hlight:    #85A6FD;
+$clr-shade:     #122267;
 
-$clr-link: $clr-hlight;
+$clr-link: #3498db;
 $clr-link-hover: lighten($clr-link, 10%);
 
-$clr-light:   #BED4D2;
-$clr-lighter: #f5f5f5;
-$clr-dark:    darken($clr-primary, 5%);
+$clr-light:   #BBC2D7;
+$clr-lighter: #F5F6FA;
+$clr-dark:    #34495e;
 $clr-darker:  #333333;
 
 $clr-primary-textoverlay:   #FFFFFF;

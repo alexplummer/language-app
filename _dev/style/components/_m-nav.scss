@@ -3,7 +3,7 @@
 // Slide out navigation
 
 .m-nav {
-    background: $clr-primary;
+    background: #0e2271;
     box-shadow: 5px 0 20px 0 rgba(0,0,0,.4);
     animation-duration: 0.3s;
 
@@ -47,7 +47,7 @@
 .nav-bg {
     display: none;
     animation-duration: 0.6s;
-    background: fade-out($clr-primary,0.5);
+    background: fade-out(#0e2271,0.5);
 }
 .nav-on .nav-bg {
     display: block;

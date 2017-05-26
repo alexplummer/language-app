@@ -13,14 +13,14 @@
         top: 50%;
         width: 100%;
         min-width: 300px;
-        max-height: 90vh;
-        transform: translateY(-50%);
+        max-height: 94vh;
+        transform: translateY(-53%);
     }
 
     .inner {
         @extend .m-card;
         overflow-y: scroll;
-        max-height: 90vh;
+        max-height: 94vh;
         padding-bottom: 20px;
 
         header {
@@ -31,13 +31,13 @@
                 @extend .icon;
 
                 &.dictionary {
-                    @extend .icon-book;
+                    @extend .icon-002-open-book;
                 }
                 &.colour {
-                    @extend .icon-tint;
+                    @extend .icon-001-drop-silhouette;
                 }
                 &.symbol {
-                    @extend .icon-garden;
+                    @extend .icon-003-edit-draw-pencil;
                 }
             }
         }

@@ -108,7 +108,7 @@ const footerMenu = function footerMenu() {
         document.getElementsByTagName('body')[0].classList.add('modal-active');
 
         let view = `<header>
-                        <h2 class="icon-gift">Store</h2>
+                        <h2 class="icon-007-signs">Store</h2>
                     </header>
                     <div class="options store">
                         <p>Paid unlocks:</p>
@@ -218,20 +218,19 @@ const footerMenu = function footerMenu() {
 
                 if (typeof store !== 'undefined') {
                     store.refresh();
-                    let product = store.get("custom list");
+                    let product = store.get("extra items");
 
                     if (product.owned) {
                         tinyTerms.paidUnlocks[unlockItem].active = 'unlocked';
+                        check10();
                     }
                     else {
-                        document.querySelector('.unlock-uploadlist').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            store.order('extra items');
+                        store.order('extra items');
 
-                            store.when("extra items").approved(function (order) {
-                                tinyTerms.paidUnlocks[unlockItem].active = 'unlocked';
-                                order.finish();
-                            });
+                        store.when("extra items").approved(function (order) {
+                            tinyTerms.paidUnlocks[unlockItem].active = 'unlocked';
+                            order.finish();
+                            check10();
                         });
                     }
                 }
@@ -239,21 +238,25 @@ const footerMenu = function footerMenu() {
                     modal.querySelector('.content').innerHTML = webView;
                 }
 
-                // 10 terms
-                if (tinyTerms.paidUnlocks.terms10.active === 'unlocked') {
-                    let pickedTerms = getListOfTerms();
-                    let existingTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
-                    let joinedTerms = existingTerms.concat(pickedTerms);
+                check10();
 
-                    tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = joinedTerms;
+                function check10() {
+                    // 10 terms
+                    if (tinyTerms.paidUnlocks.terms10.active === 'unlocked') {
+                        let pickedTerms = getListOfTerms();
+                        let existingTerms = tinyTerms[tinyTerms.pickedList].storedData.dailyTerms;
+                        let joinedTerms = existingTerms.concat(pickedTerms);
 
-                    localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
-                        // Save to storage
-                        localforage.setItem('tinyTerms.paidUnlocks', tinyTerms.paidUnlocks, () => {
-                            // Refresh
-                            location.reload();
+                        tinyTerms[tinyTerms.pickedList].storedData.dailyTerms = joinedTerms;
+
+                        localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList], () => {
+                            // Save to storage
+                            localforage.setItem('tinyTerms.paidUnlocks', tinyTerms.paidUnlocks, () => {
+                                // Refresh
+                                location.reload();
+                            });
                         });
-                    });
+                    }
                 }
             }
         });
@@ -424,7 +427,7 @@ const footerMenu = function footerMenu() {
         }
 
         let view = `<header>
-                        <h2 class="icon-chart-bar">Progress</h2>
+                        <h2 class="icon-008-bar-chart">Progress</h2>
                     </header>
                     <div class="options stats">
                         <p><strong>${name}</strong></p>
@@ -604,7 +607,16 @@ const notifyAsk = function notifyAsk() {
 
         // Save to storage
         localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]).then(function (value) {
-             hideModal(true);
+            let view = `<header>
+                            <h2 class="icon-cog-outline">Saved</h2>
+                        </header>
+                        <div class="m-reminders options">
+                            <p>Thanks, your reminders have been saved.</p>
+                        </div>
+                        `;
+
+            // Add view
+            modal.querySelector('.content').innerHTML = view;
         });
     });
 
@@ -613,6 +625,7 @@ const notifyAsk = function notifyAsk() {
 
         // Reset stored
         tinyTerms[tinyTerms.pickedList].storedData.reminderTimes = [];
+        cordova.plugins.notification.local.cancelAll(function() {}, this);
 
         // Build times based off edited times
         let timeButtons = document.querySelectorAll('.time-wrap');
@@ -622,7 +635,7 @@ const notifyAsk = function notifyAsk() {
             let editedTime = document.querySelectorAll('.time-wrap')[i].querySelector('.time-input').value;
 
             let hours = editedTime.split(":")[0];
-            let mins  = editedTime.split(":")[1];
+            let mins = editedTime.split(":")[1];
 
             // Add to stored
             tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.push([hours, mins]);
@@ -677,7 +690,6 @@ const notifyAsk = function notifyAsk() {
             // Remove time
             document.querySelectorAll('.time-wrap')[i].querySelector('.remove-time').addEventListener('click', function (e) {
                 tinyTerms[tinyTerms.pickedList].storedData.reminderTimes.splice(i, 1).pop();
-                cordova.plugins.notification.local.cancel(i, function () { });
                 getTimes();
             });
         }

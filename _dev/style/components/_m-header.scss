@@ -3,7 +3,7 @@
 // Styling for the header module
 
 .m-header {
-    background: $clr-tertiary;
+    background: linear-gradient(to bottom, #3498db 0%,#2790d6 100%);
     padding: $size-s;
     padding-bottom: 0;
     margin-bottom: $size-m + $size-s;
@@ -11,15 +11,16 @@
 
     h1 {
         @extend .icon;
-        @extend .icon-menu;
+        @extend .icon-menu2;
         float: left;
         color: #fff;
         padding: 0 0 0 10px;
         margin: 0;
-        font-size: $font-s;
+        font-size: $font-xs * 1.1;
         line-height: $font-m;
         font-weight: 100;
         position: relative;
+        top: 1px;
         margin-left: -25px;
         cursor: pointer;
 
@@ -37,7 +38,7 @@
 
         .score {
             float: right;
-            margin-right: $size-s;
+            margin-right: $size-xs;
             position: relative;
             top: -1px;
 
@@ -59,7 +60,7 @@
                 position: relative;
                 top: 2px;
             }
-            @media (max-width: 365px) {
+            @media (max-width: 330px) {
                 display: none;
             }
         }

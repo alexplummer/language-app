@@ -17,7 +17,8 @@
         z-index: $z-min;
         animation: scrollBgRight 35s linear infinite;
         @extend %gpu;
-        background: url(../img/stars-bg.jpg) no-repeat;
+        background: url(../img/stars-bg.jpg) repeat;
+        background-size: 750px 200px;
     }
     @keyframes scrollBgRight {
         0% { transform: translateX(0) }
@@ -54,8 +55,8 @@
         &:before {
             content: "";
             border-radius: 50%;
-            background: linear-gradient(to bottom, #ba2550 0%, #570015 100%);
-            box-shadow: 0 0 180px 0 rgba(250, 250, 250, 0.6);
+            background: linear-gradient(to bottom, #284fac 0%, #010d2c 100%);
+            box-shadow: 0 0 180px 0 rgb(38, 88, 209);
             padding: $size-m;
             margin-top: $size-m;
             height: 85vh;
@@ -68,11 +69,12 @@
         }
         .nav-back {
             font-size: $font-xs;
-            color: $clr-hlight;
+            color: #eca90b;
             position: absolute;
             top: 36px;
-            left: 40px;
+            left: 50px;
             z-index: $z-m + 1;
+            text-decoration: none;
             @extend .icon;
             @extend .icon-right-open;
 
@@ -83,9 +85,7 @@
                 top: 3px;
             }
             @media (max-width: 400px) {
-                top: 0;
-                left: 0;
-                right: 0;
+                left: 0px;
             }
         }
     }
@@ -132,7 +132,7 @@
                 margin: 0 auto;
                 display: inline-block;
                 width: 50px;    
-                color: $clr-link;
+                color: #eca90b;
             }
             @media (max-width: 370px) {
                 margin-top: $size-s;
@@ -185,7 +185,7 @@
             display: block;
         }
         &.scroll {
-            height: 24vh;
+            height: 30vh;
             overflow-y: scroll;
 
             a {
@@ -235,7 +235,7 @@
         z-index: $z-m;
 
         button {
-            background: $clr-hlight;
+            background: $clr-link;
             margin-bottom: $size-m;
             width: 130px;
         }
@@ -283,7 +283,6 @@
     a {
         display: block;
         font-size: $font-s;
-        color: $clr-tertiary;
         margin-bottom: 0;
         text-decoration: none;
 

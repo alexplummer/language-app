@@ -4,7 +4,7 @@ import { cl, clv, clickListener, alertMsg, jsonp, findKeys, findOneKey, makeSafe
 import appData from 'appData';
 import tinyTerms from 'app';
 import { createNewQuery } from 'queryInteraction';
-import { setScore, addHearts, progressBar } from 'viewCreation';
+import { setScore, addHearts, progressBar, goalMeters } from 'viewCreation';
 
 // Exports
 export { revealedBtnHandler, createRevealTimer, dictionaryLookup, textToSpeech, addColour, hideModal, pickSymbol };
@@ -66,6 +66,9 @@ const revealedBtnHandler = function revealedBtnHandler() {
         // Update DOM
         countHolder.innerHTML = revealGoalCount;
 
+        // Add to goal meter
+        goalMeters();
+
         // If bonus is met
         if (revealGoalCount === tinyTerms[tinyTerms.pickedList].ops.revealGoalTarget) {
 
@@ -120,6 +123,9 @@ const revealedBtnHandler = function revealedBtnHandler() {
 
                 // Keep query active 
                 tinyTerms[tinyTerms.pickedList].storedData.queryComplete = false;
+
+                // Delete hearts
+                delete tinyTerms[tinyTerms.pickedList].storedData.hearts;
 
                 // Create a new query
                 createNewQuery(true);
@@ -525,6 +531,7 @@ const addColour = function addColour() {
             if (tinyTerms.globalUnlocks.coloursNeon.active === 'unlocked') {
                 modal.querySelector('.colour-wrap').innerHTML += neonColours;
             }
+
             // Metal colours
             if (tinyTerms.globalUnlocks.coloursMetal.active === 'unlocked') {
                 modal.querySelector('.colour-wrap').innerHTML += metalColours;
@@ -532,6 +539,7 @@ const addColour = function addColour() {
         }
 
         let coloursHolder = modal.querySelector('.colour-wrap');
+
         // Add colour vars
         colours = coloursHolder.getElementsByTagName('a');
 
@@ -550,13 +558,19 @@ const addColour = function addColour() {
         // Pick a colour
         clickListener(colours, (i) => {
             let pickedColour = colours[i].getAttribute('data-colour');
+
             // Add colour to object
             termWrapper.querySelector('.theme-holder').style.background = pickedColour;
-            termWrapper.querySelector('.theme-holder').classList.add('bg-active');
-            termWrapper.querySelector('.term-holder').style.color = "#fff";
+        
+            if (pickedColour !== "#fff") {
+                termWrapper.querySelector('.term-holder').style.color = "#fff";
+                termWrapper.classList.add('bg-active');
+            }
+
             // Set storage
             tinyTerms[tinyTerms.pickedList].storedData.viewedTerms[term].colour = pickedColour;
             localforage.setItem(tinyTerms.storedName, tinyTerms[tinyTerms.pickedList]);
+
             // Hide modal
             hideModal(true);
         });

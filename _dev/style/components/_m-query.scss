@@ -17,6 +17,7 @@
             @extend .icon-graduation-cap;
             @extend .icon;
             line-height: 32px;
+            padding-bottom: $size-xs;
         }
     }  
     .hearts {
@@ -30,7 +31,7 @@
             display: inline-block;
             padding: 0;
             margin: 0;
-            color: $clr-tertiary;
+            color: #e74c3c;
             font-size: $font-m;
 
             &:before {
@@ -45,7 +46,7 @@
         .query-holder {
             @extend %text-light;
             display: inline-block;
-            font-size: $font-l;
+            font-size: $font-m;
             text-transform: none;
             margin: 0;
             padding: 0;
@@ -68,7 +69,7 @@
         }
     }
     .result-holder {
-        border-top: 1px solid #ddd;
+        border-top: 2px dotted #999;
         font-size: $font-m;
         margin-top: $size-s;
         padding-top: $size-s;
