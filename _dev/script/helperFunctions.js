@@ -210,11 +210,21 @@ const buildData = function buildData(data) {
 // Check for network connection
 const checkConnection = function checkConnection(offline, online) {
 	let image = new Image();
+	let network;
 
 	image.src = 'http://www.tiny-terms.com/img/brand/logo_white.svg?d=' + escape(Date());
-	
-	image.onload = ()=>online();
-	image.onerror = ()=>offline();
+
+	image.onload = () => network = true;
+
+	setTimeout(() => {
+		if (network === true) {
+			online();
+		}
+		else {
+			offline();
+		}
+	}, 5000);
+
 
 	/*
 	let networkState = navigator.connection.type;
@@ -335,7 +345,7 @@ function arrayCheck(arr1, arr2) {
 
 // Adds click functionality to selectors
 function clickListener(elements, clickFunction) {
-	
+
 	for (let i = 0; i < elements.length; i++) {
 		elements[i].addEventListener("click", e => {
 			e.preventDefault();

@@ -42,7 +42,7 @@ var browserReports = false;
 // ============
 // For when using FTP task, check FTP task first
 
-var ftpFolder = '/lang-test';
+var ftpFolder = '/tiny-terms/app';
 
 
 // Reqs
@@ -745,6 +745,14 @@ gulp.task('build:tmp', gulpsync.sync([
 	['lint-reports', 'html'],
 	'bower-inject'
 ]));
+gulp.task('build:tmp-offline', gulpsync.sync([
+	'clean:tmp', 'create-folders', 'js',
+	['copy:fonts', 'inject-CSSdeps', 'inject-JSdeps', 'clean-reports'],
+	['copy:scripts', 'copy:images', 'sprites'],
+	'build-sass',
+	['lint-reports', 'html'],
+	'bower-inject'
+]));
 gulp.task('build:prod', gulpsync.sync([
 	'usemin',
 	'copy:prod',
@@ -764,6 +772,13 @@ gulp.task('optimise', gulpsync.sync([
 // TASKS
 gulp.task('default', gulpsync.sync([
 	'build:tmp',
+	'connect',
+	'watch'
+]), () => {
+	console.log('(Watching)');
+});
+gulp.task('offline', gulpsync.sync([
+	'build:tmp-offline',
 	'connect',
 	'watch'
 ]), () => {

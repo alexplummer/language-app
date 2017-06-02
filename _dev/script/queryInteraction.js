@@ -52,13 +52,19 @@ const createNewQuery = function createNewQuery(bonus) {
                 break;
             }
         }
-        if (!cycledTerms.indexOf(randomTerm)) {
+        if (cycledTerms.indexOf(randomTerm)) {
             i++
         }
         // Else look for another
         if (i === Object.keys(tinyTerms[tinyTerms.pickedList].storedData.viewedTerms).length) {
-            document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
-            document.querySelector('.result-holder').classList.remove('hidden');
+
+            let queryWrapper = document.querySelector('.query-wrapper');
+
+            // Show the query wrapper
+            queryWrapper.querySelector('.list-action').classList.add('hidden');
+            queryWrapper.querySelector('.query-form').classList.add('hidden');
+            queryWrapper.querySelector('.m-query').innerHTML += "<p>Reveal more terms to get a daily test!</p><br>";
+            queryWrapper.classList.remove('hidden');
         }
     }
 
@@ -109,6 +115,8 @@ const createNewQuery = function createNewQuery(bonus) {
         querySubmit.addEventListener("click", (e) => {
             e.preventDefault();
             let queryInput = document.querySelector('.query-input').value;
+
+            queryInput = queryInput.trim();
 
             if (checkQuery(queryInput, definition) === true) {
                 winCase();

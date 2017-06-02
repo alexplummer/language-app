@@ -22,8 +22,8 @@ const ops = {
 	counterSecs: 0,
 	revealGoalTarget: 3,
 	wordAccuracy: 0.7,
-	addDay: true,
-	debug: true,
+	addDay: false,
+	debug: false,
 	godMode: false,
 	loadDelay: 2500,
 	points: {
@@ -66,7 +66,7 @@ setTimeout(() => {
 						<h2 class="">Uh oh!</h2>
 					</header>
 					<br>
-					<p>Sorry something went wrong.</p>
+					<p>Sorry something went wrong, make sure you are connected to the internet and try again.</p>
 					<p>If this keeps happening you can reset the list by <a href="#" class="reset-list">clicking here</a> (wipes list progress).</p>
 					<br>
 					<button class="crash-report">Report issue</button><button class="home-btn">Close</button>
@@ -95,7 +95,7 @@ setTimeout(() => {
 
 		document.querySelector(".home-btn").addEventListener("click", (e) => {
 			e.preventDefault();
-			showHome();
+			location.reload();
 		});
 	}
 }, 20000);
@@ -226,8 +226,11 @@ function getLists(skipDefaultCheck) {
 					tinyTerms.globalUnlocks =  globalUnlocks;
 
 					// Ten terms
-					if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
-						tinyTerms[tinyTerms.pickedList].ops.displayedTerms = 10;
+					if (typeof tinyTerms.globalUnlocks.terms10 !== 'undefined') {
+
+						if (tinyTerms.globalUnlocks.terms10.active === 'unlocked') {
+							tinyTerms[tinyTerms.pickedList].ops.displayedTerms = 10;
+						}
 					}
 				}
 				

@@ -311,13 +311,19 @@ var tinyTermsApp = function () {
                         break;
                     }
             }
-            if (!cycledTerms.indexOf(randomTerm)) {
+            if (cycledTerms.indexOf(randomTerm)) {
                 i++;
             }
             // Else look for another
             if (i === Object.keys(tinyTerms$1[tinyTerms$1.pickedList].storedData.viewedTerms).length) {
-                document.querySelector('.result-holder').innerHTML = "Reveal more terms to get a query";
-                document.querySelector('.result-holder').classList.remove('hidden');
+
+                var queryWrapper = document.querySelector('.query-wrapper');
+
+                // Show the query wrapper
+                queryWrapper.querySelector('.list-action').classList.add('hidden');
+                queryWrapper.querySelector('.query-form').classList.add('hidden');
+                queryWrapper.querySelector('.m-query').innerHTML += "<p>Reveal more terms to get a daily test!</p><br>";
+                queryWrapper.classList.remove('hidden');
             }
         }
 
@@ -368,6 +374,8 @@ var tinyTermsApp = function () {
             querySubmit.addEventListener("click", function (e) {
                 e.preventDefault();
                 var queryInput = document.querySelector('.query-input').value;
+
+                queryInput = queryInput.trim();
 
                 if (checkQuery(queryInput, definition) === true) {
                     winCase();
@@ -1619,15 +1627,21 @@ var tinyTermsApp = function () {
     // Check for network connection
     var checkConnection = function checkConnection(offline, online) {
         var image = new Image();
+        var network = void 0;
 
         image.src = 'http://www.tiny-terms.com/img/brand/logo_white.svg?d=' + escape(Date());
 
         image.onload = function () {
-            return online();
+            return network = true;
         };
-        image.onerror = function () {
-            return offline();
-        };
+
+        setTimeout(function () {
+            if (network === true) {
+                online();
+            } else {
+                offline();
+            }
+        }, 5000);
 
         /*
         let networkState = navigator.connection.type;
@@ -2837,8 +2851,8 @@ var tinyTermsApp = function () {
         counterSecs: 0,
         revealGoalTarget: 3,
         wordAccuracy: 0.7,
-        addDay: true,
-        debug: true,
+        addDay: false,
+        debug: false,
         godMode: false,
         loadDelay: 2500,
         points: {
@@ -2877,7 +2891,7 @@ var tinyTermsApp = function () {
             modal.classList.remove("hidden");
             document.getElementsByTagName("body")[0].classList.add("modal-active");
 
-            var view = '<header>\n\t\t\t\t\t\t<h2 class="">Uh oh!</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<br>\n\t\t\t\t\t<p>Sorry something went wrong.</p>\n\t\t\t\t\t<p>If this keeps happening you can reset the list by <a href="#" class="reset-list">clicking here</a> (wipes list progress).</p>\n\t\t\t\t\t<br>\n\t\t\t\t\t<button class="crash-report">Report issue</button><button class="home-btn">Close</button>\n\t\t\t\t\t';
+            var view = '<header>\n\t\t\t\t\t\t<h2 class="">Uh oh!</h2>\n\t\t\t\t\t</header>\n\t\t\t\t\t<br>\n\t\t\t\t\t<p>Sorry something went wrong, make sure you are connected to the internet and try again.</p>\n\t\t\t\t\t<p>If this keeps happening you can reset the list by <a href="#" class="reset-list">clicking here</a> (wipes list progress).</p>\n\t\t\t\t\t<br>\n\t\t\t\t\t<button class="crash-report">Report issue</button><button class="home-btn">Close</button>\n\t\t\t\t\t';
 
             // Add view
             modal.querySelector(".content").innerHTML = view;
@@ -3032,8 +3046,11 @@ var tinyTermsApp = function () {
                         tinyTerms$1.globalUnlocks = globalUnlocks;
 
                         // Ten terms
-                        if (tinyTerms$1.globalUnlocks.terms10.active === 'unlocked') {
-                            tinyTerms$1[tinyTerms$1.pickedList].ops.displayedTerms = 10;
+                        if (typeof tinyTerms$1.globalUnlocks.terms10 !== 'undefined') {
+
+                            if (tinyTerms$1.globalUnlocks.terms10.active === 'unlocked') {
+                                tinyTerms$1[tinyTerms$1.pickedList].ops.displayedTerms = 10;
+                            }
                         }
                     }
 

@@ -1197,8 +1197,8 @@ a.icon:before, .m-footer .footer-menu a:before, .m-header .right a.settings:befo
 /* csslint ignore:end */
 @font-face {
   font-family: 'fontello';
-  src: url("../font/fontello.eot?13678507");
-  src: url("../font/fontello.eot?13678507#iefix") format("embedded-opentype"), url("../font/fontello.woff2?13678507") format("woff2"), url("../font/fontello.woff?13678507") format("woff"), url("../font/fontello.ttf?13678507") format("truetype"), url("../font/fontello.svg?13678507#fontello") format("svg");
+  src: url("../font/fontello.eot?98366110");
+  src: url("../font/fontello.eot?98366110#iefix") format("embedded-opentype"), url("../font/fontello.woff2?98366110") format("woff2"), url("../font/fontello.woff?98366110") format("woff"), url("../font/fontello.ttf?98366110") format("truetype"), url("../font/fontello.svg?98366110#fontello") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1208,7 +1208,7 @@ a.icon:before, .m-footer .footer-menu a:before, .m-header .right a.settings:befo
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?13678507#fontello') format('svg');
+    src: url('../font/fontello.svg?98366110#fontello') format('svg');
   }
 }
 */
@@ -1501,13 +1501,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(103px, 63px);
+    transform: translate(126px, 27px);
     opacity: 0; } }
 
 .particle:nth-child(1) {
   top: 50%;
   left: 50%;
-  font-size: 10px;
+  font-size: 17px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(1) {
@@ -1518,13 +1518,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(32px, 39px);
+    transform: translate(103px, 16px);
     opacity: 0; } }
 
 .particle:nth-child(2) {
   top: 50%;
   left: 50%;
-  font-size: 15px;
+  font-size: 24px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(2) {
@@ -1535,7 +1535,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(14px, 130px);
+    transform: translate(14px, 79px);
     opacity: 0; } }
 
 .particle:nth-child(3) {
@@ -1552,13 +1552,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(127px, 101px);
+    transform: translate(32px, 50px);
     opacity: 0; } }
 
 .particle:nth-child(4) {
   top: 50%;
   left: 50%;
-  font-size: 25px;
+  font-size: 21px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(4) {
@@ -1569,13 +1569,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(135px, 121px);
+    transform: translate(17px, 131px);
     opacity: 0; } }
 
 .particle:nth-child(5) {
   top: 50%;
   left: 50%;
-  font-size: 2px;
+  font-size: 3px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(5) {
@@ -1586,13 +1586,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(51px, 92px);
+    transform: translate(78px, 83px);
     opacity: 0; } }
 
 .particle:nth-child(6) {
   top: 50%;
   left: 50%;
-  font-size: 4px;
+  font-size: 8px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(6) {
@@ -1603,13 +1603,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(102px, 136px);
+    transform: translate(70px, 1px);
     opacity: 0; } }
 
 .particle:nth-child(7) {
   top: 50%;
   left: 50%;
-  font-size: 24px;
+  font-size: 7px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(7) {
@@ -1620,13 +1620,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(24px, 54px);
+    transform: translate(115px, 84px);
     opacity: 0; } }
 
 .particle:nth-child(8) {
   top: 50%;
   left: 50%;
-  font-size: 6px;
+  font-size: 19px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(8) {
@@ -1637,13 +1637,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(88px, 13px);
+    transform: translate(54px, 5px);
     opacity: 0; } }
 
 .particle:nth-child(9) {
   top: 50%;
   left: 50%;
-  font-size: 7px;
+  font-size: 17px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(9) {
@@ -1654,13 +1654,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(120px, 127px);
+    transform: translate(67px, 47px);
     opacity: 0; } }
 
 .particle:nth-child(10) {
   top: 50%;
   left: 50%;
-  font-size: 4px;
+  font-size: 6px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(10) {
@@ -1671,13 +1671,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(109px, 143px);
+    transform: translate(97px, 76px);
     opacity: 0; } }
 
 .particle:nth-child(11) {
   top: 50%;
   left: 50%;
-  font-size: 20px;
+  font-size: 12px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(11) {
@@ -1688,13 +1688,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(58px, 80px);
+    transform: translate(90px, 65px);
     opacity: 0; } }
 
 .particle:nth-child(12) {
   top: 50%;
   left: 50%;
-  font-size: 22px;
+  font-size: 7px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(12) {
@@ -1705,13 +1705,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(114px, 90px);
+    transform: translate(31px, 118px);
     opacity: 0; } }
 
 .particle:nth-child(13) {
   top: 50%;
   left: 50%;
-  font-size: 12px;
+  font-size: 3px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(13) {
@@ -1722,13 +1722,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(41px, 50px);
+    transform: translate(9px, 149px);
     opacity: 0; } }
 
 .particle:nth-child(14) {
   top: 50%;
   left: 50%;
-  font-size: 7px;
+  font-size: 12px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(14) {
@@ -1739,13 +1739,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(49px, 138px);
+    transform: translate(129px, 33px);
     opacity: 0; } }
 
 .particle:nth-child(15) {
   top: 50%;
   left: 50%;
-  font-size: 21px;
+  font-size: 17px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(15) {
@@ -1756,13 +1756,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(126px, 70px);
+    transform: translate(8px, 95px);
     opacity: 0; } }
 
 .particle:nth-child(16) {
   top: 50%;
   left: 50%;
-  font-size: 8px;
+  font-size: 10px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(16) {
@@ -1773,13 +1773,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(125px, 123px);
+    transform: translate(24px, 27px);
     opacity: 0; } }
 
 .particle:nth-child(17) {
   top: 50%;
   left: 50%;
-  font-size: 6px;
+  font-size: 4px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(17) {
@@ -1790,13 +1790,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(70px, 28px);
+    transform: translate(110px, 122px);
     opacity: 0; } }
 
 .particle:nth-child(18) {
   top: 50%;
   left: 50%;
-  font-size: 2px;
+  font-size: 20px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(18) {
@@ -1807,13 +1807,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(30px, 127px);
+    transform: translate(127px, 81px);
     opacity: 0; } }
 
 .particle:nth-child(19) {
   top: 50%;
   left: 50%;
-  font-size: 10px;
+  font-size: 24px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(19) {
@@ -1824,13 +1824,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(72px, 127px);
+    transform: translate(21px, 113px);
     opacity: 0; } }
 
 .particle:nth-child(20) {
   top: 50%;
   left: 50%;
-  font-size: 22px;
+  font-size: 16px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(20) {
@@ -1841,13 +1841,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(46px, 123px);
+    transform: translate(76px, 49px);
     opacity: 0; } }
 
 .particle:nth-child(21) {
   top: 50%;
   left: 50%;
-  font-size: 20px;
+  font-size: 13px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(21) {
@@ -1858,7 +1858,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(43px, 27px);
+    transform: translate(126px, 36px);
     opacity: 0; } }
 
 .particle:nth-child(22) {
@@ -1875,13 +1875,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(136px, 30px);
+    transform: translate(92px, 67px);
     opacity: 0; } }
 
 .particle:nth-child(23) {
   top: 50%;
   left: 50%;
-  font-size: 14px;
+  font-size: 18px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(23) {
@@ -1892,13 +1892,13 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(26px, 81px);
+    transform: translate(104px, 77px);
     opacity: 0; } }
 
 .particle:nth-child(24) {
   top: 50%;
   left: 50%;
-  font-size: 15px;
+  font-size: 7px;
   animation-duration: 1s; }
 
 .explode .particle:nth-child(24) {
@@ -1909,7 +1909,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(92px, 69px);
+    transform: translate(73px, 93px);
     opacity: 0; } }
 
 .particle:nth-child(25) {
@@ -1926,7 +1926,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-101px, -73px);
+    transform: translate(-136px, -135px);
     opacity: 0; } }
 
 .particle:nth-child(26) {
@@ -1940,11 +1940,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-40px, -32px);
+    transform: translate(-18px, -103px);
     opacity: 0; } }
 
 .particle:nth-child(27) {
-  font-size: 14px; }
+  font-size: 9px; }
 
 .explode .particle:nth-child(27) {
   animation-name: anim-27; }
@@ -1954,11 +1954,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-125px, -77px);
+    transform: translate(-104px, -7px);
     opacity: 0; } }
 
 .particle:nth-child(28) {
-  font-size: 11px; }
+  font-size: 6px; }
 
 .explode .particle:nth-child(28) {
   animation-name: anim-28; }
@@ -1968,11 +1968,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-116px, -21px);
+    transform: translate(-140px, -109px);
     opacity: 0; } }
 
 .particle:nth-child(29) {
-  font-size: 7px; }
+  font-size: 6px; }
 
 .explode .particle:nth-child(29) {
   animation-name: anim-29; }
@@ -1982,11 +1982,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-37px, -11px);
+    transform: translate(-19px, -23px);
     opacity: 0; } }
 
 .particle:nth-child(30) {
-  font-size: 5px; }
+  font-size: 4px; }
 
 .explode .particle:nth-child(30) {
   animation-name: anim-30; }
@@ -1996,11 +1996,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-142px, -24px);
+    transform: translate(-54px, -132px);
     opacity: 0; } }
 
 .particle:nth-child(31) {
-  font-size: 12px; }
+  font-size: 2px; }
 
 .explode .particle:nth-child(31) {
   animation-name: anim-31; }
@@ -2010,11 +2010,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-62px, -146px);
+    transform: translate(-125px, -74px);
     opacity: 0; } }
 
 .particle:nth-child(32) {
-  font-size: 10px; }
+  font-size: 8px; }
 
 .explode .particle:nth-child(32) {
   animation-name: anim-32; }
@@ -2024,11 +2024,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-58px, -150px);
+    transform: translate(-41px, -30px);
     opacity: 0; } }
 
 .particle:nth-child(33) {
-  font-size: 8px; }
+  font-size: 10px; }
 
 .explode .particle:nth-child(33) {
   animation-name: anim-33; }
@@ -2038,11 +2038,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-136px, -137px);
+    transform: translate(-40px, -113px);
     opacity: 0; } }
 
 .particle:nth-child(34) {
-  font-size: 1px; }
+  font-size: 14px; }
 
 .explode .particle:nth-child(34) {
   animation-name: anim-34; }
@@ -2052,11 +2052,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-138px, -109px);
+    transform: translate(-147px, -39px);
     opacity: 0; } }
 
 .particle:nth-child(35) {
-  font-size: 7px; }
+  font-size: 5px; }
 
 .explode .particle:nth-child(35) {
   animation-name: anim-35; }
@@ -2066,11 +2066,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-98px, -63px);
+    transform: translate(-86px, -132px);
     opacity: 0; } }
 
 .particle:nth-child(36) {
-  font-size: 11px; }
+  font-size: 6px; }
 
 .explode .particle:nth-child(36) {
   animation-name: anim-36; }
@@ -2080,11 +2080,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-40px, -39px);
+    transform: translate(-48px, -105px);
     opacity: 0; } }
 
 .particle:nth-child(37) {
-  font-size: 14px; }
+  font-size: 9px; }
 
 .explode .particle:nth-child(37) {
   animation-name: anim-37; }
@@ -2094,11 +2094,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-100px, -42px);
+    transform: translate(-6px, -35px);
     opacity: 0; } }
 
 .particle:nth-child(38) {
-  font-size: 6px; }
+  font-size: 8px; }
 
 .explode .particle:nth-child(38) {
   animation-name: anim-38; }
@@ -2108,11 +2108,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-23px, -140px);
+    transform: translate(-24px, -59px);
     opacity: 0; } }
 
 .particle:nth-child(39) {
-  font-size: 5px; }
+  font-size: 3px; }
 
 .explode .particle:nth-child(39) {
   animation-name: anim-39; }
@@ -2122,11 +2122,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-117px, -69px);
+    transform: translate(-58px, -34px);
     opacity: 0; } }
 
 .particle:nth-child(40) {
-  font-size: 9px; }
+  font-size: 11px; }
 
 .explode .particle:nth-child(40) {
   animation-name: anim-40; }
@@ -2136,11 +2136,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-105px, -95px);
+    transform: translate(-64px, -115px);
     opacity: 0; } }
 
 .particle:nth-child(41) {
-  font-size: 10px; }
+  font-size: 1px; }
 
 .explode .particle:nth-child(41) {
   animation-name: anim-41; }
@@ -2150,11 +2150,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-62px, -8px);
+    transform: translate(-52px, -10px);
     opacity: 0; } }
 
 .particle:nth-child(42) {
-  font-size: 7px; }
+  font-size: 11px; }
 
 .explode .particle:nth-child(42) {
   animation-name: anim-42; }
@@ -2164,11 +2164,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-20px, -83px);
+    transform: translate(-93px, -66px);
     opacity: 0; } }
 
 .particle:nth-child(43) {
-  font-size: 11px; }
+  font-size: 1px; }
 
 .explode .particle:nth-child(43) {
   animation-name: anim-43; }
@@ -2178,11 +2178,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-65px, -70px);
+    transform: translate(-11px, -11px);
     opacity: 0; } }
 
 .particle:nth-child(44) {
-  font-size: 13px; }
+  font-size: 10px; }
 
 .explode .particle:nth-child(44) {
   animation-name: anim-44; }
@@ -2192,11 +2192,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-62px, -17px);
+    transform: translate(-55px, -60px);
     opacity: 0; } }
 
 .particle:nth-child(45) {
-  font-size: 6px; }
+  font-size: 15px; }
 
 .explode .particle:nth-child(45) {
   animation-name: anim-45; }
@@ -2206,11 +2206,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-68px, -121px);
+    transform: translate(-107px, -113px);
     opacity: 0; } }
 
 .particle:nth-child(46) {
-  font-size: 12px; }
+  font-size: 3px; }
 
 .explode .particle:nth-child(46) {
   animation-name: anim-46; }
@@ -2220,11 +2220,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-16px, -10px);
+    transform: translate(-76px, -143px);
     opacity: 0; } }
 
 .particle:nth-child(47) {
-  font-size: 4px; }
+  font-size: 8px; }
 
 .explode .particle:nth-child(47) {
   animation-name: anim-47; }
@@ -2234,7 +2234,7 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-21px, -29px);
+    transform: translate(-93px, -49px);
     opacity: 0; } }
 
 .particle:nth-child(48) {
@@ -2248,11 +2248,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-16px, -143px);
+    transform: translate(-67px, -131px);
     opacity: 0; } }
 
 .particle:nth-child(49) {
-  font-size: 7px; }
+  font-size: 12px; }
 
 .explode .particle:nth-child(49) {
   animation-name: anim-49; }
@@ -2262,11 +2262,11 @@ table {
     transform: translate(0px, 0px);
     opacity: 1; }
   100% {
-    transform: translate(-75px, -126px);
+    transform: translate(-83px, -81px);
     opacity: 0; } }
 
 .particle:nth-child(50) {
-  font-size: 2px; }
+  font-size: 8px; }
 
 .explode .particle:nth-child(50) {
   animation-name: anim-50; }

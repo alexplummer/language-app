@@ -279,7 +279,8 @@ const showHome = function showHome() {
 
 					store.when("custom list").approved(function (order) {
 						order.finish();
-						location.reload();
+						modal.querySelector('.content').innerHTML = unlockedView;
+						unlockedListeners();
 					});
 				});
 			}
